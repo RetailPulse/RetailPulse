@@ -1,3 +1,4 @@
 # RetailPulse
 
-Init Code with Jira
+Team Member:
+Galvin Leow
