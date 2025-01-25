@@ -1,5 +1,5 @@
 # RetailPulse
 
-Init Code with Jira
-
-Repo pulled by Yap Chong Hwee Casper
+Team Member:
+Galvin Leow
+Yap Chong Hwee Casper
