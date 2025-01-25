@@ -2,5 +2,6 @@
 
 Team Member:
 Galvin Leow,
-Evalyn Low Wei Xuan
-Yap Chong Hwee Casper
+Evalyn Low Wei Xuan,
+Yap Chong Hwee Casper,
+Pang Zhi Hao,
