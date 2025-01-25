@@ -2,4 +2,5 @@
 
 Team Member:
 Galvin Leow,
-Evalyn Low Wei Xuan
+Evalyn Low Wei Xuan,
+Pang Zhi Hao
