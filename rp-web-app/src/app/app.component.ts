@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { LoginFormComponent } from './login-form/login-form.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css'],
+  standalone: false
 })
+
 export class AppComponent {
-  title = 'rp-web-app';
+  title = 'Retail Pulse';
 }
