@@ -1,5 +1,7 @@
 # RetailPulse
 
 Team Member:
-Galvin Leow
-Yap Chong Hwee Casper
+Galvin Leow,
+Evalyn Low Wei Xuan,
+Yap Chong Hwee Casper,
+Pang Zhi Hao,
