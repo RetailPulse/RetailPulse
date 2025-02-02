@@ -1,7 +1,4 @@
-body {
-  background-color: #87CEEB; /* Sky blue background */
-  font-family: Arial, sans-serif;
-}
+/* login-form.component.css */
 
 .vh-100 {
   height: 100vh;
@@ -10,4 +7,28 @@ body {
 .card {
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: var(--pastel-light);
 }
+
+.card-title {
+  color: var(--pastel-dark);
+}
+
+.form-group label {
+  color: var(--pastel-dark);
+}
+
+.btn {
+  background-color: var(--pastel-primary);
+  color: var(--pastel-dark);
+  transition: background-color 0.3s ease;
+}
+//$pastel-primary: var(--pastel-primary);
+//
+//.btn:hover {
+//  background-color: darken($pastel-primary, 10%);
+//}
+
+//.btn:hover {
+//  background-color: darken(var(--pastel-primary), 10%);
+//}
