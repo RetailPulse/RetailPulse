@@ -1,0 +1,11 @@
+:root {
+  --pastel-primary: #A2D5F2; /* Pastel Blue */
+  --pastel-secondary: #FFC8C8; /* Pastel Pink */
+  --pastel-success: #C8E6C9; /* Pastel Green */
+  --pastel-info: #B2EBF2; /* Pastel Cyan */
+  --pastel-warning: #FFE0B2; /* Pastel Orange */
+  --pastel-danger: #FFCDD2; /* Pastel Red */
+  --pastel-light: #F5F5F5; /* Light Gray */
+  --pastel-dark: #616161; /* Dark Gray */
+  --pastel-background: #b3dae2 !important;/* Pastel Light Blue (Background) */
+}

@@ -1,1 +1,9 @@
-/* You can add global styles to this file, and also import other style files */
+@import "assets/_variables.css";
+@import "bootstrap/scss/bootstrap.scss";
+
+body {
+  background-color:$pastel-background; // Set pastel background
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
