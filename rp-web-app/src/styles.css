@@ -1,9 +1,42 @@
-@import "assets/_variables.css";
-@import "bootstrap/scss/bootstrap.scss";
+/* Import the pastel theme */
+@import './assets/theme.css';
 
-body {
-  background-color:$pastel-background; // Set pastel background
-  font-family: Arial, sans-serif;
+/* Global reset and basic layout rules */
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--pastel-background);
+  color: var(--pastel-dark);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  text-align: center;
+  background-image: var(--bs-backdrop-bg);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+/* Utility class for full viewport height */
+.vh-100 {
+  height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  color: var(--pastel-dark);
+}
+
+button {
+  font-family: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
