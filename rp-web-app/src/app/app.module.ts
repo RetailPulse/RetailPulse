@@ -7,11 +7,14 @@ import {MatInputModule} from '@angular/material/input';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SidebarComponent} from './core/sidebar/sidebar.component';
+import {CoreModule} from './core/core.module';
+import {AppRoutingModule} from './app.routes';
+import {ProductManagementComponent} from './product-management/product-management.component';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    LoginFormComponent,
+    AppComponent
+
   ],
   imports: [
     BrowserModule,
@@ -19,9 +22,13 @@ import {SidebarComponent} from './core/sidebar/sidebar.component';
     MatInputModule,
     MatButtonModule,
     MatCardModule,
-    SidebarComponent
+    CoreModule,
+    AppRoutingModule,
+    LoginFormComponent,
+    ProductManagementComponent,
+    ProductManagementComponent
   ],
   providers: [],
-  bootstrap: [AppComponent,LoginFormComponent]
+  bootstrap: [AppComponent]
 })
 export class AppModule { }
