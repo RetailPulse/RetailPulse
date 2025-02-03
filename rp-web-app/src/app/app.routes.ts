@@ -3,7 +3,7 @@
    import { ProductManagementComponent } from './product-management/product-management.component';
    import {LoginFormComponent} from './login-form/login-form.component'; // Import the new component
 
-   const routes: Routes = [
+   export const routes: Routes = [
      { path: '', component: LoginFormComponent },
      { path: 'product-management', component: ProductManagementComponent } // New route for product management
    ];
