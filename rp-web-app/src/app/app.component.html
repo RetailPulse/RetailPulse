@@ -1,10 +1,9 @@
-<div *ngIf="!isLoginPage" class="app-container">
+<div class="d-flex layout">
+  <!-- Sidebar -->
   <app-sidebar></app-sidebar>
 
-  <main class="main-content">
+  <!-- Main Content -->
+  <div class="content flex-grow-1">
     <router-outlet></router-outlet>
-  </main>
+  </div>
 </div>
-
-<router-outlet *ngIf="isLoginPage"></router-outlet>
-
