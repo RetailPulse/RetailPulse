@@ -1,0 +1,2 @@
+docker rmi mysql-access:0.1.0
+docker build -t mysql-access:0.1.0 -f build_access_sql.dockerfile .

@@ -1,0 +1,25 @@
+services:
+  mysql_RP:
+    image: mysql:9.2.0
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: RetailPulseDB
+    ports:
+      - "3307:3307"
+    volumes:
+      - mysql_rp_vol: /var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 30s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+    networks:
+      - springboot-network
+volumes:
+  mysql_rp_vol:
+    driver: local
+networks:
+  springboot-network:
+    driver: bridge
+

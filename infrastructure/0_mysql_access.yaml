@@ -1,0 +1,25 @@
+services:
+  mysql_access:
+    image: mysql-access:0.1.0
+    container_name: mysql_access
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: identity_access
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_access_vol: /var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 30s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+    networks:
+      - access-network
+volumes:
+  mysql_access_vol:
+    driver: local
+networks:
+  access-network:
+    driver: bridge

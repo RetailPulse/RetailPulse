@@ -28,7 +28,7 @@ public class RetailPulseConfig {
         );
 
         http.authorizeHttpRequests(
-                c -> c.requestMatchers("/hello").hasRole("CASHIER").anyRequest().authenticated()
+                c -> c.requestMatchers("/hello").hasRole("SUPER").anyRequest().authenticated()
         );
 
         return http.build();
