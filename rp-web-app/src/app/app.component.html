@@ -1,3 +1,10 @@
-<h1 class="text-center">{{title}}</h1>
-<app-login-form></app-login-form>
+<div *ngIf="!isLoginPage" class="app-container">
+  <app-sidebar></app-sidebar>
+
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>
+
+<router-outlet *ngIf="isLoginPage"></router-outlet>
 
