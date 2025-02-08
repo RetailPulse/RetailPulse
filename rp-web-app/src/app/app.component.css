@@ -5,13 +5,9 @@
 }
 
 /* Content Styling */
-/*.content {*/
-/*  flex-grow: 1;*/
-/*  padding: 2rem;*/
-/*  background-color: var(--pastel-light);*/
-/*  border-radius: var(--radius-medium);*/
-/*  box-shadow: 0 4px 6px var(--pastel-shadow);*/
-/*}*/
+.main-content {
+  margin-top: 60px; /* Adjust the value as needed */
+}
 
 /* Sidebar Toggle */
 .sidebar-toggle-btn {

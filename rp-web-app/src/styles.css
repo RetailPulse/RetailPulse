@@ -1,21 +1,22 @@
 @import "assets/theme.css";
 
 /* Table Container */
-.content {
+/* Apply background to the entire body and html */
+ body {
   background-image: var(--bs-backdrop-bg);
+  background-repeat: no-repeat;
+  background-size: cover;
   padding: var(--space-large);
-  background-color: var(--pastel-light);
+  /*background-color: var(--pastel-light);*/
   border-radius: var(--radius-medium);
-  box-shadow: 0 4px 6px var(--pastel-shadow);
   min-height: 100vh;
   overflow: auto;
 }
-
 .p-table-wrapper {
-  background-color: var(--pastel-background);
+  /*background-color: v/ar(--pastel-background);*/
   border: 1px solid var(--pastel-border);
   border-radius: var(--radius-medium);
-  box-shadow: 0 2px 4px var(--pastel-shadow);
+  /*box-shadow: 0 2px 4px var(--pastel-shadow);*/
 }
 
 .p-datatable-thead > tr > th {
