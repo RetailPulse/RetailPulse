@@ -1,42 +1,35 @@
-/* Import the pastel theme */
-@import './assets/theme.css';
+@import "assets/theme.css";
 
-/* Global reset and basic layout rules */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Poppins', sans-serif;
-  background-color: var(--pastel-background);
-  color: var(--pastel-dark);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  text-align: center;
+/* Table Container */
+/* Apply background to the entire body and html */
+ body {
   background-image: var(--bs-backdrop-bg);
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
   background-repeat: no-repeat;
+  background-size: cover;
+  padding: var(--space-large);
+  /*background-color: var(--pastel-light);*/
+  border-radius: var(--radius-medium);
+  min-height: 100vh;
+  overflow: auto;
+}
+.p-table-wrapper {
+  /*background-color: v/ar(--pastel-background);*/
+  border: 1px solid var(--pastel-border);
+  border-radius: var(--radius-medium);
+  /*box-shadow: 0 2px 4px var(--pastel-shadow);*/
 }
 
-/* Utility class for full viewport height */
-.vh-100 {
-  height: 100vh;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 600;
+.p-datatable-thead > tr > th {
+  background-color: var(--pastel-primary);
   color: var(--pastel-dark);
+  font-weight: 600;
 }
 
-button {
-  font-family: inherit;
-  font-size: 1rem;
-  cursor: pointer;
+.p-datatable-tbody > tr {
+  background-color: var(--pastel-light);
+  transition: background-color 0.2s ease;
 }
 
+.p-datatable-tbody > tr:hover {
+  background-color: var(--pastel-secondary);
+}

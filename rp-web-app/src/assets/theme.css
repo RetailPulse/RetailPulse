@@ -7,40 +7,20 @@
   --pastel-danger: #FFCDD2; /* Pastel Red */
   --pastel-light: #F5F5F5; /* Light Gray */
   --pastel-dark: #616161; /* Dark Gray */
-  --pastel-background: #d0dde1 ;/* Pastel Light Blue (Background) */
+  --pastel-background: #d0dde1; /* Pastel Light Blue (Background) */
+  --pastel-border: #b0bec5; /* Light Gray Border */
+  --pastel-shadow: rgba(0, 0, 0, 0.1); /* Shadow Color */
+  --pastel-muted-text: #90a4ae; /* Muted Text Color */
+
+  --space-small: 0.5rem;
+  --space-medium: 1rem;
+  --space-large: 2rem;
+
+  --radius-small: 4px;
+  --radius-medium: 8px;
+  --radius-large: 12px;
+
   --bs-backdrop-bg: url('background.jpg');
 }
 
-body {
-  font-family: 'Inter', sans-serif;
-  background-image: var(--bs-backdrop-bg);
-  background-size: cover;      /* Make the image cover the whole background */
-  background-position: center; /* Center the image */
-  background-attachment: fixed; /* Keep the background fixed when scrolling */
-  background-repeat: no-repeat; /* Don't repeat the image */
-}
-/* Title Styling */
-.app-title {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 700; /* Bold */
-  font-size: 3rem;
-  color: var(--pastel-dark);
-  margin-bottom: 2rem;
-}
 
-/* Button Styling */
-.app-button {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 600; /* Semi-bold for the button */
-  font-size: 1.2rem;
-  color: var(--pastel-dark);
-}
-
-/* Body Text (if needed) */
-.app-body-text {
-  font-family: 'Lora', serif;
-  font-weight: 400; /* Regular weight */
-  font-size: 1rem;
-  line-height: 1.5;
-  color: var(--pastel-dark);
-}

@@ -1,0 +1,36 @@
+<div class="table-header-container">
+    <div class="table-header">Product Management</div>
+    <div class="search-bar-container">
+    <span class="p-input-icon-left">
+      <i class="pi pi-search"></i>
+      <input pInputText type="text" placeholder="Search..." [(ngModel)]="searchTerm" (input)="filterProducts()" class="search-bar" />
+    </span>
+        <button pButton type="button" label="Create" icon="pi pi-plus" class="create-button" (click)="createProduct()"></button>
+    </div>
+</div>
+<div class="table-responsive">
+    <p-table [value]="filteredProducts" [responsiveLayout]="'scroll'" class="table table-hover">
+        <ng-template pTemplate="header">
+            <tr>
+                <th *ngFor="let col of cols">{{ col.header }}</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product>
+            <tr>
+                <td *ngFor="let col of cols">
+                    <ng-container [ngSwitch]="col.field">
+                        <ng-container *ngSwitchCase="'inventoryStatus'">
+                            <p-tag [value]="product[col.field]" [severity]="getSeverity(product[col.field])"></p-tag>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'price'">
+                            {{ product[col.field] | currency: 'USD': 'symbol' }}
+                        </ng-container>
+                        <ng-container *ngSwitchDefault>
+                            {{ product[col.field] }}
+                        </ng-container>
+                    </ng-container>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
