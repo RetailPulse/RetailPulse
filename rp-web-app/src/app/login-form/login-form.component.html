@@ -1,20 +1,11 @@
 <div class="login-container">  
-  <h2 class="title">Retail Pulse</h2>
-  <!-- <div class="form-group">
-    <label for="username">Username</label>
-    <input type="text" class="form-control" id="username" name="username" required>
-  </div>
-  <div class="form-group">
-    <label for="password">Password</label>
-    <input type="password" class="form-control" id="password" name="password" required>
-  </div> -->    
+  <h2 class="title">Retail Pulse</h2>  
   <p></p>
   @if (authenciationServerStatus){
     <button mat-raised-button color="primary" (click)="onLogin() "class="login-button" >
       Login
     </button>
   }  
-  @else {
-    <p-message severity="error">Authentication server is down. Please try again later.</p-message>
-  }  
+  <p></p>
+  <p-message severity="error" [innerHTML]="errorMessage$.value"></p-message>
 </div>
