@@ -5,10 +5,15 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app.routes';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgbModule, NgbOffcanvasModule } from '@ng-bootstrap/ng-bootstrap';
+
+import { provideHttpClient } from '@angular/common/http'; // Import provideHttpClient
+import { OAuthModule } from 'angular-oauth2-oidc';
+
 import {SidebarComponent} from './sidebar/sidebar.component';
 import {ProductManagementComponent} from './product-management/product-management.component';
 import {ProductService} from './product-management/product-management.component';
-
+import { AuthService } from './services/auth.service';
+import { AuthGuardService } from './services/authguard.guard';
 
 @NgModule({
   declarations: [
@@ -22,9 +27,15 @@ import {ProductService} from './product-management/product-management.component'
     NgbOffcanvasModule,
     LoginFormComponent,
     SidebarComponent,
-    ProductManagementComponent
+    ProductManagementComponent,
+    OAuthModule.forRoot()
   ],
-  providers: [ProductService],
+  providers: [
+    provideHttpClient(), // Add provideHttpClient to the providers array
+    ProductService,   
+    AuthService, 
+    AuthGuardService
+    ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

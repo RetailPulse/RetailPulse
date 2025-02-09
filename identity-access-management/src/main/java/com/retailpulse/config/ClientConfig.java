@@ -54,6 +54,7 @@ public class ClientConfig {
                     RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
                             .clientId(clientId)
                             .clientName(clientName)
+                            .clientSecret("$2b$12$P5vLo3DSfkAOMrVRAqLM4eYkL4YGtDdI5u1JLaGzQI1nPjjaZShsO")
                             .clientIdIssuedAt(now)
                             .clientSecretExpiresAt(getOneYearFromNow(now))
                             .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
