@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
-import { authConfig } from '../../environments/environment';
+import { authConfig, environment } from '../../environments/environment';
 import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
@@ -14,6 +14,11 @@ export class AuthService {
 
   // Configure OAuth2 settings  
   public configureOAuth(): Promise<boolean> {
+    if (!environment.authEnabled) {
+      console.log('Authentication is disabled. Skipping OAuth configuration');
+      return Promise.resolve(true);
+    }
+
     this.oauthService.configure(authConfig);
 
     return this.oauthService.loadDiscoveryDocumentAndTryLogin().then(() => {
@@ -32,19 +37,33 @@ export class AuthService {
   }
 
   login() {
+    if (!environment.authEnabled) {
+      console.log('Authentication is disabled');
+      return;
+    }
     this.oauthService.initCodeFlow();
   }
 
   logout() {
+    if (!environment.authEnabled) {
+      console.log('Authentication is disabled');
+      return;
+    }
     this.oauthService.logOut();
     sessionStorage.removeItem('accessToken'); // Remove the token from session storage
   }
 
   get isAuthenticated(): boolean {
+    if (!environment.authEnabled) {
+      return true;
+    }
     return this.oauthService.hasValidAccessToken();
   }
 
   get accessToken(): string {
+    if (!environment.authEnabled) {
+      return 'dummy-access-token';
+    }
     let token = sessionStorage.getItem('accessToken');
     if (!token) {
       token = this.oauthService.getAccessToken();
@@ -55,7 +74,10 @@ export class AuthService {
     return token?.toString();
   }
 
-  public getUserRole(): string[] {    
+  public getUserRole(): string[] {   
+    if (!environment.authEnabled) {
+      return [environment.devModeRole];
+    } 
     if (!this.accessToken) {
       return ['UNAUTHORIZED'];
     }
