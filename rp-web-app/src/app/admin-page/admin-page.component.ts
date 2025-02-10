@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { LogoutButtonComponent } from '../logout-button/logout-button.component';
+import { Component, signal } from '@angular/core'; 
+import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'admin-page',
@@ -10,4 +12,19 @@ import { LogoutButtonComponent } from '../logout-button/logout-button.component'
 })
 export class AdminPageComponent {
 
+  constructor(
+    private router: Router, 
+    private authService: AuthService,
+    private http: HttpClient
+  ) { 
+    
+    if (!this.authService.isAuthenticated) {
+      this.router.navigate(['/login']);
+    }
+  }
+
+  // Method to handle test calling an endpoint from backend.
+  onClick(): void {
+   //TODO
+  }
 }

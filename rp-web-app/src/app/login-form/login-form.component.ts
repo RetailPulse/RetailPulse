@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { MessageModule } from 'primeng/message';
@@ -12,9 +12,13 @@ import { BehaviorSubject } from 'rxjs';
   styleUrls: ['./login-form.component.css'], // Corrected from styleUrl to styleUrls
   imports: [MessageModule]
 })
-export class LoginFormComponent {
+export class LoginFormComponent implements OnInit{
   errorMessage$: BehaviorSubject<string> = new BehaviorSubject<string>('');
   authenciationServerStatus: boolean = false;
+
+  async ngOnInit() {
+    await this.authService.ensureTokenIsValid();
+  }
 
   constructor(private router: Router, 
     private route: ActivatedRoute, private authService: AuthService) {     
@@ -41,7 +45,7 @@ export class LoginFormComponent {
         if (this.authService.isAuthenticated) {
           // Navigate to the admin or operator page upon successful login
           console.log("Token: \r\n" + this.authService.accessToken);
-              
+                        
           let userRoles = this.authService.getUserRole();
           if (userRoles.includes("ADMIN") || userRoles.includes("SUPER")) {
             this.router.navigate(['/admin']); 
@@ -50,7 +54,7 @@ export class LoginFormComponent {
             this.router.navigate(['/operator']);
           }
         }
-      }  
+      }
     });
   }
     

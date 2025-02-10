@@ -74,6 +74,30 @@ export class AuthService {
     return token?.toString();
   }
 
+  public isTokenExpired(token: string): boolean {
+    const decodedToken: any = jwtDecode(token);
+    const expirationDate = new Date(0);
+    expirationDate.setUTCSeconds(decodedToken.exp);
+    return expirationDate < new Date();
+  }
+
+  private refreshToken(): Promise<void> {
+    return this.oauthService.refreshToken().then(() => {
+      const newToken = this.oauthService.getAccessToken();
+      sessionStorage.setItem('accessToken', newToken);
+    }).catch(error => {
+      console.log('Error refreshing token', error);
+      this.logout();
+    });
+  }
+
+  public async ensureTokenIsValid(): Promise<void> {
+    const token = this.accessToken;
+    if (this.isTokenExpired(token)) {
+      await this.refreshToken();
+    }
+  }
+  
   public getUserRole(): string[] {   
     if (!environment.authEnabled) {
       return [environment.devModeRole];
