@@ -12,6 +12,8 @@ import { OAuthModule } from 'angular-oauth2-oidc';
 import {SidebarComponent} from './sidebar/sidebar.component';
 import {ProductManagementComponent} from './product-management/product-management.component';
 import {ProductService} from './product-management/product-management.component';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { AuthService } from './services/auth.service';
 import { AuthGuardService } from './services/authguard.guard';
 
@@ -34,7 +36,12 @@ import { AuthGuardService } from './services/authguard.guard';
     provideHttpClient(), // Add provideHttpClient to the providers array
     ProductService,   
     AuthService, 
-    AuthGuardService
+    AuthGuardService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
     ],
   bootstrap: [AppComponent]
 })

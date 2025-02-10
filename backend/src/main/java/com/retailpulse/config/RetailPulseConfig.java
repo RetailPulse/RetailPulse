@@ -15,12 +15,16 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class RetailPulseConfig {
 
-    @Value("${jwt.key.set.uri}")
+    @Value("${auth.jwt.key.set.uri}")
     private String keySetUri;
+
+    @Value("${auth.enabled}")
+    private boolean authEnabled;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
+      if (authEnabled) {          
         http.oauth2ResourceServer(
                 c -> c.jwt(
                         j -> j.jwkSetUri(keySetUri).jwtAuthenticationConverter(jwtAuthenticationConverter())
@@ -28,10 +32,17 @@ public class RetailPulseConfig {
         );
 
         http.authorizeHttpRequests(
-                c -> c.requestMatchers("/hello").hasRole("SUPER").anyRequest().authenticated()
+                c -> c.requestMatchers("/hello").authenticated() //.hasRole("SUPER").anyRequest().authenticated()
         );
+      } else {
+        http.authorizeHttpRequests(
+          c -> c.anyRequest().permitAll()
+        );        
+      }
 
-        return http.build();
+      http.csrf(csrf -> csrf.disable());
+      
+      return http.build();
     }
 
     private JwtAuthenticationConverter jwtAuthenticationConverter() {

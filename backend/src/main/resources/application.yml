@@ -1,7 +1,8 @@
 server.port: 9090
 
-jwt:
-  key.set.uri: http://localhost:8080/oauth2/jwks
+auth:
+  enabled: true
+  jwt.key.set.uri: http://localhost:8080/oauth2/jwks
 
 spring:
   datasource:
