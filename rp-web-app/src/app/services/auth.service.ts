@@ -24,7 +24,7 @@ export class AuthService {
     return this.oauthService.loadDiscoveryDocumentAndTryLogin().then(() => {
       if (this.oauthService.hasValidAccessToken()) {
         console.log('User is logged in');
-        sessionStorage.setItem('accessToken', this.oauthService.getAccessToken());        
+        // sessionStorage.setItem('accessToken', this.oauthService.getAccessToken());        
         return true;
       } else {
         console.log('User is not logged in');
@@ -50,7 +50,7 @@ export class AuthService {
       return;
     }
     this.oauthService.logOut();
-    sessionStorage.removeItem('accessToken'); // Remove the token from session storage
+    // sessionStorage.removeItem('accessToken'); // Remove the token from session storage
   }
 
   get isAuthenticated(): boolean {

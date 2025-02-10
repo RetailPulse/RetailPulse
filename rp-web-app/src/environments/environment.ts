@@ -11,6 +11,6 @@ export const authConfig: AuthConfig = {
 
 export const environment = {
   production: false,
-  authEnabled: true,
-  devModeRole: 'OPERATOR' //'ADMIN',
+  authEnabled: false,
+  devModeRole: 'ADMIN' //'OPERATOR' //
 };
