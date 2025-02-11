@@ -17,10 +17,18 @@ jobs:
       with:
         java-version: '23'
         distribution: 'temurin'
-        cache: maven
-    - name: Display Maven version
-      run: mvn -v
-    - name: Install dependencies
-      run: mvn install --file backend/pom.xml
-    - name: Compile and run unit tests on specific folder
-      run: mvn compile -Dtest=com.retailpulse.controller.** test --file backend/pom.xml -X
+   
+    - name: Build
+      run: mvn --batch-mode -DskipTests package
+    
+    - name: Test
+      run: mvn --batch-mode -Dmaven.test.failure.ignore=true -Dtest=com.retailpulse.controller.** test
+
+    - name: Report
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: Maven Tests
+        path: target/surefire-reports/*.xml
+        reporter: java-junit
+        fail-on-error: true
