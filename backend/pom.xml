@@ -91,6 +91,12 @@
             <version>8.3.0</version>
             <scope>runtime</scope>
         </dependency>
+        <!-- Add necessary dependencies -->
+        <dependency>
+            <groupId>com.retailpulse</groupId>
+            <artifactId>product-service</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
 </project>
