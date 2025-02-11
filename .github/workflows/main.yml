@@ -19,4 +19,4 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Run unit tests on specific folder
-      run: mvn -Dtest=your.specific.package.** test
+      run: mvn -Dtest=com.retailpulse.controller.** test
