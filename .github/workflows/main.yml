@@ -20,5 +20,7 @@ jobs:
         cache: maven
     - name: Display Maven version
       run: mvn -v
+    - name: Install dependencies
+      run: mvn install --file backend/pom.xml
     - name: Compile and run unit tests on specific folder
       run: mvn compile -Dtest=com.retailpulse.controller.** test --file backend/pom.xml -X
