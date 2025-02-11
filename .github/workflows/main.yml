@@ -22,7 +22,7 @@ jobs:
       run: mvn --batch-mode -DskipTests package --file backend/pom.xml
     
     - name: Test
-      run: mvn --batch-mode -Dmaven.test.failure.ignore=true -Dtest=com.retailpulse.controller.** test --file backend/pom.xml
+      run: mvn --batch-mode -Dmaven.test.failure.ignore=true -Dtest=com.retailpulse.controller.**,com.retailpulse.service.** test --file backend/pom.xml
 
     - name: Report
       uses: dorny/test-reporter@v1
