@@ -1,9 +1,36 @@
-@import "assets/_variables.css";
-@import "bootstrap/scss/bootstrap.scss";
+@import "assets/theme.css";
 
-body {
-  background-color:$pastel-background; // Set pastel background
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
+/* Table Container */
+/* Apply background to the entire body and html */
+ body {
+  background-image: var(--bs-backdrop-bg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding: var(--space-large);
+  /*background-color: var(--pastel-light);*/
+  border-radius: var(--radius-medium);
+  min-height: 100vh;
+  overflow: auto;
 }
+.p-table-wrapper {
+  /*background-color: v/ar(--pastel-background);*/
+  border: 1px solid var(--pastel-border);
+  border-radius: var(--radius-medium);
+  /*box-shadow: 0 2px 4px var(--pastel-shadow);*/
+}
+
+.p-datatable-thead > tr > th {
+  background-color: var(--pastel-primary);
+  color: var(--pastel-dark);
+  font-weight: 600;
+}
+
+.p-datatable-tbody > tr {
+  background-color: var(--pastel-light);
+  transition: background-color 0.2s ease;
+}
+
+.p-datatable-tbody > tr:hover {
+  background-color: var(--pastel-secondary);
+}
+

@@ -1,0 +1,31 @@
+<!-- Sidebar Toggle Button -->
+<button class="btn btn-outline-primary sidebar-toggle-btn" (click)="toggleSidebar()">
+    <i class="pi pi-bars"></i>
+</button>
+
+
+<!-- Sidebar -->
+<div class="sidebar" [@sidebarState]="sidebarVisible ? 'open' : 'closed'">
+    <div class="sidebar-header">
+        <h1>Menu</h1>
+    </div>
+    <div class="sidebar-body">
+        <ul class="list-unstyled">
+            <li>
+                <button class="btn btn-outline-secondary w-100 mb-2">
+                    <i class="pi pi-box"></i> Product Management
+                </button>
+            </li>
+            <li>
+                <button class="btn btn-outline-secondary w-100 mb-2">
+                    <i class="pi pi-credit-card"></i> POS Management
+                </button>
+            </li>
+            <li>
+                <button class="btn btn-outline-secondary w-100">
+                    <i class="pi pi-book"></i> Generation of Report
+                </button>
+            </li>
+        </ul>
+    </div>
+</div>
