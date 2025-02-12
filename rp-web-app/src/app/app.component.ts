@@ -14,7 +14,7 @@ export class AppComponent {
 
   isLoginPage = false
 
-  constructor(private router: Router) { //private authService: AuthService, 
+  constructor(private router: Router) { //private authService: AuthService,
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.isLoginPage = event.url === '/';
