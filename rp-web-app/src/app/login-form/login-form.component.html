@@ -1,11 +1,7 @@
-<div class="login-container">  
-  <h2 class="title">Retail Pulse</h2>  
+<div class="login-container">
+  <h2 class="title">Retail Pulse</h2>
   <p></p>
-  @if (authenciationServerStatus){
-    <button mat-raised-button color="primary" (click)="onLogin() "class="login-button" >
-      Login
-    </button>
-  }  
-  <p></p>
-  <p-message severity="error" [innerHTML]="errorMessage$.value"></p-message>
+  <button mat-raised-button color="primary" (click)="onLogin() " class="login-button">
+    Login
+  </button>
 </div>

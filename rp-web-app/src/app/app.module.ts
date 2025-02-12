@@ -34,8 +34,8 @@ import { AuthGuardService } from './services/authguard.guard';
   ],
   providers: [
     provideHttpClient(), // Add provideHttpClient to the providers array
-    ProductService,   
-    AuthService, 
+    ProductService,
+    AuthService,
     AuthGuardService,
     {
       provide: HTTP_INTERCEPTORS,

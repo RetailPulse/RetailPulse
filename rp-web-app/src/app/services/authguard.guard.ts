@@ -9,8 +9,8 @@ import { AuthService } from './auth.service';
 export class AuthGuardService implements CanActivate {
 
   constructor(
-    private authService: AuthService, 
-    private router: Router,    
+    private authService: AuthService,
+    private router: Router,
   ) {}
 
   canActivate(
@@ -26,8 +26,8 @@ export class AuthGuardService implements CanActivate {
       return true;
     } else {
       // Redirect to the login page
-      sessionStorage.setItem('errorMessages', 'You are not authorized to access this page.');
-      this.router.navigate(['/login']); 
+      // sessionStorage.setItem('errorMessages', 'You are not authorized to access this page.');
+      this.router.navigate(['/login']);
       return false;
     }
   }
