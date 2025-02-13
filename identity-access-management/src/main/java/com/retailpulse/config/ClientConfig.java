@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
@@ -17,9 +18,6 @@ import org.springframework.security.oauth2.server.authorization.settings.TokenSe
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 @Configuration
@@ -54,15 +52,12 @@ public class ClientConfig {
                     RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
                             .clientId(clientId)
                             .clientName(clientName)
-                            .clientSecret("$2b$12$P5vLo3DSfkAOMrVRAqLM4eYkL4YGtDdI5u1JLaGzQI1nPjjaZShsO")
                             .clientIdIssuedAt(now)
-                            .clientSecretExpiresAt(getOneYearFromNow(now))
                             .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
                             .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                            .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                             .redirectUri(redirectUri)
                             .postLogoutRedirectUri(postLogoutRedirectUri)
-                            .scope("openid")
+                            .scope(OidcScopes.OPENID)
                             .clientSettings(ClientSettings.builder()
                                     .requireProofKey(true)
                                     .requireAuthorizationConsent(true)
@@ -70,8 +65,7 @@ public class ClientConfig {
                             )
                             .tokenSettings(TokenSettings.builder()
                                     .authorizationCodeTimeToLive(Duration.ofMinutes(5))
-                                    .accessTokenTimeToLive(Duration.ofHours(1))
-                                    .refreshTokenTimeToLive(Duration.ofDays(14))
+                                    .accessTokenTimeToLive(Duration.ofMinutes(3))
                                     .build()
                             )
                             .build();
@@ -87,9 +81,4 @@ public class ClientConfig {
         };
     }
 
-    private Instant getOneYearFromNow(Instant now) {
-        ZonedDateTime zonedDateTimeNow = ZonedDateTime.ofInstant(now, ZoneId.systemDefault());
-        ZonedDateTime oneYearLater = zonedDateTimeNow.plus(1, ChronoUnit.YEARS);
-        return oneYearLater.toInstant();
-    }
 }

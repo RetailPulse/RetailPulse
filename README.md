@@ -14,8 +14,8 @@ To Run:
     docker build -t mysql-access:0.1.0 -f build_access_sql.dockerfile .
 3. Change directory to ./deploy
 4. Execute:
-    docker compose -f 0_mysql_access.yaml -d
-    docker compose -f 1_mysql_RP.yaml -d
+    docker compose -f 0_mysql_access.yaml up -d
+    docker compose -f 1_mysql_RP.yaml up -d
 5. Open a new terminal. Change directory to ./identity-access-management.
 6. Execute:
   mvn clean install

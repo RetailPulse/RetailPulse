@@ -5,7 +5,10 @@ export const authConfig: AuthConfig = {
   redirectUri: window.location.origin,
   clientId: 'client',
   responseType: 'code',
-  scope: 'openid', // Update based on your requirements
+  scope: 'openid',
+  useSilentRefresh: true,
+  useHttpBasicAuth: false,
+  disablePKCE: false,
   showDebugInformation: true
 };
 
