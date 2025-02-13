@@ -68,15 +68,5 @@
   background-color: var(--pastel-danger) !important;
 }
 
-/* Ensure the modal is positioned absolutely and does not affect the document flow */
-.p-dialog {
-  position: absolute !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  z-index: 1050 !important; /* Ensure it is above other elements */
-  width: auto !important;
-  max-width: 90vw !important;
-  max-height: 90vh !important;
-  overflow: auto !important;
-}
+
+

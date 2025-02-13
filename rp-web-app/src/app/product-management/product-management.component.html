@@ -12,7 +12,6 @@
                 [modal]="true"
                 [closable]="true"
                 [header]="'Create Product'"
-                [style]="{width: '40vw'}"
                 class="custom-modal"
                 [ngClass]="{'p-dialog-visible': displayModal}">
 
@@ -66,9 +65,9 @@
                 </div>
 
                 <!-- Add more rows as needed -->
-                <div class="form-actions d-flex justify-content-end gap-2">
-                    <button p-button icon="pi pi-check" (click)="saveProduct()" class="btn btn-success">Save</button>
-                    <button p-button icon="pi pi-times" (click)="displayModal = false" class="btn btn-secondary">Cancel</button>
+                <div class="form-actions d-flex justify-content-end gap-4">
+                    <button pButton type="button" icon="pi pi-check" (click)="saveProduct()" class="btn btn-success"></button>
+                    <button pButton type="button" icon="pi pi-times" (click)="displayModal = false" class="btn btn-secondary"></button>
                 </div>
             </div>
         </p-dialog>
@@ -92,7 +91,7 @@
                             <p-tag [value]="product[col.field]" [severity]="getSeverity(product[col.field])"></p-tag>
                         </ng-container>
                         <ng-container *ngSwitchCase="'price'">
-                            {{ product[col.field] | currency: 'USD': 'symbol' }}
+                            {{ product[col.field] | currency: 'SGD': 'symbol' }}
                         </ng-container>
                         <ng-container *ngSwitchDefault>
                             {{ product[col.field] }}

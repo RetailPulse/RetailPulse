@@ -3,7 +3,7 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { CurrencyPipe, CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ButtonDirective } from 'primeng/button';
+import {ButtonDirective} from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import Fuse from 'fuse.js';
 
@@ -53,6 +53,11 @@ export class ProductManagementComponent implements OnInit {
   searchTerm: string = '';
   displayModal: boolean = false;
   newProduct: Product = new Product();
+  statusOptions: any[] = [
+    { label: 'In Stock', value: 'INSTOCK' },
+    { label: 'Low Stock', value: 'LOWSTOCK' },
+    { label: 'Out of Stock', value: 'OUTOFSTOCK' }
+  ];
 
   cols!: Column[];
 
