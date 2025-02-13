@@ -17,16 +17,15 @@ export class AuthService {
 
   // Configure OAuth2 settings
   public initializeAuth() {
+
+    if (!environment.authEnabled) {
+      console.log("Authentication is disabled. Using dummy token.");      
+      return Promise.resolve();
+    }
+
     return this.oauthService.loadDiscoveryDocumentAndTryLogin().then(() => {
       if (this.oauthService.hasValidAccessToken()) {
-        console.log("Token: \r\n" + this.accessToken);
-
-        let userRoles = this.getUserRole();
-        if (userRoles.includes("ADMIN") || userRoles.includes("SUPER")) {
-          this.router.navigate(['/admin']);
-        } else if (userRoles.includes("OPERATOR")) {
-          this.router.navigate(['/operator']);
-        }
+        console.log("Token: \r\n" + this.accessToken);        
       } else {
         console.log('User is not logged in');
         this.router.navigate(['/login']);
@@ -51,7 +50,6 @@ export class AuthService {
       return;
     }
     this.oauthService.logOut();
-    sessionStorage.removeItem('accessToken'); // Remove the token from session storage
   }
 
   get isAuthenticated(): boolean {
@@ -65,14 +63,8 @@ export class AuthService {
     if (!environment.authEnabled) {
       return 'dummy-access-token';
     }
-    let token = sessionStorage.getItem('accessToken');
-    if (!token) {
-      token = this.oauthService.getAccessToken();
-      if (token) {
-        sessionStorage.setItem('accessToken', token);
-      }
-    }
-    return token?.toString();
+
+    return this.oauthService.getAccessToken();
   }
 
   public getUserRole(): string[] {
