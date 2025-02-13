@@ -18,6 +18,9 @@ jobs:
         java-version: '23'
         distribution: 'temurin'
    
+    - name: Clean
+      run: mvn clean --file backend/pom.xml
+
     - name: Build
       run: mvn --batch-mode -DskipTests package --file backend/pom.xml
     
