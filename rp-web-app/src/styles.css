@@ -42,29 +42,50 @@
   overflow-y: auto; /* Allow scrolling if content overflows */
   max-height: 70vh; /* Limit the height to 70% of the viewport height */
 }
-
-.p-dialog .p-dialog-header {
-  background-color: #D8EEDF !important; /* Light pastel pink */
+.p-dialog-header .p-dialog-title {
+  display: flex;
+  justify-content: center; /* Center the header content */
+  align-items: center;
   color: var(--pastel-dark);
   font-weight: bold;
+  border-radius: var(--radius-large) var(--radius-large) 0 0; /* Rounded top corners */
+  padding: 1rem;
+  position: relative;
+}
+
+.p-dialog-header .p-dialog-header-actions{
+  right: 1rem; /* Position the close button to the right */
+  color: var(--pastel-dark); /* White icon color */
+  padding-right: 2em ;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .p-dialog {
+  position: fixed !important; /* Change to fixed position */
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 1050 !important; /* Ensure it is above other elements */
+  width: auto !important;
+  max-width: 90vw !important;
+  max-height: 90vh !important;
+  border-radius: var(--radius-large) !important; /* Increase border-radius for more rounded corners */
   box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.15) !important;
-  border-radius: var(--radius-medium);
-  overflow: hidden;
-  background-color: #ffffff !important; /* Ensure solid background */
+  background-color: #ffffff !important;
+  overflow: auto !important;
 }
 
 /* Ensure the modal stays within screen bounds */
 .p-dialog .modal-content {
-  overflow: hidden; /* Hide overflowing content */
+  border-radius: var(--radius-large) !important; /* Increase border-radius for more rounded corners */
+  overflow:hidden; /*  overflowing content */
 }
 
 /* Customize the height of the modal */
 .p-dialog .p-dialog-content {
   max-height: 70vh; /* Prevent content overflow */
-  overflow-y: auto; /* Allow vertical scrolling */
+  overflow-y: auto;
 }
 
 
@@ -78,24 +99,26 @@
 }
 
 .p-dialog .form-control {
-  border-radius: var(--radius-small);
+  border-radius: var(--radius-large);
   background-color: var(--pastel-light);
   color: var(--pastel-dark);
   border: 1px solid var(--pastel-border);
   padding: 0.75rem;
 }
 
-/* Button styles */
-.p-dialog .btn-success {
-  background-color: #C8E6C9 !important; /* Pastel green for "Save" */
-  border-color: #81C784 !important; /* Slightly darker green border */
-  color: #1d3557 !important; /* Dark text for better contrast */
-  font-weight: bold; /* Emphasize the action */
+/* Style for the buttons */
+.btn {
+  transition: background-color 0.3s ease;
 }
 
-.p-dialog .btn-secondary {
-  background-color: #FFCDD2 !important; /* Pastel red for "Cancel" */
-  border-color: #FF8A80 !important; /* Slightly darker red border */
-  color: white !important;
-  font-weight: bold; /* Emphasize the action */
+/* Hover effect for the buttons */
+.btn-success:hover {
+  border-radius: var(--radius-large);
+  background-color: var(--pastel-success) !important; /* Green color on hover */
 }
+
+.btn-secondary:hover {
+  border-radius: var(--radius-large);
+  background-color: var(--pastel-danger) !important; /* Green color on hover */
+}
+
