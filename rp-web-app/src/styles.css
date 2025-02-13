@@ -20,7 +20,7 @@
 }
 
 .p-datatable-thead > tr > th {
-  background-color: var(--pastel-primary);
+  background-color: var(--pastel-info);
   color: var(--pastel-dark);
   font-weight: 600;
 }
@@ -30,7 +30,73 @@
   transition: background-color 0.2s ease;
 }
 
-.p-datatable-tbody > tr:hover {
-  background-color: var(--pastel-secondary);
+.p-datatable-tbody > tr:hover > td:not(:last-child) {
+  background-color: var(--pastel-purple-background);
+}
+
+/* Custom modal styles */
+.p-dialog .p-dialog-content {
+  background-color: var(--pastel-primary) !important; /* Soft pastel pink */
+  padding: 1.5rem;
+  color: var(--pastel-dark);
+  overflow-y: auto; /* Allow scrolling if content overflows */
+  max-height: 70vh; /* Limit the height to 70% of the viewport height */
+}
+
+.p-dialog .p-dialog-header {
+  background-color: #D8EEDF !important; /* Light pastel pink */
+  color: var(--pastel-dark);
+  font-weight: bold;
+}
+
+.p-dialog {
+  box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.15) !important;
+  border-radius: var(--radius-medium);
+  overflow: hidden;
+  background-color: #ffffff !important; /* Ensure solid background */
+}
+
+/* Ensure the modal stays within screen bounds */
+.p-dialog .modal-content {
+  overflow: hidden; /* Hide overflowing content */
+}
+
+/* Customize the height of the modal */
+.p-dialog .p-dialog-content {
+  max-height: 70vh; /* Prevent content overflow */
+  overflow-y: auto; /* Allow vertical scrolling */
+}
+
+
+/* Add spacing between rows and columns */
+.p-dialog .row {
+  margin-bottom: 1.5rem; /* Added space between input rows */
+}
+
+.p-dialog .form-group {
+  margin-bottom: 0.75rem; /* Add space between label and input */
+}
+
+.p-dialog .form-control {
+  border-radius: var(--radius-small);
+  background-color: var(--pastel-light);
+  color: var(--pastel-dark);
+  border: 1px solid var(--pastel-border);
+  padding: 0.75rem;
+}
+
+/* Button styles */
+.p-dialog .btn-success {
+  background-color: #C8E6C9 !important; /* Pastel green for "Save" */
+  border-color: #81C784 !important; /* Slightly darker green border */
+  color: #1d3557 !important; /* Dark text for better contrast */
+  font-weight: bold; /* Emphasize the action */
+}
+
+.p-dialog .btn-secondary {
+  background-color: #FFCDD2 !important; /* Pastel red for "Cancel" */
+  border-color: #FF8A80 !important; /* Slightly darker red border */
+  color: white !important;
+  font-weight: bold; /* Emphasize the action */
 }
 

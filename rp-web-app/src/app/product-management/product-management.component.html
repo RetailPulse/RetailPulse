@@ -5,7 +5,75 @@
       <i class="pi pi-search"></i>
       <input pInputText type="text" placeholder="Search..." [(ngModel)]="searchTerm" (input)="filterProducts()" class="search-bar" />
     </span>
-        <button pButton type="button" label="Create" icon="pi pi-plus" class="create-button" (click)="createProduct()"></button>
+        <button pButton type="button" icon="pi pi-plus" class="create-button" (click)="createProduct()"></button>
+
+        <p-dialog
+                [(visible)]="displayModal"
+                [modal]="true"
+                [closable]="true"
+                [header]="'Create Product'"
+                [style]="{width: '40vw'}"
+                class="custom-modal"
+                [ngClass]="{'p-dialog-visible': displayModal}">
+
+            <div class="modal-content p-4 rounded">
+                <!-- Row 1 -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="code" class="form-label">Code</label>
+                            <input pInputText id="code" [(ngModel)]="newProduct.code" placeholder="Product Code" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="name" class="form-label">Name</label>
+                            <input pInputText id="name" [(ngModel)]="newProduct.name" placeholder="Product Name" class="form-control"/>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2 -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="category" class="form-label">Category</label>
+                            <input pInputText id="category" [(ngModel)]="newProduct.category" placeholder="Category" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="price" class="form-label">Price</label>
+                            <input pInputText id="price" type="number" [(ngModel)]="newProduct.price" placeholder="Price" class="form-control"/>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 3 -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="sku" class="form-label">SKU</label>
+                            <input pInputText id="sku" [(ngModel)]="newProduct.code" placeholder="SKU" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="quantity" class="form-label">Quantity</label>
+                            <input pInputText id="quantity" type="number" [(ngModel)]="newProduct.quantity" placeholder="Quantity" class="form-control"/>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add more rows as needed -->
+                <div class="form-actions d-flex justify-content-end gap-2">
+                    <button p-button icon="pi pi-check" (click)="saveProduct()" class="btn btn-success">Save</button>
+                    <button p-button icon="pi pi-times" (click)="displayModal = false" class="btn btn-secondary">Cancel</button>
+                </div>
+            </div>
+        </p-dialog>
+
+
     </div>
 </div>
 <div class="table-responsive">
@@ -13,6 +81,7 @@
         <ng-template pTemplate="header">
             <tr>
                 <th *ngFor="let col of cols">{{ col.header }}</th>
+                <th>Actions</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-product>
@@ -29,6 +98,10 @@
                             {{ product[col.field] }}
                         </ng-container>
                     </ng-container>
+                </td>
+                <td>
+                    <button pButton type="button" icon="pi pi-pencil"  class="btn btn-primary btn-sm edit-button" (click)="editProduct(product)"></button>
+                    <button pButton type="button" icon="pi pi-trash" class="btn btn-danger btn-sm delete-button"(click)="deleteProduct(product)"></button>
                 </td>
             </tr>
         </ng-template>

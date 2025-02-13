@@ -2,7 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { CurrencyPipe, CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // Import FormsModule for ngModel
+import { FormsModule } from '@angular/forms';
+import { ButtonDirective } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
+import Fuse from 'fuse.js';
 
 class Product {
   code!: string;
@@ -37,7 +40,9 @@ export class ProductService {
     TagModule,
     CurrencyPipe,
     CommonModule,
-    FormsModule // Include FormsModule here
+    FormsModule,
+    ButtonDirective,
+    DialogModule,
   ],
   templateUrl: './product-management.component.html',
   styleUrls: ['./product-management.component.css']
@@ -46,6 +51,8 @@ export class ProductManagementComponent implements OnInit {
   products!: Product[];
   filteredProducts!: Product[];
   searchTerm: string = '';
+  displayModal: boolean = false;
+  newProduct: Product = new Product();
 
   cols!: Column[];
 
@@ -81,15 +88,40 @@ export class ProductManagementComponent implements OnInit {
   }
 
   filterProducts(): void {
-    const term = this.searchTerm.toLowerCase();
-    this.filteredProducts = this.products.filter(product =>
-      product.name.toLowerCase().includes(term) ||
-      product.code.toLowerCase().includes(term) ||
-      product.category.toLowerCase().includes(term)
-    );
+    const term = this.searchTerm.trim().toLowerCase();
+    if (!term) {
+      this.filteredProducts = this.products;
+      return;
+    }
+    const fuse = new Fuse(this.products, {
+      keys: ['name', 'code', 'category'],
+      includeScore: true,
+      threshold: 0.3,
+      ignoreLocation: true,
+    });
+
+    const results = fuse.search(term);
+    this.filteredProducts = results.map(result => result.item);
   }
 
   createProduct(): void {
-    // Handle create product logic here
+    this.displayModal = true;
+  }
+
+  saveProduct(): void {
+    this.products.push(this.newProduct);
+    this.filteredProducts = [...this.products];
+    this.newProduct = new Product();
+    this.displayModal = false;
+  }
+
+  editProduct(product: any) {
+    // editing the items
+    console.log ('Editing product: ', product);
+  }
+
+  deleteProduct(product: any) {
+    this.products = this.products.filter(p => p !== product);
+    this.filteredProducts = this.filteredProducts.filter(p => p !== product);
   }
 }
