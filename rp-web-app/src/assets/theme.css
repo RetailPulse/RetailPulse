@@ -1,7 +1,7 @@
 :root {
-  --pastel-primary: #A2D5F2; /* Pastel Blue */
-  --pastel-secondary: #FFC8C8; /* Pastel Pink */
-  --pastel-success: #C8E6C9; /* Pastel Green */
+  --pastel-primary: #D8E5F7; /* Pastel Blue */
+  --pastel-secondary: #FFDCDB; /* Pastel Pink */
+  --pastel-success: #D8EEDF; /* Pastel Green */
   --pastel-info: #B2EBF2; /* Pastel Cyan */
   --pastel-warning: #FFE0B2; /* Pastel Orange */
   --pastel-danger: #FFCDD2; /* Pastel Red */
@@ -11,6 +11,8 @@
   --pastel-border: #b0bec5; /* Light Gray Border */
   --pastel-shadow: rgba(0, 0, 0, 0.1); /* Shadow Color */
   --pastel-muted-text: #90a4ae; /* Muted Text Color */
+  --pastel-purple-background: #F2D9EF; /* Pastel Purple */
+  --pastel-yellow-background: #FDF1C9; /* Pastel Yellow */
 
   --space-small: 0.5rem;
   --space-medium: 1rem;

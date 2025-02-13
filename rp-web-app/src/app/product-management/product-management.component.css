@@ -31,7 +31,7 @@
 
 .create-button {
   padding: 0.5rem 1rem;
-  background-color: var(--pastel-primary);
+  background-color: var(--pastel-yellow-background);
   color: var(--pastel-dark);
   border: none;
   border-radius: 50px;
@@ -39,5 +39,44 @@
 }
 
 .create-button:hover {
-  background-color: var(--pastel-primary-dark);
+  background-color: var(--pastel-success);
+}
+
+/* Style for the edit button */
+.edit-button {
+  border-color: var(--pastel-info) !important;
+  color: var(--pastel-dark) !important;
+  border-radius: var(--radius-small);
+  padding: var(--space-small);
+  margin-right: var(--space-small);
+}
+
+.edit-button:hover {
+  background-color: var(--pastel-primary) !important;
+}
+
+
+/* Style for the delete button */
+.delete-button {
+  border-color: var(--pastel-danger) !important;
+  color: var(--pastel-dark) !important;
+  border-radius: var(--radius-small);
+  padding: var(--space-small);
+}
+
+.delete-button:hover {
+  background-color: var(--pastel-danger) !important;
+}
+
+/* Ensure the modal is positioned absolutely and does not affect the document flow */
+.p-dialog {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 1050 !important; /* Ensure it is above other elements */
+  width: auto !important;
+  max-width: 90vw !important;
+  max-height: 90vh !important;
+  overflow: auto !important;
 }

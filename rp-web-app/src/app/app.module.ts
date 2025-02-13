@@ -13,6 +13,7 @@ import {ProductService} from './product-management/product-management.component'
 @NgModule({
   declarations: [
     AppComponent
+
   ],
   imports: [
     BrowserModule,
@@ -22,7 +23,7 @@ import {ProductService} from './product-management/product-management.component'
     NgbOffcanvasModule,
     LoginFormComponent,
     SidebarComponent,
-    ProductManagementComponent
+    ProductManagementComponent,
   ],
   providers: [ProductService],
   bootstrap: [AppComponent]

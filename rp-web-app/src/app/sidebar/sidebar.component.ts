@@ -7,9 +7,8 @@ import {ProductManagementComponent} from "../product-management/product-manageme
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
+  standalone:true,
   imports: [
-    NgClass,
-    ProductManagementComponent
   ],
   animations: [
     trigger('sidebarState', [
