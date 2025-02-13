@@ -6,7 +6,6 @@ import { environment } from '../../environments/environment';
 import { BehaviorSubject } from 'rxjs';
 
 @Component({
-  standalone: true,
   selector: 'app-login-form',
   templateUrl: './login-form.component.html',
   styleUrls: ['./login-form.component.css'], // Corrected from styleUrl to styleUrls
