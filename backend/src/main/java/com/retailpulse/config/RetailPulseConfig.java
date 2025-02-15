@@ -3,10 +3,16 @@ package com.retailpulse.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 /**
  * @Author WilliamSiling
@@ -24,26 +30,42 @@ public class RetailPulseConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-      if (authEnabled) {          
-        http.oauth2ResourceServer(
-                c -> c.jwt(
-                        j -> j.jwkSetUri(keySetUri).jwtAuthenticationConverter(jwtAuthenticationConverter())
-                )
-        );
+        if (authEnabled) {
+            http.oauth2ResourceServer(
+                    c -> c.jwt(
+                            j -> j.jwkSetUri(keySetUri).jwtAuthenticationConverter(jwtAuthenticationConverter())
+                    )
+            );
 
-        http.authorizeHttpRequests(
-                c -> c.requestMatchers("/hello").authenticated() //.hasRole("SUPER").anyRequest().authenticated()
-        );
+            http.authorizeHttpRequests(
+                    c -> c.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                            .requestMatchers("/hello").authenticated() //.hasRole("SUPER").anyRequest().authenticated()
+            );
 
-      } else {
-        http.authorizeHttpRequests(
-          c -> c.anyRequest().permitAll()
-        );        
-
+        } else {
+            http.authorizeHttpRequests(
+                    c -> c.anyRequest().permitAll()
+            );
+        }
+        http.cors(c -> {
+            c.configurationSource(corsConfigurationSource());
+        });
         http.csrf(csrf -> csrf.disable());
-      }
 
-      return http.build();
+        return http.build();
+    }
+
+    private CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:4200"));  // Specify your frontend URL
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setExposedHeaders(List.of("Authorization"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     private JwtAuthenticationConverter jwtAuthenticationConverter() {
