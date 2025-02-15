@@ -70,3 +70,6 @@ lib/
 
 # Test results
 test-results/
+
+# Logs
+logs/
