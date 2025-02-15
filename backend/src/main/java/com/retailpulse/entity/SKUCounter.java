@@ -1,10 +1,14 @@
 package com.retailpulse.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class SKUCounter {
 
     @Id
@@ -20,4 +24,6 @@ public class SKUCounter {
         this.name = name;
         this.counter = counter;
     }
+
+
 }

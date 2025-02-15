@@ -68,5 +68,57 @@
   background-color: var(--pastel-danger) !important;
 }
 
+/* Custom styles for the p-dialog */
 
+/* MUI-like text field styles */
+.mui-text-field {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.mui-text-field input,
+.mui-text-field textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--pastel-border);
+  border-radius: var(--radius-medium);
+  background-color: var(--pastel-light);
+  color: var(--pastel-dark);
+  transition: border-color 0.2s;
+}
+
+.mui-text-field input:focus,
+.mui-text-field textarea:focus {
+  border-color: var(--pastel-primary);
+  outline: none;
+}
+
+.mui-text-field label {
+  position: absolute;
+  top: -0.75rem;
+  left: 0.75rem;
+  background-color: var(--pastel-light);
+  padding: 0 0.25rem;
+  color: var(--pastel-dark);
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.mui-text-field input:focus + label,
+.mui-text-field textarea:focus + label {
+  color: var(--pastel-primary);
+}
+
+/* Custom styles for the p-inputSwitch */
+.p-inputswitch {
+  width: 50px;
+  height: 25px;
+  background-color: var(--pastel-border);
+  border-radius: 25px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+/* Custom styles for the p-inputSwitch */
 

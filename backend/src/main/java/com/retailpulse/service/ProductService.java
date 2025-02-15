@@ -31,6 +31,7 @@ public class ProductService {
 
     public Product saveProduct(Product product) {
         // Generate SKU before saving
+        System.out.println("Generating SKU for product: " + product);
         String generatedSKU = skuGeneratorService.generateSKU();
         product.setSku(generatedSKU);
         return productRepository.save(product);

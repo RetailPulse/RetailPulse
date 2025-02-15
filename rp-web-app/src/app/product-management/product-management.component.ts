@@ -1,36 +1,16 @@
 import { Component, OnInit } from '@angular/core';
+import { ProductService } from './product.service';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { CurrencyPipe, CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {ButtonDirective} from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
+import { InputSwitch } from 'primeng/inputswitch';
 import Fuse from 'fuse.js';
-
-class Product {
-  code!: string;
-  name!: string;
-  category!: string;
-  quantity!: number;
-  inventoryStatus!: string;
-  price!: number;
-}
-
-interface Column {
-  field: string;
-  header: string;
-}
-
-export class ProductService {
-  getProductsMini(): Promise<Product[]> {
-    const products: Product[] = [
-      { code: 'P001', name: 'Product 1', category: 'Category 1', quantity: 10, inventoryStatus: 'INSTOCK', price: 100 },
-      { code: 'P002', name: 'Product 2', category: 'Category 2', quantity: 5, inventoryStatus: 'LOWSTOCK', price: 200 },
-      { code: 'P003', name: 'Product 3', category: 'Category 3', quantity: 0, inventoryStatus: 'OUTOFSTOCK', price: 300 },
-    ];
-    return Promise.resolve(products);
-  }
-}
+import {Column, Product} from './product.model';
+import {InputText} from "primeng/inputtext";
+import {InputTextarea} from "primeng/inputtextarea";
 
 @Component({
   selector: 'app-product-management',
@@ -43,6 +23,9 @@ export class ProductService {
     FormsModule,
     ButtonDirective,
     DialogModule,
+    InputSwitch,
+    InputText,
+    InputTextarea,
   ],
   templateUrl: './product-management.component.html',
   styleUrls: ['./product-management.component.css']
@@ -53,43 +36,34 @@ export class ProductManagementComponent implements OnInit {
   searchTerm: string = '';
   displayModal: boolean = false;
   newProduct: Product = new Product();
-  statusOptions: any[] = [
-    { label: 'In Stock', value: 'INSTOCK' },
-    { label: 'Low Stock', value: 'LOWSTOCK' },
-    { label: 'Out of Stock', value: 'OUTOFSTOCK' }
-  ];
 
   cols!: Column[];
+  checked: boolean = true;
 
   constructor(private productService: ProductService) {}
 
   ngOnInit(): void {
-    this.productService.getProductsMini().then((data: Product[]) => {
-      this.products = data;
-      this.filteredProducts = data;
+ // Use the ProductService to fetch the products from the backend
+ this.productService.getProducts().subscribe((data: Product[]) => {
+   console.log('Fetched Products:', data);
+   // Filter the products to only include those that are active
+   this.products = data.filter(product => product.active);
+   console.log('Active Products:', this.products);
+   this.filteredProducts = this.products;
     });
 
     this.cols = [
-      { field: 'code', header: 'SKU' },
-      { field: 'name', header: 'Name' },
+      { field: 'sku', header: 'SKU' },
+      { field: 'brand', header: 'Brand' },
       { field: 'category', header: 'Category' },
-      { field: 'quantity', header: 'Quantity' },
-      { field: 'inventoryStatus', header: 'Status' },
-      { field: 'price', header: 'Price' }
+      { field: 'subcategory', header: 'Subcategory' },
+      { field: 'description', header: 'Description' },
+      { field: 'rrp', header: 'RRP' },
+      { field: 'barcode', header: 'Barcode' },
+      { field: 'origin', header: 'Origin' },
+      { field: 'uom', header: 'UOM' },
+      { field: 'vendor_code', header: 'Vendor Code' }
     ];
-  }
-
-  getSeverity(status: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | undefined {
-    switch (status) {
-      case 'INSTOCK':
-        return 'success';
-      case 'LOWSTOCK':
-        return 'warn';
-      case 'OUTOFSTOCK':
-        return 'danger';
-      default:
-        return undefined;
-    }
   }
 
   filterProducts(): void {
@@ -99,7 +73,7 @@ export class ProductManagementComponent implements OnInit {
       return;
     }
     const fuse = new Fuse(this.products, {
-      keys: ['name', 'code', 'category'],
+      keys: ['brand', 'sku', 'category', 'subcategory', 'description', 'barcode', 'origin', 'uom', 'vendor_code'],
       includeScore: true,
       threshold: 0.3,
       ignoreLocation: true,
@@ -111,22 +85,38 @@ export class ProductManagementComponent implements OnInit {
 
   createProduct(): void {
     this.displayModal = true;
+
   }
 
   saveProduct(): void {
-    this.products.push(this.newProduct);
-    this.filteredProducts = [...this.products];
-    this.newProduct = new Product();
-    this.displayModal = false;
+    this.productService.createProduct(this.newProduct).subscribe((createdProduct: Product) => {
+      // Add the created product to the list
+      this.products.push(createdProduct);
+      this.filteredProducts = [...this.products];
+
+      // Reset the new product and close the modal
+      this.newProduct = new Product();
+      this.displayModal = false;
+    }, (error) => {
+      console.error('Error creating product:', error);
+      // Optionally handle error (e.g., show a toast notification)
+    });
   }
 
   editProduct(product: any) {
     // editing the items
-    console.log ('Editing product: ', product);
+    console.log('Editing product: ', product);
   }
 
-  deleteProduct(product: any) {
-    this.products = this.products.filter(p => p !== product);
-    this.filteredProducts = this.filteredProducts.filter(p => p !== product);
-  }
+
+    deleteProduct(product: Product): void {
+      this.productService.deleteProduct(product.id).subscribe(() => {
+        this.products = this.products.filter(p => p.id !== product.id);
+        this.filteredProducts = this.filteredProducts.filter(p => p.id !== product.id);
+      }, (error) => {
+        console.error('Error deleting product:', error);
+      });
+    }
+
 }
+export { ProductService } from './product.service';
