@@ -45,11 +45,6 @@
 
 <p-dialog [(visible)]="displayModal" [modal]="true" [header]="'Create Product'" [style]="{width: '70vw'}">
     <div class="grid p-fluid">
-        <!-- SKU Line -->
-        <div class="col-12 mb-3 mui-text-field">
-            <input pInputText id="sku" [(ngModel)]="newProduct.sku" placeholder=" " />
-            <label for="sku">SKU</label>
-        </div>
 
         <!-- Brand, Category, Subcategory Line -->
         <div class="col-4 mb-3 mui-text-field">
@@ -86,19 +81,17 @@
         </div>
 
         <!-- Barcode Line -->
-        <div class="col-12 mb-3 mui-text-field">
+        <div class="col-4 mb-3 mui-text-field">
             <input pInputText id="barcode" [(ngModel)]="newProduct.barcode" placeholder=" " />
             <label for="barcode">Barcode</label>
         </div>
 
         <!-- Vendor Code and Active Status Line -->
-        <div class="col-6 mb-3 mui-text-field">
+        <div class="col-4 mb-3 mui-text-field">
             <input pInputText id="vendor_code" [(ngModel)]="newProduct.vendor_code" placeholder=" " />
             <label for="vendor_code">Vendor Code</label>
         </div>
-        <div class="col-6 mb-3">
-            <p-inputSwitch id="isActive" [(ngModel)]="newProduct.active"></p-inputSwitch>
-        </div>
+
 <!--        <div class="col-6 mb-3">-->
 <!--            <label for="isactive" class="form-label">Active</label>-->
 <!--            <p-inputSwitch id="isactive" [(ngModel)]="newProduct.isactive"></p-inputSwitch>-->
