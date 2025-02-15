@@ -34,14 +34,15 @@ public class RetailPulseConfig {
         http.authorizeHttpRequests(
                 c -> c.requestMatchers("/hello").authenticated() //.hasRole("SUPER").anyRequest().authenticated()
         );
+
       } else {
         http.authorizeHttpRequests(
           c -> c.anyRequest().permitAll()
         );        
+
+        http.csrf(csrf -> csrf.disable());
       }
 
-      http.csrf(csrf -> csrf.disable());
-      
       return http.build();
     }
 

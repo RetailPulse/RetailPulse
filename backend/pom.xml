@@ -41,6 +41,20 @@
             
             <!-- Spring Boot Maven Plugin -->
             <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>3.10.1</version> 
+              <configuration>
+                  <annotationProcessorPaths>
+                      <path>
+                          <groupId>org.projectlombok</groupId>
+                          <artifactId>lombok</artifactId>
+                          <version>1.18.36</version> 
+                      </path>
+                  </annotationProcessorPaths>
+              </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
@@ -131,6 +145,12 @@
             <version>8.3.0</version>
             <scope>runtime</scope>
         </dependency>
+        <!-- Remove or ensure the following dependency is available -->
+        <!-- <dependency>
+            <groupId>com.retailpulse</groupId>
+            <artifactId>product-service</artifactId>
+            <version>1.0.0</version>
+        </dependency> -->
     </dependencies>
 
 </project>
