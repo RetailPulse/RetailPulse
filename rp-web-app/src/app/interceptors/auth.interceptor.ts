@@ -1,25 +1,45 @@
-import { Injectable } from '@angular/core';
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { AuthService } from '../services/auth.service';
+import {inject} from '@angular/core';
+import {HttpInterceptorFn} from '@angular/common/http';
+import {AuthService} from '../services/auth.service';
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  console.log('Processing authInterceptor...');
 
-  constructor(private authService: AuthService) {}
+  const patterns = [
+    '/.well-known/openid-configuration',
+    '/oauth2/jwks',
+    '/oauth2/token',
+    '/login'
+  ];
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if (!this.authService.isAuthenticated) {
-      return next.handle(req);
-    }
+  // Inject the AuthService
+  const authService = inject(AuthService);
 
-    const authToken = this.authService.accessToken;
-    const authReq = req.clone({
+  // Get the token from the AuthService
+  const token = authService.accessToken;
+
+  // Skip the interceptor for OPTIONS requests (Preflight request)
+  if (req.method === 'OPTIONS') {
+    return next(req); // Simply pass the OPTIONS request without modification
+  }
+
+  // Exclude the URL of the openid-configuration endpoint
+  const matches = patterns.some(pattern => req.url.includes(pattern));
+  if (matches) {
+    return next(req); // Skip adding the Authorization header for this request
+  }
+
+  // Clone the request and add the authorization header if the token exists
+  if (token) {
+    req = req.clone({
       setHeaders: {
-        Authorization: `Bearer ${authToken}`
+        Authorization: `Bearer ${token}`
       }
     });
-
-    return next.handle(authReq);
   }
-}
+
+  console.log('Request after authInterceptor:', req);
+
+  // Pass the request to the next handler
+  return next(req);
+};
