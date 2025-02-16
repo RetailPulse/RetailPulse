@@ -39,7 +39,6 @@ public class ProductService {
     public Product updateProduct(Long id, Product productDetails) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
-        System.out.println("Product Details"  + productDetails);
         product.setDescription(productDetails.getDescription());
         product.setCategory(productDetails.getCategory());
         product.setSubcategory(productDetails.getSubcategory());
