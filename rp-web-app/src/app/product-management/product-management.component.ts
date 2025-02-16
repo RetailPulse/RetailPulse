@@ -6,7 +6,6 @@ import { CurrencyPipe, CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ButtonDirective } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
-import { InputSwitch } from 'primeng/inputswitch';
 import Fuse from 'fuse.js';
 import {Column, Product} from './product.model';
 import {InputText} from "primeng/inputtext";
@@ -23,7 +22,6 @@ import {InputTextarea} from "primeng/inputtextarea";
     FormsModule,
     ButtonDirective,
     DialogModule,
-    InputSwitch,
     InputText,
     InputTextarea,
   ],
