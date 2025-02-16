@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 @Service
 public class ProductService {
@@ -36,24 +37,36 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public Product updateProduct(Long id, Product productDetails) {
+    public Product updateProduct(Long id, @org.jetbrains.annotations.NotNull Product productDetails) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
 
-        product.setDescription(productDetails.getDescription());
-        product.setCategory(productDetails.getCategory());
-        product.setSubcategory(productDetails.getSubcategory());
-        product.setBrand(productDetails.getBrand());
-        product.setOrigin(productDetails.getOrigin());
-        product.setUom(productDetails.getUom());
-        product.setVendorCode(productDetails.getVendorCode());
-        product.setBarcode(productDetails.getBarcode());
-        product.setRrp(productDetails.getRrp());
+        if (!product.isActive()) {
+            throw new RuntimeException("Cannot update a deleted product with id: " + id);
+        }
+
+        updateField(productDetails.getDescription(), product::setDescription);
+        updateField(productDetails.getCategory(), product::setCategory);
+        updateField(productDetails.getSubcategory(), product::setSubcategory);
+        updateField(productDetails.getBrand(), product::setBrand);
+        updateField(productDetails.getOrigin(), product::setOrigin);
+        updateField(productDetails.getUom(), product::setUom);
+        updateField(productDetails.getVendorCode(), product::setVendorCode);
+        updateField(productDetails.getBarcode(), product::setBarcode);
+         if (productDetails.getRrp() != 0) {
+            product.setRrp(productDetails.getRrp());
+         }
 
         // Do not update isActive field, this is used for soft delete
         // product.setIsActive(productDetails.isActive());
 
         return productRepository.save(product);
+    }
+
+    private void updateField(String newValue, Consumer<String> updater) {
+        if (newValue != null && !newValue.isEmpty()) {
+            updater.accept(newValue);
+        }
     }
 
     public Product deleteProduct(Long id) {

@@ -2,9 +2,11 @@ package com.retailpulse.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@NoArgsConstructor
 public class SKUCounter {
 
     @Id
