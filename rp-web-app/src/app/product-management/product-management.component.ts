@@ -2,32 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { CurrencyPipe, CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // Import FormsModule for ngModel
-
-class Product {
-  code!: string;
-  name!: string;
-  category!: string;
-  quantity!: number;
-  inventoryStatus!: string;
-  price!: number;
-}
-
-interface Column {
-  field: string;
-  header: string;
-}
-
-export class ProductService {
-  getProductsMini(): Promise<Product[]> {
-    const products: Product[] = [
-      { code: 'P001', name: 'Product 1', category: 'Category 1', quantity: 10, inventoryStatus: 'INSTOCK', price: 100 },
-      { code: 'P002', name: 'Product 2', category: 'Category 2', quantity: 5, inventoryStatus: 'LOWSTOCK', price: 200 },
-      { code: 'P003', name: 'Product 3', category: 'Category 3', quantity: 0, inventoryStatus: 'OUTOFSTOCK', price: 300 },
-    ];
-    return Promise.resolve(products);
-  }
-}
+import { FormsModule } from '@angular/forms';
+import { ButtonDirective } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
+import Fuse from 'fuse.js';
+import {Column, Product} from './product.model';
+import {InputText} from "primeng/inputtext";
+import {InputTextarea} from "primeng/inputtextarea";
+import {ProductService} from "./product.service";
+import {BrowserModule} from '@angular/platform-browser';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @Component({
   selector: 'app-product-management',
@@ -36,8 +20,12 @@ export class ProductService {
     TableModule,
     TagModule,
     CurrencyPipe,
+    FormsModule,
+    ButtonDirective,
+    DialogModule,
+    InputText,
     CommonModule,
-    FormsModule // Include FormsModule here
+    InputTextarea,
   ],
   templateUrl: './product-management.component.html',
   styleUrls: ['./product-management.component.css']
@@ -46,50 +34,89 @@ export class ProductManagementComponent implements OnInit {
   products!: Product[];
   filteredProducts!: Product[];
   searchTerm: string = '';
+  displayModal: boolean = false;
+  newProduct: Product = new Product();
 
   cols!: Column[];
+  checked: boolean = true;
 
-  constructor(private productService: ProductService) {}
+  constructor(private productService: ProductService) {
+  }
 
   ngOnInit(): void {
-    this.productService.getProductsMini().then((data: Product[]) => {
-      this.products = data;
-      this.filteredProducts = data;
+    // Use the ProductService to fetch the products from the backend
+    this.productService.getProducts().subscribe((data: Product[]) => {
+      console.log('Fetched Products:', data);
+      // Filter the products to only include those that are active
+      this.products = data.filter(product => product.active);
+      console.log('Active Products:', this.products);
+      this.filteredProducts = this.products;
     });
 
     this.cols = [
-      { field: 'code', header: 'SKU' },
-      { field: 'name', header: 'Name' },
-      { field: 'category', header: 'Category' },
-      { field: 'quantity', header: 'Quantity' },
-      { field: 'inventoryStatus', header: 'Status' },
-      { field: 'price', header: 'Price' }
+      {field: 'sku', header: 'SKU'},
+      {field: 'brand', header: 'Brand'},
+      {field: 'category', header: 'Category'},
+      {field: 'subcategory', header: 'Subcategory'},
+      {field: 'description', header: 'Description'},
+      {field: 'rrp', header: 'RRP'},
+      {field: 'barcode', header: 'Barcode'},
+      {field: 'origin', header: 'Origin'},
+      {field: 'uom', header: 'UOM'},
+      {field: 'vendor_code', header: 'Vendor Code'}
     ];
   }
 
-  getSeverity(status: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | undefined {
-    switch (status) {
-      case 'INSTOCK':
-        return 'success';
-      case 'LOWSTOCK':
-        return 'warn';
-      case 'OUTOFSTOCK':
-        return 'danger';
-      default:
-        return undefined;
-    }
-  }
-
   filterProducts(): void {
-    const term = this.searchTerm.toLowerCase();
-    this.filteredProducts = this.products.filter(product =>
-      product.name.toLowerCase().includes(term) ||
-      product.code.toLowerCase().includes(term) ||
-      product.category.toLowerCase().includes(term)
-    );
+    const term = this.searchTerm.trim().toLowerCase();
+    if (!term) {
+      this.filteredProducts = this.products;
+      return;
+    }
+    const fuse = new Fuse(this.products, {
+      keys: ['brand', 'sku', 'category', 'subcategory', 'description', 'barcode', 'origin', 'uom', 'vendor_code'],
+      includeScore: true,
+      threshold: 0.3,
+      ignoreLocation: true,
+    });
+
+    const results = fuse.search(term);
+    this.filteredProducts = results.map(result => result.item);
   }
 
   createProduct(): void {
-    // Handle create product logic here
+    this.displayModal = true;
+
+  }
+
+  saveProduct(): void {
+    this.productService.createProduct(this.newProduct).subscribe((createdProduct: Product) => {
+      // Add the created product to the list
+      this.products.push(createdProduct);
+      this.filteredProducts = [...this.products];
+
+      // Reset the new product and close the modal
+      this.newProduct = new Product();
+      this.displayModal = false;
+    }, (error) => {
+      console.error('Error creating product:', error);
+      // Optionally handle error (e.g., show a toast notification)
+    });
+  }
+
+  editProduct(product: any) {
+    // editing the items
+    console.log('Editing product: ', product);
+  }
+
+
+  deleteProduct(product: Product): void {
+    this.productService.deleteProduct(product.id).subscribe(() => {
+      this.products = this.products.filter(p => p.id !== product.id);
+      this.filteredProducts = this.filteredProducts.filter(p => p.id !== product.id);
+    }, (error) => {
+      console.error('Error deleting product:', error);
+    });
   }
 }
+

@@ -1,5 +1,5 @@
 import { LogoutButtonComponent } from '../logout-button/logout-button.component';
-import { Component, Signal } from '@angular/core'; 
+import { Component, Signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { HttpClient } from '@angular/common/http';
@@ -16,11 +16,11 @@ export class AdminPageComponent {
   // public helloResponse: Signal<string> = (inputStr: string) => {return inputStr;};
 
   constructor(
-    private router: Router, 
+    private router: Router,
     private authService: AuthService,
     private http: HttpClient
-  ) { 
-    
+  ) {
+
     console.log('Token: ' + this.authService.accessToken);
     if (!this.authService.isAuthenticated) {
       console.log("User is not authenticated. Going back to login page.");
