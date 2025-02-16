@@ -43,9 +43,8 @@
   </p-table>
 </div>
 
-<p-dialog [(visible)]="displayModal" [modal]="true" [header]="'Create Product'" [style]="{width: '70vw'}">
+<p-dialog [(visible)]="displayModal" [modal]="true" [header]="modalMode === 'create' ? 'Create Product' : modalMode === 'update' ? 'Update Product' : 'Product'" [style]="{width: '70vw'}">
   <div class="grid p-fluid">
-
     <!-- Brand, Category, Subcategory Line -->
     <div class="col-4 mb-3 mui-text-field">
       <input pInputText id="brand" [(ngModel)]="newProduct.brand" placeholder=" " />
@@ -88,14 +87,9 @@
 
     <!-- Vendor Code and Active Status Line -->
     <div class="col-4 mb-3 mui-text-field">
-      <input pInputText id="vendor_code" [(ngModel)]="newProduct.vendor_code" placeholder=" " />
+      <input pInputText id="vendor_code" [(ngModel)]="newProduct.vendorCode" placeholder=" " />
       <label for="vendor_code">Vendor Code</label>
     </div>
-
-    <!--        <div class="col-6 mb-3">-->
-    <!--            <label for="isactive" class="form-label">Active</label>-->
-    <!--            <p-inputSwitch id="isactive" [(ngModel)]="newProduct.isactive"></p-inputSwitch>-->
-    <!--        </div>-->
   </div>
 
   <ng-template pTemplate="footer">
