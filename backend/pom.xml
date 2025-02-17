@@ -19,6 +19,18 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <spring-boot.run.arguments>--server.port=8085</spring-boot.run.arguments>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <!-- Maven Compiler Plugin with Lombok annotation processing -->
