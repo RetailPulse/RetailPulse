@@ -8,8 +8,8 @@ import { DialogModule } from 'primeng/dialog';
 import Fuse from 'fuse.js';
 import {Column, Product} from './product.model';
 import {InputText} from "primeng/inputtext";
-import {InputTextarea} from "primeng/inputtextarea";
 import {ProductService} from "./product.service";
+import {Textarea} from 'primeng/textarea';
 
 
 @Component({
@@ -24,7 +24,7 @@ import {ProductService} from "./product.service";
     DialogModule,
     InputText,
     CommonModule,
-    InputTextarea,
+    Textarea,
   ],
   templateUrl: './product-management.component.html',
   styleUrls: ['./product-management.component.css']
