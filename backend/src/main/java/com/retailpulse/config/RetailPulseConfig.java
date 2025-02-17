@@ -27,6 +27,9 @@ public class RetailPulseConfig {
     @Value("${auth.enabled}")
     private boolean authEnabled;
 
+    @Value("${auth.origin}")
+    private String originURL;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -39,7 +42,8 @@ public class RetailPulseConfig {
 
             http.authorizeHttpRequests(
                     c -> c.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                            .requestMatchers("/hello").authenticated() //.hasRole("SUPER").anyRequest().authenticated()
+                            .requestMatchers("/hello").authenticated()
+                            .requestMatchers("/api/*").authenticated() //.hasRole("SUPER").anyRequest().authenticated()
             );
 
         } else {
@@ -47,17 +51,18 @@ public class RetailPulseConfig {
                     c -> c.anyRequest().permitAll()
             );
         }
+        
         http.cors(c -> {
             c.configurationSource(corsConfigurationSource());
-        });
-        http.csrf(csrf -> csrf.disable());
+        });       
 
+        http.csrf(csrf -> csrf.disable());
         return http.build();
     }
 
     private CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200"));  // Specify your frontend URL
+        configuration.setAllowedOrigins(List.of(originURL));  
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setExposedHeaders(List.of("Authorization"));

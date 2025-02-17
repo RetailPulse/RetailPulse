@@ -1,10 +1,21 @@
 <title>Admin Page</title>
-<h1>Admin Page</h1>
 
-<button mat-raised-button color="primary" (click)="onClick() "class="test-button" >
-  Test
-</button>
-
-<logout-button></logout-button>
-
-<div></div>
+<div>
+  <table id="admin-main-table">
+    <tr>
+      <td id="admin-side-bar" width="140">
+        <tr>
+          <logout-button></logout-button>
+        </tr>
+        <tr>
+          <button mat-raised-button color="primary" (click)="onClick() "class="test-button" >
+            Test
+          </button>
+        </tr>  
+      </td>      
+      <td id="admin-dashboard"  width="100%">
+        <app-product-management></app-product-management>        
+      </td>
+    </tr>
+  </table>
+</div>

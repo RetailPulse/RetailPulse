@@ -21,6 +21,7 @@
     "@ng-bootstrap/ng-bootstrap": "^18.0.0",
     "angular-oauth2-oidc": "^19.0.0",
     "bootstrap": "^5.3.3",
+    "fuse.js": "^7.1.0",
     "jwt-decode": "^4.0.0",
     "primeicons": "^7.0.0",
     "primeng": "^19.0.6",
