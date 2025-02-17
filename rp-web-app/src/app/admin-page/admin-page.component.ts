@@ -3,10 +3,14 @@ import { Component, Signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { HttpClient } from '@angular/common/http';
+import { ProductManagementComponent } from '../product-management/product-management.component';
 
 @Component({
   selector: 'admin-page',
-  imports: [LogoutButtonComponent],
+  imports: [
+    LogoutButtonComponent, 
+    ProductManagementComponent
+  ],
   templateUrl: './admin-page.component.html',
   styleUrl: './admin-page.component.css',
   standalone: true
