@@ -3,10 +3,15 @@ import { Component, Signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { HttpClient } from '@angular/common/http';
+import { ProductManagementComponent } from '../product-management/product-management.component';
+import {apiConfig} from '../../environments/environment';
 
 @Component({
   selector: 'admin-page',
-  imports: [LogoutButtonComponent],
+  imports: [
+    LogoutButtonComponent, 
+    ProductManagementComponent
+  ],
   templateUrl: './admin-page.component.html',
   styleUrl: './admin-page.component.css',
   standalone: true
@@ -33,7 +38,9 @@ export class AdminPageComponent {
 
   // Method to handle test calling an endpoint from backend.
   onClick(): void {
-    this.http.get('http://localhost:9090/hello').subscribe({
+    const apiUrl = apiConfig.url + 'hello';
+    console.log('Calling API:', apiUrl);
+    this.http.get(apiUrl).subscribe({
       next: (response) => {
         console.log('Response:', response);
       },

@@ -12,8 +12,12 @@ export const authConfig: AuthConfig = {
   showDebugInformation: true
 };
 
+export const apiConfig = {
+  url: 'http://localhost:8085/'
+}
+
 export const environment = {
   production: false,
-  authEnabled: false,
+  authEnabled: true,
   devModeRole: 'ADMIN' //'OPERATOR' //
 };
