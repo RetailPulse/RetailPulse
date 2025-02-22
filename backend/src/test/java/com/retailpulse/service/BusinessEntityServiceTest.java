@@ -30,7 +30,7 @@ public class BusinessEntityServiceTest {
     }
 
     @Test
-    void testGetAllBusinessEntity() {
+    void testGetAllBusinessEntity_Success() {
         BusinessEntity businessEntity1 = new BusinessEntity();
         businessEntity1.setId(1L);
         businessEntity1.setName("Shop 1");
@@ -53,7 +53,7 @@ public class BusinessEntityServiceTest {
     }
 
     @Test
-    void testGetBusinessEntityById() {
+    void testGetBusinessEntityById_Success() {
         // Mock BusinessEntity object
         BusinessEntity businessEntity = new BusinessEntity();
         businessEntity.setId(1L);
@@ -66,7 +66,7 @@ public class BusinessEntityServiceTest {
     }
 
     @Test
-    void testSaveBusinessEntity() {
+    void testSaveBusinessEntity_Success() {
         BusinessEntity businessEntity = new BusinessEntity();
         businessEntity.setId(1L);
         businessEntity.setName("Shop 1");
@@ -173,6 +173,37 @@ public class BusinessEntityServiceTest {
         assertEquals("Business Entity not found with id: " + businessEntityId, exception.getMessage());
         verify(businessEntityRepository, times(1)).findById(businessEntityId);
         verify(businessEntityRepository, never()).save(any(BusinessEntity.class));
+    }
+
+    @Test
+    void testUpdateBusinessEntityDoesNotChangeIsActive_Success() {
+        // Arrange: existing business entity with isActive = true
+        BusinessEntity existingBusinessEntity = new BusinessEntity();
+        existingBusinessEntity.setId(1L);
+        existingBusinessEntity.setName("Old Name");
+        existingBusinessEntity.setLocation("Old Location");
+        existingBusinessEntity.setType("Old Type");
+        existingBusinessEntity.setActive(true);
+
+        // Arrange: update details with new values and an attempt to change isActive to false
+        BusinessEntity updatedBusinessEntity = new BusinessEntity();
+        updatedBusinessEntity.setName("New Name");
+        updatedBusinessEntity.setLocation("New Location");
+        updatedBusinessEntity.setType("New Type");
+        updatedBusinessEntity.setActive(false); // This should be ignored
+
+        when(businessEntityRepository.findById(1L)).thenReturn(Optional.of(existingBusinessEntity));
+        when(businessEntityRepository.save(any(BusinessEntity.class)))
+            .thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act: update the business entity
+        BusinessEntity result = businessEntityService.updateBusinessEntity(1L, updatedBusinessEntity);
+
+        // Assert: the fields are updated except isActive, which remains true
+        assertEquals("New Name", result.getName());
+        assertEquals("New Location", result.getLocation());
+        assertEquals("New Type", result.getType());
+        assertTrue(result.isActive(), "BusinessEntity should remain active");
     }
 
     @Test
