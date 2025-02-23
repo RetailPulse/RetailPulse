@@ -33,9 +33,7 @@ export class UserManagementComponent {
   filteredUsers = signal<User[]>([]);
   isLoading = signal(true);
   error = signal<string | null>(null);
-
-  searchTerm: String = "";
-  newDialog_visible: boolean = false;
+  newDialog_visible = signal(false);
 
   constructor(private userService: UserService) {
     this.userService.getUsers().subscribe({
@@ -52,18 +50,32 @@ export class UserManagementComponent {
     });
   }
 
-  filterUsers(): void {
+  filterUsers(event: Event): void {
     console.log('Filtering users');
-    const term = this.searchTerm.trim().toLowerCase();
-    this.filteredUsers.set(
-      this.users().filter(user =>
-        user.name.toLowerCase().includes(term)
-      )
-    );
+    
+    if (!event.target) {
+      return;
+    }
+
+    const inputElement = event.target as HTMLInputElement;
+    const term = inputElement.value.trim().toLowerCase();
+
+    if (!term || term === '') {
+      this.filteredUsers.set(this.users());
+      return;
+    }
+    
+    let fuse = new Fuse(this.users(), {
+      keys: ['name', 'username', 'email'],
+      threshold: 0.3
+    })
+
+    const results = fuse.search(term);
+    this.filteredUsers.set(results.map(result => result.item));
   }
 
   showNewUserDialog(): void {
-    this.newDialog_visible = true;
+    this.newDialog_visible.set(true);
   }
 
   deleteUser(userId: BigInt): void {

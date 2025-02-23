@@ -7,8 +7,7 @@
           <input pInputText type="text" 
             class="search-bar" 
             placeholder="Search by name..." 
-            [(ngModel)]= "searchTerm" 
-            (input)="filterUsers()"
+            (input)="filterUsers($event)" 
           /> <!-- -->
       </span>
       <button pButton type="button" icon="pi pi-plus" class="create-button" (click)="showNewUserDialog()"></button>
