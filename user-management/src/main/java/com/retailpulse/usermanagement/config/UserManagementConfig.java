@@ -28,27 +28,23 @@ public class UserManagementConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-        http.oauth2ResourceServer(
+        if (authEnabled) {
+            http.oauth2ResourceServer(
                 c -> c.jwt(
                         j -> j.jwkSetUri(keySetUri).jwtAuthenticationConverter(jwtAuthenticationConverter())
                 )
-        );
+            );
 
-        if (authEnabled) {
             http.authorizeHttpRequests(
-                    c -> c
-                            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/**").authenticated()
+                c -> c
+                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                    .requestMatchers("/api/**").authenticated()
             );
         } else {
             http.authorizeHttpRequests(
-                    c -> c
-                            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                            .requestMatchers("/api/**").permitAll()
+                c -> c.anyRequest().permitAll()
             );
         }
-
 
         http.cors(c -> {
             c.configurationSource(corsConfigurationSource());

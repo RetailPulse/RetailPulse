@@ -35,15 +35,15 @@ public class RetailPulseConfig {
 
         if (authEnabled) {
             http.oauth2ResourceServer(
-                    c -> c.jwt(
-                            j -> j.jwkSetUri(keySetUri).jwtAuthenticationConverter(jwtAuthenticationConverter())
-                    )
+                c -> c.jwt(
+                        j -> j.jwkSetUri(keySetUri).jwtAuthenticationConverter(jwtAuthenticationConverter())
+                )
             );
 
             http.authorizeHttpRequests(
-                    c -> c.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                            .requestMatchers("/hello").authenticated()
-                            .requestMatchers("/api/*").authenticated() //.hasRole("SUPER").anyRequest().authenticated()
+                c -> c.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/hello").authenticated()
+                        .requestMatchers("/api/**").authenticated() //.hasRole("SUPER").anyRequest().authenticated()
             );
 
         } else {

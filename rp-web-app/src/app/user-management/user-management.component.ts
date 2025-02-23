@@ -3,7 +3,7 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { CurrencyPipe, CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ButtonDirective } from 'primeng/button';
+import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import {InputText} from "primeng/inputtext";
 import Fuse from 'fuse.js';
@@ -18,7 +18,7 @@ import {UserService} from './user.service';
     TableModule,
     TagModule,
     FormsModule,
-    ButtonDirective,
+    ButtonModule,
     DialogModule,
     CommonModule,
   ],
@@ -44,6 +44,11 @@ export class UserManagementComponent {
         console.error('Error fetching users:', err);
       }
     });
+  }
+
+  registerUser(): boolean {
+    console.log('Registering user');
+    return true;
   }
 
   deleteUser(userId: BigInt): void {

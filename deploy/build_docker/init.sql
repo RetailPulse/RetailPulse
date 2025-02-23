@@ -29,13 +29,13 @@ INSERT INTO users (username, password, name, email, enabled)
 VALUES ('batman', '$2y$12$U/2bpYZ7r5CqYDkOibj0MeUqatUkRu9ctqGSQMxvoo17xEsBENU9q', 'Bruce Wayne', 'brucew@rpulse.com', 1);
 
 INSERT INTO authorities (username, authority)
-VALUES ('batman', 'ADMIN');
+VALUES ('batman', 'CASHIER');
 
 INSERT INTO users (username, password, name, email, enabled)
 VALUES ('ironman', '$2y$12$U/2bpYZ7r5CqYDkOibj0MeUqatUkRu9ctqGSQMxvoo17xEsBENU9q', 'Tony Stark', 'tonys@rpulse.com', 1);
 
 INSERT INTO authorities (username, authority)
-VALUES ('ironman', 'CASHER');
+VALUES ('ironman', 'CASHIER');
 
 INSERT INTO users (username, password, name, email, enabled)
 VALUES ('blackwidow', '$2y$12$U/2bpYZ7r5CqYDkOibj0MeUqatUkRu9ctqGSQMxvoo17xEsBENU9q', 'Natasha', 'natasha@rpulse.com', 1);

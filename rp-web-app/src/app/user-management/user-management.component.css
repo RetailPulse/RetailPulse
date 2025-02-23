@@ -68,6 +68,19 @@
   background-color: var(--pastel-danger) !important;
 }
 
+/* Container for buttons */
+.button-container {
+  display: flex;
+  gap: 8px; /* Adds space between the buttons */
+}
+
+/* Ensure buttons have the same width */
+.button-container button {
+  flex: 1; /* Makes buttons expand to fill available space */
+  min-width: 40px; /* Ensures a minimum width for consistency */
+  text-align: center; /* Centers the text inside the button */
+}
+
 /* Custom styles for the p-dialog */
 
 /* MUI-like text field styles */

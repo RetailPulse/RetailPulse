@@ -1,5 +1,15 @@
 <div class="table-header-container">
   <div class="table-header">User Management</div>
+  @if (!isLoading() && !error()) {
+    <div class="search-bar-container">
+      <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input pInputText type="text" placeholder="Search..." class="search-bar" /> <!--[(ngModel)]="searchTerm" (input)="filterProducts()" -->
+      </span>
+      <button pButton type="button" icon="pi pi-plus" class="create-button" (click)="registerUser()"></button>
+    </div>
+  }
+</div>
 
   <!-- Loading Indicator -->
   @if (isLoading()) {
@@ -16,17 +26,8 @@
   }
 
   @if (!isLoading() && !error()) {
-    <!-- <div class="search-bar-container">
-            <span class="p-input-icon-left">
-                <i class="pi pi-search"></i>
-                <input pInputText type="text" placeholder="Search..." [(ngModel)]="searchTerm" (input)="filterProducts()" class="search-bar" />
-            </span>
-        <button pButton type="button" icon="pi pi-plus" class="create-button" (click)="createProduct()"></button>
-      </div>
-    </div> -->
-
     <div class="table-responsive">
-      <p-table [value]="users()" styleClass="p-datatable-striped">
+      <p-table [value]="users()" stripedRows [responsiveLayout]="'scroll'" class="table table-hover">
         <ng-template pTemplate="header">
           <tr>
             <th>ID</th>
@@ -44,11 +45,13 @@
             <td>{{ user.username }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.name }}</td>
-            <td>{{ user.role }}</td>
+            <td>{{ user.roles[0] }}</td>
             <td>{{ user.enabled ? 'Enabled' : 'Disabled' }}</td>
             <td>
-              <button pButton type="button" label="Edit" (click)="editUser(user)" class="p-button-primary"></button>
-              <button pButton type="button" label="Delete" (click)="deleteUser(user.id)" class="p-button-danger"></button>
+              <div class="button-container">
+                <button pButton type="button" label="Edit" (click)="editUser(user)" class="p-button-primary"></button>
+                <button pButton type="button" label="Delete" (click)="deleteUser(user.id)" class="p-button-danger"></button>
+              </div>              
             </td>
           </tr>
         </ng-template>
