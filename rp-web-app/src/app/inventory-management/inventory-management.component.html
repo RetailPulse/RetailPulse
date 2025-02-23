@@ -1,0 +1,72 @@
+<div class="table-header-container">
+  <div class="table-header">Inventory Management</div>
+  <div class="search-bar-container">
+        <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input pInputText type="text" placeholder="Search..." [(ngModel)]="searchTerm" (input)="filterProducts()" class="search-bar" />
+        </span>
+    <div class="mui-split-button-container">
+      <span class="create-label" (click)="allocateProducts()">
+        Create
+      </span>
+      <button class="split-button-dropdown" (click)="toggleMenu($event)">
+        <i class="pi pi-chevron-down"></i>
+      </button>
+
+      <div *ngIf="isMenuOpen" class="split-menu">
+        <button *ngFor="let item of menuItems" (click)="item.command" class="menu-item">
+          <i [class]="item.icon"></i> {{ item.label }}
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<mat-tab-group>
+  <mat-tab label="Full Inventory">
+    <div class="table-responsive">
+      <p-table [value]="filteredProducts" [responsiveLayout]="'scroll'" class="table table-hover">
+        <ng-template pTemplate="header">
+          <tr>
+            <th *ngFor="let col of cols">{{ col.header }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product>
+          <tr>
+            <td *ngFor="let col of cols">
+              <ng-container [ngSwitch]="col.field">
+                <ng-container *ngSwitchCase="'is_active'">
+                  <p-tag [value]="product[col.field] ? 'Active' : 'Inactive'"></p-tag>
+                </ng-container>
+                <ng-container *ngSwitchDefault>
+                  {{ product[col.field] }}
+                </ng-container>
+              </ng-container>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </mat-tab>
+
+  <mat-tab label="Summary View">
+    <div class="table-responsive">
+      <p-table [value]="filteredProducts" [responsiveLayout]="'scroll'" class="table table-hover">
+        <ng-template pTemplate="header">
+          <tr>
+            <th *ngFor="let col of limitedCols">{{ col.header }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product>
+          <tr>
+            <td *ngFor="let col of limitedCols">
+              {{ product[col.field] }}
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </mat-tab>
+</mat-tab-group>
+
