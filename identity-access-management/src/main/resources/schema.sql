@@ -3,25 +3,27 @@ GRANT ALL PRIVILEGES ON identity_access.* TO 'root'@'localhost';
 FLUSH PRIVILEGES;
 
 CREATE TABLE IF NOT EXISTS users (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(45) NOT NULL,
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(45) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
+    name VARCHAR(255),
+    email VARCHAR(255),
     enabled INT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS authorities (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(45) NOT NULL,
-    authority VARCHAR(45) NOT NULL
+CREATE TABLE authorities (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    authority VARCHAR(255) NOT NULL,
+    CONSTRAINT fk_authorities_user FOREIGN KEY (username) REFERENCES users(username) ON DELETE CASCADE
 );
 
-
 INSERT INTO users (username, password, enabled)
-VALUES ('user', '$2a$10$WxyzW7pNlmf9WX8hYgLlceJz1mpvWnWqOeoJKRo4WW8Fq/umxJGQe', 1);
+VALUES ('admin', '$2a$10$WxyzW7pNlmf9WX8hYgLlceJz1mpvWnWqOeoJKRo4WW8Fq/umxJGQe', 1);
 -- Password: password (encoded using BCrypt)
 
 INSERT INTO authorities (username, authority)
-VALUES ('user', 'USER');
+VALUES ('admin', 'ADMIN');
 
 CREATE TABLE oauth2_registered_client (
                                           id varchar(100) NOT NULL,
