@@ -6,9 +6,10 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import {InputText} from "primeng/inputtext";
+import { SelectModule } from 'primeng/select';
 import Fuse from 'fuse.js';
 
-import {User} from './user.model';
+import {User, UserRoles} from './user.model';
 import {UserService} from './user.service';
 
 
@@ -21,6 +22,7 @@ import {UserService} from './user.service';
     InputText,
     ButtonModule,
     DialogModule,
+    SelectModule,
     CommonModule
   ],
   templateUrl: './user-management.component.html',
@@ -34,6 +36,17 @@ export class UserManagementComponent {
   isLoading = signal(true);
   error = signal<string | null>(null);
   newDialog_visible = signal(false);
+
+  newUser = signal<User>({
+    id: BigInt(0),
+    username: '',
+    email: '',
+    name: '',
+    roles: ['CASHIER'],
+    enabled: true
+  });
+
+  userRoles = UserRoles;
 
   constructor(private userService: UserService) {
     this.userService.getUsers().subscribe({
@@ -76,6 +89,31 @@ export class UserManagementComponent {
 
   showNewUserDialog(): void {
     this.newDialog_visible.set(true);
+  }
+
+  registerNewUser(): void {
+    const user = this.newUser();
+    console.log('Saving new user:', user);
+    
+    this.userService.createUser(user).subscribe({
+      next: (createdUser: User) => {
+        console.log('User created:', createdUser);
+        this.users.set([...this.users(), createdUser]);
+        this.filteredUsers.set([...this.users()]);
+        this.newUser.set({
+          id: BigInt(0),
+          username: '',
+          email: '',
+          name: '',
+          roles: [],
+          enabled: true
+        });
+        this.newDialog_visible.set(false);
+      },
+      error: (err) => {
+        console.error('Error creating user:', err);
+      }
+    });
   }
 
   deleteUser(userId: BigInt): void {

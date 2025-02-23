@@ -122,6 +122,17 @@
   color: var(--pastel-primary);
 }
 
+.mui-select-field {
+  display: flex;
+  flex-direction: column; /* Stack label and dropdown vertically */
+  gap: 8px; /* Add space between the label and the dropdown */
+}
+
+.mui-select-field label {
+  font-size: 14px; /* Adjust font size if needed */
+  margin-bottom: 4px; /* Add spacing below the label */
+}
+
 /* Custom styles for the p-inputSwitch */
 .p-inputswitch {
   width: 50px;

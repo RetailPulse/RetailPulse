@@ -65,9 +65,36 @@
 
   <p-dialog [(visible)]="newDialog_visible" 
     [modal]="true" 
-    [header]="'Create Product'" 
-    [style]="{width: '70vw'}">
-
-
+    [header]="'Register New User'"
+    [style]="{width: '70vw', height: '100vh'}">
+    <div class="grid p-fluid">
+      <div class="col-4 mb-3 mui-text-field">
+        <input pInputText id="txtUsername" [value]="newUser().username" placeholder=" " />
+        <label for="txtUsername">Username</label>
+      </div>
+      <div class="col-4 mb-3 mui-text-field">
+        <input pInputText id="txtName"  [value]="newUser().name" placeholder=" " />
+        <label for="txtName">Full Name</label>
+      </div>
+      <div class="col-4 mb-3 mui-text-field">
+        <input pInputText id="txtEmail"  [value]="newUser().email" placeholder=" " />
+        <label for="txtEmail">Email</label>
+      </div>
+      <div class="col-4 mb-3 mui-select-field">
+          <label for="roleSelect">Role</label>
+          <p-select
+            id="roleSelect" 
+            [options]="userRoles" 
+            [(ngModel)]="newUser().roles[0]" 
+            placeholder="Select Role"
+            optionLabel="label"
+            optionValue="value">
+          </p-select>
+      </div>
+    </div>
+    <ng-template pTemplate="footer">      
+      <button pButton type="button" label="Cancel" icon="pi pi-times" (click)="newDialog_visible.set(false)" class="p-button-secondary ml-2"></button>
+      <button pButton type="button" label="Save" icon="pi pi-check" (click)="registerNewUser()" class="p-button-success"></button>
+    </ng-template>
   </p-dialog>
   

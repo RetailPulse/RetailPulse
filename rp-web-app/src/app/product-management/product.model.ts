@@ -10,8 +10,7 @@ export class Product {
   barcode!: string;       // Barcode for the product
   origin!: string;        // Product's country of origin
   uom!: string;           // Unit of Measure (e.g., kg, liters, etc.)
-  vendor_code!: string;   // Vendor code for the product
-
+  vendorCode!: string;   // Vendor code for the product
   // You can add more fields here if needed
 }
 
