@@ -10,8 +10,6 @@ import {Column, Product} from './product.model';
 import {InputText} from "primeng/inputtext";
 import {InputTextarea} from "primeng/inputtextarea";
 import {ProductService} from "./product.service";
-import {BrowserModule} from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @Component({
   selector: 'app-product-management',

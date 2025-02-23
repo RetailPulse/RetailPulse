@@ -1,16 +1,15 @@
-import { LogoutButtonComponent } from '../logout-button/logout-button.component';
-import { Component, Signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { SidebarComponent } from '../sidebar/sidebar.component';
+import { Component } from '@angular/core';
+import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { HttpClient } from '@angular/common/http';
-import { ProductManagementComponent } from '../product-management/product-management.component';
 import {apiConfig} from '../../environments/environment';
 
 @Component({
   selector: 'admin-page',
   imports: [
-    LogoutButtonComponent, 
-    ProductManagementComponent
+    RouterModule, 
+    SidebarComponent,
   ],
   templateUrl: './admin-page.component.html',
   styleUrl: './admin-page.component.css',
@@ -38,7 +37,7 @@ export class AdminPageComponent {
 
   // Method to handle test calling an endpoint from backend.
   onClick(): void {
-    const apiUrl = apiConfig.url + 'hello';
+    const apiUrl = apiConfig.backend_api_url + 'hello';
     console.log('Calling API:', apiUrl);
     this.http.get(apiUrl).subscribe({
       next: (response) => {
