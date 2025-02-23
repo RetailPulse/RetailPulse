@@ -1,6 +1,16 @@
-import { bootstrapApplication } from '@angular/platform-browser';
-import { appConfig } from './app/app.config';
-import { AppComponent } from './app/app.component';
+import { authInterceptor } from "./interceptors/auth.interceptor";
 
-bootstrapApplication(AppComponent, appConfig)
-  .catch((err) => console.error(err));
+import { OAuthModule } from 'angular-oauth2-oidc';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { ApplicationConfig, provideZoneChangeDetection, importProvidersFrom } from '@angular/core';
+import { provideRouter } from '@angular/router'; //, withDebugTracing
+import { routes } from './app.routes';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideRouter(routes), //, withDebugTracing()
+    provideHttpClient(withInterceptors([authInterceptor])),
+    importProvidersFrom(OAuthModule.forRoot())
+  ]
+};
