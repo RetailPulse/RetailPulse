@@ -3,7 +3,7 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { CurrencyPipe, CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ButtonDirective } from 'primeng/button';
+import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import Fuse from 'fuse.js';
 import {Column, Product} from './product.model';
@@ -17,9 +17,9 @@ import {ProductService} from "./product.service";
   imports: [
     TableModule,
     TagModule,
-    CurrencyPipe,
     FormsModule,
-    ButtonDirective,
+    CurrencyPipe,
+    ButtonModule,
     DialogModule,
     InputText,
     CommonModule,
@@ -71,6 +71,7 @@ export class ProductManagementComponent implements OnInit {
       this.filteredProducts = this.products;
       return;
     }
+
     const fuse = new Fuse(this.products, {
       keys: ['brand', 'sku', 'category', 'subcategory', 'description', 'barcode', 'origin', 'uom', 'vendor_code'],
       includeScore: true,

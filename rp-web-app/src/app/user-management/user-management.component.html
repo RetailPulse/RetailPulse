@@ -4,9 +4,14 @@
     <div class="search-bar-container">
       <span class="p-input-icon-left">
           <i class="pi pi-search"></i>
-          <input pInputText type="text" placeholder="Search..." class="search-bar" /> <!--[(ngModel)]="searchTerm" (input)="filterProducts()" -->
+          <input pInputText type="text" 
+            class="search-bar" 
+            placeholder="Search by name..." 
+            [(ngModel)]= "searchTerm" 
+            (input)="filterUsers()"
+          /> <!-- -->
       </span>
-      <button pButton type="button" icon="pi pi-plus" class="create-button" (click)="registerUser()"></button>
+      <button pButton type="button" icon="pi pi-plus" class="create-button" (click)="showNewUserDialog()"></button>
     </div>
   }
 </div>
@@ -27,7 +32,7 @@
 
   @if (!isLoading() && !error()) {
     <div class="table-responsive">
-      <p-table [value]="users()" stripedRows [responsiveLayout]="'scroll'" class="table table-hover">
+      <p-table [value]="filteredUsers()" stripedRows [responsiveLayout]="'scroll'" class="table table-hover">
         <ng-template pTemplate="header">
           <tr>
             <th>ID</th>
@@ -59,4 +64,11 @@
     </div>
   }
 
+  <p-dialog [(visible)]="newDialog_visible" 
+    [modal]="true" 
+    [header]="'Create Product'" 
+    [style]="{width: '70vw'}">
+
+
+  </p-dialog>
   
