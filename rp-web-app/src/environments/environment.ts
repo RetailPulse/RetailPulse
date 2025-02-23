@@ -13,8 +13,9 @@ export const authConfig: AuthConfig = {
 };
 
 export const apiConfig = {
-  url: 'http://localhost:8085/'
-}
+  backend_api_url: 'http://localhost:8085/',
+  user_api_url: 'http://localhost:8083/'
+};
 
 export const environment = {
   production: false,

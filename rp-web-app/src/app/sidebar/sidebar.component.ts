@@ -1,16 +1,17 @@
 import { Component, HostListener } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import {NgClass} from "@angular/common";
-import {ProductManagementComponent} from "../product-management/product-management.component";
+import { RouterModule } from '@angular/router';
+
+import { LogoutButtonComponent } from '../logout-button/logout-button.component';
 
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
-  // imports: [
-  //   NgClass,
-  //   ProductManagementComponent
-  // ],
+  imports: [
+    RouterModule,
+    LogoutButtonComponent
+    ],
   animations: [
     trigger('sidebarState', [
       state('closed', style({
