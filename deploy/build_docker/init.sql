@@ -3,16 +3,19 @@
 -- FLUSH PRIVILEGES;
 
 CREATE TABLE IF NOT EXISTS users (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(45) NOT NULL,
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(45) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
+    name VARCHAR(255),
+    email VARCHAR(255),
     enabled INT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS authorities (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(45) NOT NULL,
-    authority VARCHAR(45) NOT NULL
+CREATE TABLE authorities (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    authority VARCHAR(255) NOT NULL,
+    CONSTRAINT fk_authorities_user FOREIGN KEY (username) REFERENCES users(username) ON DELETE CASCADE
 );
 
 INSERT INTO users (username, password, enabled)
@@ -20,7 +23,7 @@ VALUES ('superadmin', '$2y$12$U/2bpYZ7r5CqYDkOibj0MeUqatUkRu9ctqGSQMxvoo17xEsBEN
 -- Password: password (encoded using BCrypt)
 
 INSERT INTO authorities (username, authority)
-VALUES ('superadmin', 'SUPER');
+VALUES ('superadmin', 'ADMIN');
 
 CREATE TABLE oauth2_registered_client (
                                           id varchar(100) NOT NULL,
