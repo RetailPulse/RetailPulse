@@ -9,7 +9,7 @@ import {apiConfig} from '../../environments/environment';
   providedIn: 'root'
 })
 export class ProductService {
-  private apiUrl = apiConfig.url + 'api/products'; // Replace with your API URL  
+  private apiUrl = apiConfig.backend_api_url + 'api/products'; // Replace with your API URL  
 
   constructor(private http: HttpClient) { }
 

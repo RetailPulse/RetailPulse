@@ -57,6 +57,11 @@
   margin-left: 250px;
 }
 
+.text-left {
+  text-align: left;
+  justify-content: flex-start;
+}
+
 /* Responsive adjustments */
 @media (min-width: 768px) {
   .sidebar {

@@ -6,26 +6,42 @@
 
 <!-- Sidebar -->
 <div class="sidebar" [@sidebarState]="sidebarVisible ? 'open' : 'closed'">
+    <br>
+    <br>
+    <br>
     <div class="sidebar-header">
         <h1>Menu</h1>
     </div>
     <div class="sidebar-body">
         <ul class="list-unstyled">
             <li>
-                <button class="btn btn-outline-secondary w-100 mb-2">
+                <button class="btn btn-outline-secondary w-100 mb-2 text-left" routerLink="/admin/product-management">
                     <i class="pi pi-box"></i> Product Management
                 </button>
-            </li>
+            </li>            
             <li>
-                <button class="btn btn-outline-secondary w-100 mb-2">
-                    <i class="pi pi-credit-card"></i> POS Management
+                <button class="btn btn-outline-secondary w-100 mb-2 text-left" routerLink="/admin/biz-entity-management">
+                    <i class="pi pi-credit-card"></i> Biz Entity Management
                 </button>
             </li>
             <li>
-                <button class="btn btn-outline-secondary w-100">
-                    <i class="pi pi-book"></i> Generation of Report
-                </button>
+              <button class="btn btn-outline-secondary w-100 mb-2 text-left" routerLink="/admin/report-generation">
+                  <i class="pi pi-chart-bar"></i> Report Generation
+              </button>
             </li>
+            <li>
+              <button class="btn btn-outline-secondary w-100 mb-2 text-left" routerLink="/admin/user-management">
+                  <i class="pi pi-users"></i> User Management
+              </button>
+            </li>
+            <li>
+              <button class="btn btn-outline-secondary w-100 mb-2 text-left" routerLink="/admin/my-profile">
+                  <i class="pi pi-user"></i> My Profile
+              </button>
+            </li>
+            <li>
+              <logout-button></logout-button>
+            </li>            
         </ul>
     </div>
 </div>

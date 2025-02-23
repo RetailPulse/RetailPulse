@@ -18,12 +18,30 @@ CREATE TABLE authorities (
     CONSTRAINT fk_authorities_user FOREIGN KEY (username) REFERENCES users(username) ON DELETE CASCADE
 );
 
-INSERT INTO users (username, password, enabled)
-VALUES ('superadmin', '$2y$12$U/2bpYZ7r5CqYDkOibj0MeUqatUkRu9ctqGSQMxvoo17xEsBENU9q', 1);
 -- Password: password (encoded using BCrypt)
+INSERT INTO users (username, password, name, email, enabled)
+VALUES ('superadmin', '$2y$12$U/2bpYZ7r5CqYDkOibj0MeUqatUkRu9ctqGSQMxvoo17xEsBENU9q', 'Kent Clark', 'kentc@rpulse.com', 1);
 
 INSERT INTO authorities (username, authority)
 VALUES ('superadmin', 'ADMIN');
+
+INSERT INTO users (username, password, name, email, enabled)
+VALUES ('batman', '$2y$12$U/2bpYZ7r5CqYDkOibj0MeUqatUkRu9ctqGSQMxvoo17xEsBENU9q', 'Bruce Wayne', 'brucew@rpulse.com', 1);
+
+INSERT INTO authorities (username, authority)
+VALUES ('batman', 'CASHIER');
+
+INSERT INTO users (username, password, name, email, enabled)
+VALUES ('ironman', '$2y$12$U/2bpYZ7r5CqYDkOibj0MeUqatUkRu9ctqGSQMxvoo17xEsBENU9q', 'Tony Stark', 'tonys@rpulse.com', 1);
+
+INSERT INTO authorities (username, authority)
+VALUES ('ironman', 'CASHIER');
+
+INSERT INTO users (username, password, name, email, enabled)
+VALUES ('blackwidow', '$2y$12$U/2bpYZ7r5CqYDkOibj0MeUqatUkRu9ctqGSQMxvoo17xEsBENU9q', 'Natasha', 'natasha@rpulse.com', 1);
+
+INSERT INTO authorities (username, authority)
+VALUES ('blackwidow', 'MANAGER');
 
 CREATE TABLE oauth2_registered_client (
                                           id varchar(100) NOT NULL,
