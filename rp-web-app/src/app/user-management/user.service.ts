@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable } from 'rxjs';
-import {User, createUserDTO} from './user.model';
+import {User, createUserDTO, updateUserDTO} from './user.model';
 import {apiConfig} from '../../environments/environment';
 
 
@@ -15,7 +15,11 @@ export class UserService {
   constructor() { }
 
   getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(this.apiUrl);
+    return this.http.get<User[]>(this.apiUrl).pipe(
+      catchError((err) => {        
+        throw new Error(err.error.message);
+      })
+    );
   }
 
   createUser(newUser: User): Observable<User> {
@@ -36,11 +40,27 @@ export class UserService {
   }
 
   editUser(currUser: User): Observable<User> {
-    return this.http.put<User>(`${this.apiUrl}/${currUser.id}`, currUser);
+
+    const update_user_dto: updateUserDTO = {      
+      email: currUser.email,
+      name: currUser.name,
+      roles: currUser.roles,
+      isEnabled: currUser.isEnabled
+    };
+
+    return this.http.put<User>(`${this.apiUrl}/${currUser.id}`, update_user_dto).pipe(
+      catchError((err) => {        
+        throw new Error(err.error.message);
+      })
+    );
   }
 
   deleteUser(userId:number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${userId}`);
+    return this.http.delete<void>(`${this.apiUrl}/${userId}`).pipe(
+      catchError((err) => {        
+        throw new Error(err.error.message);
+      })
+    );
   }
 
 }
