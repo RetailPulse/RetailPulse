@@ -1,7 +1,7 @@
 server.port: 8083
 
 auth:
-  enabled: true
+  enabled: false
   origin: "http://localhost:4200"
   jwt.key.set.uri: http://localhost:8080/oauth2/jwks
 
