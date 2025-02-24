@@ -1,21 +1,11 @@
-<title>Admin Page</title>
+<!-- admin-page.component.html -->
+<div class="admin-container">
+  <!-- Sidebar -->
+  <app-sidebar></app-sidebar>
 
-<div>
-  <table id="admin-main-table">
-    <tr>
-      <td id="admin-side-bar" width="140">
-        <tr>
-          <logout-button></logout-button>
-        </tr>
-        <tr>
-          <button mat-raised-button color="primary" (click)="onClick() "class="test-button" >
-            Test
-          </button>
-        </tr>  
-      </td>      
-      <td id="admin-dashboard"  width="100%">
-        <app-product-management></app-product-management>        
-      </td>
-    </tr>
-  </table>
+  <!-- Main Dashboard -->
+  <div class="main-dashboard">
+    <title>Admin Page</title>
+    <router-outlet></router-outlet>
+  </div>
 </div>

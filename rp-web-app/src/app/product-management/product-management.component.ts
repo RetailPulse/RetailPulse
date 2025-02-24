@@ -3,15 +3,14 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { CurrencyPipe, CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ButtonDirective } from 'primeng/button';
+import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import Fuse from 'fuse.js';
 import {Column, Product} from './product.model';
 import {InputText} from "primeng/inputtext";
-import {InputTextarea} from "primeng/inputtextarea";
 import {ProductService} from "./product.service";
-import {BrowserModule} from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {Textarea} from 'primeng/textarea';
+
 
 @Component({
   selector: 'app-product-management',
@@ -19,13 +18,13 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
   imports: [
     TableModule,
     TagModule,
-    CurrencyPipe,
     FormsModule,
-    ButtonDirective,
+    CurrencyPipe,
+    ButtonModule,
     DialogModule,
     InputText,
     CommonModule,
-    InputTextarea,
+    Textarea,
   ],
   templateUrl: './product-management.component.html',
   styleUrls: ['./product-management.component.css']
@@ -36,6 +35,7 @@ export class ProductManagementComponent implements OnInit {
   searchTerm: string = '';
   displayModal: boolean = false;
   newProduct: Product = new Product();
+  modalMode: 'create' | 'update' = 'create';
 
   cols!: Column[];
   checked: boolean = true;
@@ -63,7 +63,7 @@ export class ProductManagementComponent implements OnInit {
       {field: 'barcode', header: 'Barcode'},
       {field: 'origin', header: 'Origin'},
       {field: 'uom', header: 'UOM'},
-      {field: 'vendor_code', header: 'Vendor Code'}
+      {field: 'vendorCode', header: 'Vendor Code'}
     ];
   }
 
@@ -73,6 +73,7 @@ export class ProductManagementComponent implements OnInit {
       this.filteredProducts = this.products;
       return;
     }
+
     const fuse = new Fuse(this.products, {
       keys: ['brand', 'sku', 'category', 'subcategory', 'description', 'barcode', 'origin', 'uom', 'vendor_code'],
       includeScore: true,
@@ -85,29 +86,39 @@ export class ProductManagementComponent implements OnInit {
   }
 
   createProduct(): void {
+    this.newProduct = new Product();
+    this.modalMode = 'create';
     this.displayModal = true;
 
   }
 
-  saveProduct(): void {
-    this.productService.createProduct(this.newProduct).subscribe((createdProduct: Product) => {
-      // Add the created product to the list
-      this.products.push(createdProduct);
-      this.filteredProducts = [...this.products];
+ editProduct(product: Product): void {
+   this.newProduct = { ...product };
+   this.modalMode = 'update';
+   this.displayModal = true;
+ }
 
-      // Reset the new product and close the modal
-      this.newProduct = new Product();
-      this.displayModal = false;
-    }, (error) => {
-      console.error('Error creating product:', error);
-      // Optionally handle error (e.g., show a toast notification)
-    });
-  }
-
-  editProduct(product: any) {
-    // editing the items
-    console.log('Editing product: ', product);
-  }
+ saveProduct(): void {
+   if (this.modalMode === 'create') {
+     this.productService.createProduct(this.newProduct).subscribe((createdProduct: Product) => {
+       this.products.push(createdProduct);
+       this.filteredProducts = [...this.products];
+       this.newProduct = new Product();
+       this.displayModal = false;
+     }, (error) => {
+       console.error('Error creating product:', error);
+     });
+   } else if (this.modalMode === 'update') {
+     this.productService.updateProduct(this.newProduct).subscribe((updatedProduct: Product) => {
+       const index = this.products.findIndex(p => p.id === updatedProduct.id);
+       this.products[index] = updatedProduct;
+       this.filteredProducts = [...this.products];
+       this.displayModal = false;
+     }, (error) => {
+       console.error('Error updating product:', error);
+     });
+   }
+ }
 
 
   deleteProduct(product: Product): void {

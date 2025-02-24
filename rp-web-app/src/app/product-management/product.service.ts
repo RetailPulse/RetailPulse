@@ -9,7 +9,7 @@ import {apiConfig} from '../../environments/environment';
   providedIn: 'root'
 })
 export class ProductService {
-  private apiUrl = apiConfig.url + 'api/products'; // Replace with your API URL  
+  private apiUrl = apiConfig.backend_api_url + 'api/products'; // Replace with your API URL  
 
   constructor(private http: HttpClient) { }
 
@@ -21,6 +21,10 @@ export class ProductService {
   }
   deleteProduct(productId:String): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${productId}`);
+  }
+
+  updateProduct(updatedProduct: Product): Observable<Product> {
+    return this.http.put<Product>(`${this.apiUrl}/${updatedProduct.id}`, updatedProduct);
   }
 
 }

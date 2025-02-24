@@ -1,0 +1,100 @@
+<div class="table-header-container">
+  <div class="table-header">User Management</div>
+  @if (!isLoading() && !error()) {
+    <div class="search-bar-container">
+      <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input pInputText type="text" 
+            class="search-bar" 
+            placeholder="Search by name..." 
+            (input)="filterUsers($event)" 
+          /> <!-- -->
+      </span>
+      <button pButton type="button" icon="pi pi-plus" class="create-button" (click)="showNewUserDialog()"></button>
+    </div>
+  }
+</div>
+
+  <!-- Loading Indicator -->
+  @if (isLoading()) {
+    <div class="loading-indicator">
+      <p>Loading users...</p>
+    </div>
+  }
+
+  <!-- Error Message -->
+  @if (error()) {
+    <div class="error-message">
+      <p>{{ error() }}</p>
+    </div>
+  }
+
+  @if (!isLoading() && !error()) {
+    <div class="table-responsive">
+      <p-table [value]="filteredUsers()" stripedRows [responsiveLayout]="'scroll'" class="table table-hover">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-user>
+          <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.roles[0] }}</td>
+            <td>{{ user.enabled ? 'Enabled' : 'Disabled' }}</td>
+            <td>
+              <div class="button-container">
+                <button pButton type="button" label="Edit" (click)="editUser(user)" class="p-button-primary"></button>
+                <button pButton type="button" label="Delete" (click)="deleteUser(user.id)" class="p-button-danger"></button>
+              </div>              
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  }
+
+  <p-dialog [(visible)]="newDialog_visible" 
+    [modal]="true" 
+    [header]="'Register New User'"
+    [style]="{width: '70vw', height: '100vh'}">
+    <div class="grid p-fluid">
+      <div class="col-4 mb-3 mui-text-field">
+        <input pInputText id="txtUsername" [value]="newUser().username" placeholder=" " />
+        <label for="txtUsername">Username</label>
+      </div>
+      <div class="col-4 mb-3 mui-text-field">
+        <input pInputText id="txtName"  [value]="newUser().name" placeholder=" " />
+        <label for="txtName">Full Name</label>
+      </div>
+      <div class="col-4 mb-3 mui-text-field">
+        <input pInputText id="txtEmail"  [value]="newUser().email" placeholder=" " />
+        <label for="txtEmail">Email</label>
+      </div>
+      <div class="col-4 mb-3 mui-select-field">
+          <label for="roleSelect">Role</label>
+          <p-select
+            id="roleSelect" 
+            [options]="userRoles" 
+            [(ngModel)]="newUser().roles[0]" 
+            placeholder="Select Role"
+            optionLabel="label"
+            optionValue="value">
+          </p-select>
+      </div>
+    </div>
+    <ng-template pTemplate="footer">      
+      <button pButton type="button" label="Cancel" icon="pi pi-times" (click)="newDialog_visible.set(false)" class="p-button-secondary ml-2"></button>
+      <button pButton type="button" label="Save" icon="pi pi-check" (click)="registerNewUser()" class="p-button-success"></button>
+    </ng-template>
+  </p-dialog>
+  
