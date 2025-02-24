@@ -77,7 +77,7 @@
 /* Ensure buttons have the same width */
 .button-container button {
   flex: 1; /* Makes buttons expand to fill available space */
-  min-width: 40px; /* Ensures a minimum width for consistency */
+  min-width: 20px; /* Ensures a minimum width for consistency */
   text-align: center; /* Centers the text inside the button */
 }
 
@@ -142,4 +142,39 @@
   position: relative;
   cursor: pointer;
   transition: background-color 0.3s;
+}
+
+/* Highlight invalid fields */
+.error {
+  border: 2px solid red !important;
+}
+
+/* Optional: Add a red asterisk to labels for required fields */
+.required::after {
+  content: '*';
+  color: red;
+  margin-left: 5px;
+}
+
+/* Error message styling */
+.label-error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+/* Error message styling */
+.error-message {
+  color: red;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+/* Success message styling */
+.success-message {
+  color: rgb(22, 94, 0);
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 5px;
 }

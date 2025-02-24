@@ -20,25 +20,25 @@ CREATE TABLE authorities (
 
 -- Password: password (encoded using BCrypt)
 INSERT INTO users (username, password, name, email, enabled)
-VALUES ('superadmin', '$2y$12$U/2bpYZ7r5CqYDkOibj0MeUqatUkRu9ctqGSQMxvoo17xEsBENU9q', 'Kent Clark', 'kentc@rpulse.com', 1);
+VALUES ('superadmin', '$2a$10$Icdy05HD6OXmfVEaX3Kk0OTN3p/DYz95GNluZqvD5HTCGxLAdbP/C', 'Kent Clark', 'kentc@rpulse.com', 1);
 
 INSERT INTO authorities (username, authority)
 VALUES ('superadmin', 'ADMIN');
 
 INSERT INTO users (username, password, name, email, enabled)
-VALUES ('batman', '$2y$12$U/2bpYZ7r5CqYDkOibj0MeUqatUkRu9ctqGSQMxvoo17xEsBENU9q', 'Bruce Wayne', 'brucew@rpulse.com', 1);
+VALUES ('batman', '$2a$10$Icdy05HD6OXmfVEaX3Kk0OTN3p/DYz95GNluZqvD5HTCGxLAdbP/C', 'Bruce Wayne', 'brucew@rpulse.com', 1);
 
 INSERT INTO authorities (username, authority)
 VALUES ('batman', 'CASHIER');
 
 INSERT INTO users (username, password, name, email, enabled)
-VALUES ('ironman', '$2y$12$U/2bpYZ7r5CqYDkOibj0MeUqatUkRu9ctqGSQMxvoo17xEsBENU9q', 'Tony Stark', 'tonys@rpulse.com', 1);
+VALUES ('ironman', '$2a$10$Icdy05HD6OXmfVEaX3Kk0OTN3p/DYz95GNluZqvD5HTCGxLAdbP/C', 'Tony Stark', 'tonys@rpulse.com', 1);
 
 INSERT INTO authorities (username, authority)
 VALUES ('ironman', 'CASHIER');
 
 INSERT INTO users (username, password, name, email, enabled)
-VALUES ('blackwidow', '$2y$12$U/2bpYZ7r5CqYDkOibj0MeUqatUkRu9ctqGSQMxvoo17xEsBENU9q', 'Natasha', 'natasha@rpulse.com', 1);
+VALUES ('blackwidow', '$2a$10$Icdy05HD6OXmfVEaX3Kk0OTN3p/DYz95GNluZqvD5HTCGxLAdbP/C', 'Natasha', 'natasha@rpulse.com', 1);
 
 INSERT INTO authorities (username, authority)
 VALUES ('blackwidow', 'MANAGER');

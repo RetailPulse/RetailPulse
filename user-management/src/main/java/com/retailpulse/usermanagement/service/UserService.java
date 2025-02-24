@@ -53,13 +53,13 @@ public class UserService {
     public ViewUserDTO createUser(CreateUserDTO createUserDTO) {
 
         if (userRepository.existsByUsername(createUserDTO.username())) {
-            throw new BusinessException(USERNAME_EXIST, "Failed to create user");
+            throw new BusinessException(USERNAME_EXIST, "Username already exist. Failed to create user.");
         }
 
         try {
             PasswordValidator.isValid(createUserDTO.password());
         } catch (MalformedPasswordException e) {
-            throw new BusinessException(INVALID_FORMAT, "Failed to create user");
+          throw new BusinessException(INVALID_FORMAT, e.getMessage() + " Failed to create user.");
         }
 
         User user;
@@ -70,9 +70,9 @@ public class UserService {
                     .email(createUserDTO.email())
                     .authorities(createUserDTO.roles().stream().map(Authorities::valueOf).collect(Collectors.toSet())).build();
         } catch (MalformedEmailException e) {
-            throw new BusinessException(INVALID_FORMAT, "Failed to create user");
+            throw new BusinessException(INVALID_FORMAT, e.getMessage() + " Failed to create user.");
         }
-
+        
         UserEntity userEntity = UserMapper.toEntity(user);
 
         UserEntity savedUserEntity = userRepository.save(userEntity);
@@ -84,7 +84,7 @@ public class UserService {
         Optional<UserEntity> userEntityOptional = userRepository.findById(id);
 
         if (userEntityOptional.isEmpty()) {
-            throw new BusinessException(USER_NOT_FOUND, "Failed to update user");
+            throw new BusinessException(USER_NOT_FOUND, "User not found. Failed to update user.");
         }
 
         User user = UserMapper.toDomain(userEntityOptional.get());
@@ -94,7 +94,7 @@ public class UserService {
         try {
             user.updateEmail(updateUserDTO.email());
         } catch (MalformedEmailException e) {
-            throw new BusinessException(INVALID_FORMAT, "Failed to update user");
+            throw new BusinessException(INVALID_FORMAT, e.getMessage() + " Failed to update user.");
         }
 
         user.updateRoles(updateUserDTO.roles().stream().map(Authorities::valueOf).collect(Collectors.toSet()));
@@ -110,7 +110,7 @@ public class UserService {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
         } else {
-            throw new BusinessException(USER_NOT_FOUND, "Failed to delete user");
+            throw new BusinessException(USER_NOT_FOUND, "User not found. Failed to delete user..");
         }
     }
 
@@ -118,7 +118,7 @@ public class UserService {
         Optional<UserEntity> userEntityOptional = userRepository.findById(id);
 
         if (userEntityOptional.isEmpty()) {
-            throw new BusinessException(USER_NOT_FOUND, "Failed to change password");
+            throw new BusinessException(USER_NOT_FOUND, "User not found. Failed to change password.");
         }
 
         UserEntity userEntity = userEntityOptional.get();
@@ -126,13 +126,13 @@ public class UserService {
         User user = UserMapper.toDomain(userEntity);
 
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            throw new BusinessException(INVALID_OLD_PASSWORD, "Failed to change password");
+            throw new BusinessException(INVALID_OLD_PASSWORD, "Wrong Old Password. Failed to change password.");
         }
 
         try {
             PasswordValidator.isValid(newPassword);
         } catch (MalformedPasswordException e) {
-            throw new BusinessException(INVALID_FORMAT, "Failed to change password");
+            throw new BusinessException(INVALID_FORMAT, e.getMessage() + "Failed to change password.");
         }
 
         user.changePassword(passwordEncoder.hashPassword(newPassword));
