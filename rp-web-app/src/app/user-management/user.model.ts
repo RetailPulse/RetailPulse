@@ -1,5 +1,5 @@
 export class User {
-  id!: BigInt;            // Unique identifier for the user
+  id!: number;            // Unique identifier for the user
   username!: string;      // Username of the user
   email!: string;         // Email of the user
   name!: string;          // Full name of the user

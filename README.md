@@ -3,9 +3,8 @@
 Team Member:
 Galvin Leow,
 Evalyn Low Wei Xuan,
+William Siling Tjhi,
 Yap Chong Hwee Casper,
-Pang Zhi Hao,
-William Siling Tjhi
 
 To Run:
 1. Change directory to ./deploy/build_docker

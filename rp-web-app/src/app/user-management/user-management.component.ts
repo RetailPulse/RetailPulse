@@ -38,7 +38,7 @@ export class UserManagementComponent {
   newDialog_visible = signal(false);
 
   newUser = signal<User>({
-    id: BigInt(0),
+    id: 0,
     username: '',
     email: '',
     name: '',
@@ -101,7 +101,7 @@ export class UserManagementComponent {
         this.users.set([...this.users(), createdUser]);
         this.filteredUsers.set([...this.users()]);
         this.newUser.set({
-          id: BigInt(0),
+          id: 0,
           username: '',
           email: '',
           name: '',
