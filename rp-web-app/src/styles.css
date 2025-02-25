@@ -57,24 +57,24 @@ body {
 
 .p-table-wrapper {
   /*background-color: v/ar(--pastel-background);*/
-  border: 1px solid var(--pastel-border);
-  border-radius: var(--radius-medium);
+  border: 1px solid var(--pastel-border) !important ;
+  border-radius: var(--radius-medium) !important;
   /*box-shadow: 0 2px 4px var(--pastel-shadow);*/
 }
 
 .p-datatable-thead > tr > th {
-  background-color: var(--pastel-info);
-  color: var(--pastel-dark);
-  font-weight: 600;
+  background-color: white!important;
+  color: var(--pastel-dark) !important;
+  font-weight: 600 !important;
 }
 
 .p-datatable-tbody > tr {
-  background-color: var(--pastel-light);
-  transition: background-color 0.2s ease;
+  background-color: var(--pastel-light) !important;
+  transition: background-color 0.2s ease !important;
 }
 
 .p-datatable-tbody > tr:hover > td:not(:last-child) {
-  background-color: var(--pastel-purple-background);
+  background-color: var(--pastel-purple-background) !important;
 }
 
 

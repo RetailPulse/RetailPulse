@@ -6,18 +6,19 @@
             <input pInputText type="text" placeholder="Search..." [(ngModel)]="searchTerm" (input)="filterProducts()" class="search-bar" />
         </span>
     <div class="mui-split-button-container">
-      <span class="create-label" (click)="allocateProducts()">
+      <span class="create-label" (click)="allocateProducts(event)">
         Create
       </span>
       <button class="split-button-dropdown" (click)="toggleMenu($event)">
         <i class="pi pi-chevron-down"></i>
       </button>
 
-      <div *ngIf="isMenuOpen" class="split-menu">
-        <button *ngFor="let item of menuItems" (click)="item.command" class="menu-item">
-          <i [class]="item.icon"></i> {{ item.label }}
-        </button>
-      </div>
+        <div *ngIf="isMenuOpen" class="split-menu">
+            <button *ngFor="let item of menuItems" (click)="item.command()" class="menu-item">
+                <i [class]="item.icon"></i> {{ item.label }}
+            </button>
+
+        </div>
     </div>
 
   </div>
@@ -70,3 +71,24 @@
   </mat-tab>
 </mat-tab-group>
 
+<!-- Allocate Product Dialog -->
+<p-dialog [(visible)]="displayAllocateDialog" modal header="Allocate Product" [style]="{width: '400px'}">
+    <div class="dialog-content">
+        <p>Form for allocating products goes here...</p>
+    </div>
+    <ng-template pTemplate="footer">
+        <button pButton label="Cancel" icon="pi pi-times" (click)="closeDialogs()" class="p-button-text"></button>
+        <button pButton label="Allocate" icon="pi pi-check" class="p-button-primary"></button>
+    </ng-template>
+</p-dialog>
+
+<!-- Import Product Dialog -->
+<p-dialog [(visible)]="displayImportDialog" modal header="Import Products" [style]="{width: '400px'}">
+    <div class="dialog-content">
+        <p>Form for importing products goes here...</p>
+    </div>
+    <ng-template pTemplate="footer">
+        <button pButton label="Cancel" icon="pi pi-times" (click)="closeDialogs()" class="p-button-text"></button>
+        <button pButton label="Import" icon="pi pi-upload" class="p-button-primary"></button>
+    </ng-template>
+</p-dialog>
