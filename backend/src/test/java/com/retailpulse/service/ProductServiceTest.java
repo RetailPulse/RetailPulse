@@ -1,5 +1,6 @@
 package com.retailpulse.service;
 
+import com.retailpulse.entity.BusinessEntity;
 import com.retailpulse.entity.Product;
 import com.retailpulse.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +33,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    void testGetAllProducts() {
+    void testGetAllProducts_Success() {
         // Mock Product object
         Product product = new Product();
         product.setId(1L);
@@ -46,7 +47,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    void testGetProductById() {
+    void testGetProductById_Success() {
         // Mock Product object
         Product product = new Product();
         product.setId(1L);
@@ -57,9 +58,22 @@ public class ProductServiceTest {
         assertTrue(result.isPresent());
         assertEquals(1L, result.get().getId());
     }
+      
+    @Test
+    void testGetProductBySKU_Success() {
+        // Mock Product object
+        Product product = new Product();
+        product.setSku("RP12345");
+        // When findBySku is called with RP12345, then return the Product object
+        when(productRepository.findBySku("RP12345")).thenReturn(Optional.of(product));
+
+        Optional<Product> result = productService.getProductBySKU("RP12345");
+        assertTrue(result.isPresent());
+        assertEquals("RP12345", result.get().getSku());
+    }
 
     @Test
-    void testSaveProduct() {
+    void testSaveProduct_Success() {
         Product product = new Product();
         when(skuGeneratorService.generateSKU()).thenReturn("RP12345");
         when(productRepository.save(any(Product.class))).thenAnswer(invocation -> {
@@ -74,48 +88,107 @@ public class ProductServiceTest {
     }
 
     @Test
-    void testUpdateProduct() {
+    void testUpdateProduct_Success() {
+        // Arrange: set up an existing product with valid values
         Product existingProduct = new Product();
         existingProduct.setId(1L);
         existingProduct.setSku("12345");
         existingProduct.setDescription("Old Description");
+        existingProduct.setRrp(10);
         existingProduct.setActive(true);
 
+        // Arrange: updated product details with a new description and an invalid RRP (-1)
         Product updatedProduct = new Product();
         updatedProduct.setDescription("New Description");
+        updatedProduct.setRrp(-1); // Negative RRP should be ignored by the update logic
 
+        // Arrange: stub repository calls
         when(productRepository.findById(1L)).thenReturn(Optional.of(existingProduct));
-        when(productRepository.save(any(Product.class))).thenAnswer(invocation -> {
-            Product savedProduct = invocation.getArgument(0);
-            return savedProduct;
-        });
+        when(productRepository.save(any(Product.class)))
+                .thenAnswer(invocation -> invocation.<Product>getArgument(0));
 
+        // Act: update the product
         Product result = productService.updateProduct(1L, updatedProduct);
-        assertEquals("12345", result.getSku()); // SKU should remain unchanged
-        assertEquals("New Description", result.getDescription());
-        assertTrue(result.isActive()); // Ensure the product remains active
+
+        // Assert: SKU remains unchanged, description is updated,
+        // and the original RRP is retained because the new RRP value is invalid.
+        assertEquals("12345", result.getSku(), "SKU should remain unchanged");
+        assertEquals("New Description", result.getDescription(), "Description should be updated");
+        assertEquals(10, result.getRrp(), "RRP should remain unchanged when updated value is negative");
+        assertTrue(result.isActive(), "Product should remain active");
     }
 
     @Test
-    void testDeleteProduct() {
-        Product product = new Product();
-        product.setId(1L);
-        product.setActive(true);
+    public void testUpdateProduct_NotFound() {
+        Long productId = 1L;
+        Product updatedProduct = new Product();
+        updatedProduct.setDescription("New Description");
+        updatedProduct.setRrp(20); // Use a valid RRP for this test
 
-        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
-        when(productRepository.save(any(Product.class))).thenAnswer(invocation -> {
-            Product savedProduct = invocation.getArgument(0);
-            return savedProduct;
+        // Stub repository call to return an empty Optional
+        when(productRepository.findById(productId)).thenReturn(Optional.empty());
+
+        // Expect a RuntimeException with the appropriate error message
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            productService.updateProduct(productId, updatedProduct);
         });
 
-        productService.deleteProduct(1L);
-
-        assertFalse(product.isActive()); // Ensure the product is marked as inactive
-        verify(productRepository, times(1)).save(product); // Ensure the product is saved
+        assertEquals("Product not found with id: " + productId, exception.getMessage());
+        verify(productRepository, times(1)).findById(productId);
+        verify(productRepository, never()).save(any(Product.class));
     }
 
     @Test
-    void testUpdateProductDoesNotChangeIsActive() {
+    public void testUpdateProduct_DeletedProduct() {
+        Long productId = 1L;
+        // Arrange: an existing product that is marked as deleted (inactive)
+        Product existingProduct = new Product();
+        existingProduct.setId(productId);
+        existingProduct.setSku("12345");
+        existingProduct.setDescription("Old Description");
+        existingProduct.setRrp(10);
+        existingProduct.setActive(false);
+
+        // Arrange: details for update (attempt to update a deleted product)
+        Product updatedProduct = new Product();
+        updatedProduct.setDescription("New Description");
+        updatedProduct.setRrp(20);
+
+        when(productRepository.findById(productId)).thenReturn(Optional.of(existingProduct));
+
+        // Act & Assert: expect an exception when attempting to update a deleted product
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            productService.updateProduct(productId, updatedProduct);
+        });
+
+        assertEquals("Cannot update a deleted product with id: " + productId, exception.getMessage());
+        verify(productRepository, times(1)).findById(productId);
+        verify(productRepository, never()).save(any(Product.class));
+    }
+
+    @Test
+    public void testUpdateProduct_ProductNotFound() {
+        Long productId = 1L;
+        // Arrange: updated product details
+        Product updatedProduct = new Product();
+        updatedProduct.setDescription("New Description");
+        updatedProduct.setRrp(20);
+
+        // Stub repository call to return an empty Optional (product not found)
+        when(productRepository.findById(productId)).thenReturn(Optional.empty());
+
+        // Act & Assert: expect an exception with the appropriate error message
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            productService.updateProduct(productId, updatedProduct);
+        });
+
+        assertEquals("Product not found with id: " + productId, exception.getMessage());
+        verify(productRepository, times(1)).findById(productId);
+        verify(productRepository, never()).save(any(Product.class));
+    }
+
+    @Test
+    void testUpdateProductDoesNotChangeIsActive_Success() {
         Product existingProduct = new Product();
         existingProduct.setId(1L);
         existingProduct.setSku("12345");
@@ -128,8 +201,7 @@ public class ProductServiceTest {
 
         when(productRepository.findById(1L)).thenReturn(Optional.of(existingProduct));
         when(productRepository.save(any(Product.class))).thenAnswer(invocation -> {
-            Product savedProduct = invocation.getArgument(0);
-            return savedProduct;
+            return invocation.<Product>getArgument(0);
         });
 
         Product result = productService.updateProduct(1L, updatedProduct);
@@ -137,4 +209,22 @@ public class ProductServiceTest {
         assertEquals("New Description", result.getDescription());
         assertTrue(result.isActive()); // Ensure the product remains active
     }
+
+    @Test
+    void testDeleteProduct_Success() {
+        Product product = new Product();
+        product.setId(1L);
+        product.setActive(true);
+
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(productRepository.save(any(Product.class))).thenAnswer(invocation -> {
+            return invocation.<Product>getArgument(0);
+        });
+
+        productService.deleteProduct(1L);
+
+        assertFalse(product.isActive()); // Ensure the product is marked as inactive
+        verify(productRepository, times(1)).save(product); // Ensure the product is saved
+    }
+
 }

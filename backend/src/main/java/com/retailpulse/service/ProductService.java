@@ -53,7 +53,7 @@ public class ProductService {
         updateField(productDetails.getUom(), product::setUom);
         updateField(productDetails.getVendorCode(), product::setVendorCode);
         updateField(productDetails.getBarcode(), product::setBarcode);
-         if (productDetails.getRrp() != 0) {
+         if (productDetails.getRrp() >= 0) {
             product.setRrp(productDetails.getRrp());
          }
 
