@@ -31,8 +31,11 @@ public class ProductService {
     }
 
     public Product saveProduct(Product product) {
+        if (product.getRrp() < 0) {
+            throw new IllegalArgumentException("Recommended retail price cannot be negative");
+        }
         // Generate SKU before saving
-        String generatedSKU = skuGeneratorService.generateSKU();
+        String generatedSKU = skuGeneratorService.generateSKU(); 
         product.setSku(generatedSKU);
         return productRepository.save(product);
     }
@@ -69,9 +72,15 @@ public class ProductService {
         }
     }
 
-    public Product deleteProduct(Long id) {
+    public Product softDeleteProduct(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+
+        if (!product.isActive()) {
+            throw new IllegalArgumentException("Product with id " + id + " is already deleted.");
+        }
+
+        // TODO - Add check if Inventory have product; If yes, cannot delete
 
         product.setActive(false);
         return productRepository.save(product);

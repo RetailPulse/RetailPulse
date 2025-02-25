@@ -142,6 +142,12 @@
             <version>8.3.0</version>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
         <!-- Remove or ensure the following dependency is available -->
         <!-- <dependency>
             <groupId>com.retailpulse</groupId>

@@ -1,7 +1,9 @@
 package com.retailpulse.service;
 
 import com.retailpulse.entity.BusinessEntity;
+import com.retailpulse.entity.Inventory;
 import com.retailpulse.repository.BusinessEntityRepository;
+import com.retailpulse.repository.InventoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,9 @@ public class BusinessEntityService {
 
     @Autowired
     BusinessEntityRepository businessEntityRepository;
+
+    @Autowired
+    InventoryRepository inventoryRepository;
 
     public List<BusinessEntity> getAllBusinessEntities() {
         return businessEntityRepository.findAll();
@@ -56,7 +61,27 @@ public class BusinessEntityService {
         BusinessEntity businessEntity = businessEntityRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Business Entity not found with id: " + id));
 
+        if (!businessEntity.isActive()) {
+            throw new IllegalArgumentException("Business Entity with id " + id + " is already deleted.");
+        }
+
+        // Check if Inventory has products; If yes, cannot delete
+        if (hasProductsInInventory(businessEntity)) {
+            throw new IllegalArgumentException("Cannot delete Business Entity with id " + id + " as it has associated products in the inventory.");
+        }
+
         businessEntity.setActive(false);
         return businessEntityRepository.save(businessEntity);
+    }
+
+    private boolean hasProductsInInventory(BusinessEntity businessEntity) {
+        List<Inventory> inventories = inventoryRepository.findByBusinessEntityId(businessEntity.getId());
+        return inventories.stream().anyMatch(inventory -> inventory.getQuantity() > 0);
+    }
+
+    public boolean isExternalBusinessEntity(Long id) {
+        BusinessEntity businessEntity = businessEntityRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Business Entity not found with id: " + id));
+        return businessEntity.isExternal();
     }
 }

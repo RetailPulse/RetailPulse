@@ -1,6 +1,7 @@
 package com.retailpulse.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.jetbrains.annotations.NotNull;
@@ -28,10 +29,14 @@ public class InventoryService {
         return inventoryRepository.findByProductId(productId)
                 .orElseThrow(() -> new RuntimeException("Inventory not found with product id: " + productId));
     }
+    
+    public List<Inventory> getInventoryByBusinessEntityId(Long businessEntityId) {
+        return inventoryRepository.findByBusinessEntityId(businessEntityId);
+    }
 
-    public Inventory getInventoryByProductIdAndBusinessEntityId(Long productId, Long businessEntityId) {
-        return inventoryRepository.findByProductIdAndBusinessEntityId(productId, businessEntityId)
-                .orElseThrow(() -> new RuntimeException("Inventory not found with product id: " + productId + " and business entity id: " + businessEntityId));
+    public Optional<Inventory> getInventoryByProductIdAndBusinessEntityId(Long productId, Long businessEntityId) {
+        return inventoryRepository.findByProductIdAndBusinessEntityId(productId, businessEntityId);
+
     }
 
     public Inventory saveInventory(Inventory inventory) {
