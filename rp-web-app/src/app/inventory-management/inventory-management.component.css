@@ -86,6 +86,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  color: var(--pastel-dark) !important;
 }
 
 .menu-item:hover {

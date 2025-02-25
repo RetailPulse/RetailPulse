@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
+import {InventoryManagementComponent} from './inventory-management/inventory-management.component';
 import { LoginPageComponent } from './login-page/login-page.component';
 import {ReportGenerationComponent} from './report-generation/report-generation.component';
 
@@ -39,7 +40,7 @@ export const routes: Routes = [
     loadComponent: lazyOperatorPage,
     canActivate: [authGuard],
     data: { roles: ['CASHER', 'MANAGER'] },
-    children: [      
+    children: [
       { path: 'profile', loadComponent: lazyProfile },
       { path: '', redirectTo: 'profile', pathMatch: 'full' }, // Default child route
     ],
