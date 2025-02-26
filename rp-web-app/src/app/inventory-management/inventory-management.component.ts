@@ -3,11 +3,12 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
-import Fuse from 'fuse.js';
-import { Column, Product } from './inventory.model';
 import { MenuItem } from 'primeng/api';
 import { MatTab, MatTabGroup } from '@angular/material/tabs';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import Fuse from 'fuse.js';
+import { Column, Product } from './inventory.model';
+import { InventoryModalComponent } from '../inventory-modal/inventory-modal.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FilterOption} from './inventory.model';
 import { InventoryService } from './inventory.service';
@@ -115,7 +116,6 @@ export class InventoryManagementComponent implements OnInit {
       { field: 'sku', header: 'SKU' },
       { field: 'quantity', header: 'Quantity' },
     ];
-    // Displaying only 5 columns in the second tab
   }
 
   filterProducts(): void {
@@ -138,7 +138,6 @@ export class InventoryManagementComponent implements OnInit {
   toggleMenu(event: MouseEvent): void {
     this.isMenuOpen = !this.isMenuOpen;
     event.stopPropagation();
-    this.isMenuOpen = !this.isMenuOpen;
   }
 
   openModal(index: number): void {

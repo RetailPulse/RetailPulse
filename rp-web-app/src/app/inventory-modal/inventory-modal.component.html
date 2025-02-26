@@ -82,7 +82,12 @@
         <mat-label>Product SKU</mat-label>
         <mat-select formControlName="productSku" (selectionChange)="onProductSkuSelected($event.value)">
           <mat-option *ngFor="let sku of products" [value]="sku.sku">{{ sku.sku }}</mat-option>
-        </mat-select>
+        <mat-label>Select Option 1</mat-label>
+      <mat-select [(ngModel)]="selectedOption1">
+        <mat-option *ngFor="let option of dropdownOptions" [value]="option.value">
+          {{ option.label }}
+        </mat-option>
+      </mat-select>
         <mat-error *ngIf="allocationForm.get('productSku')?.hasError('required')">
           Product SKU is required
         </mat-error>
