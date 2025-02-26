@@ -285,4 +285,11 @@ export class InventoryModalComponent implements OnInit {
     this.dialogRef.close();
     this.data.isModalOpen = false;
   }
+
+  submit(): void {
+    this.dialogRef.close({
+      selectedOption1: this.selectedOption1,
+      selectedOption2: this.selectedOption2
+    });
+  }
 }
