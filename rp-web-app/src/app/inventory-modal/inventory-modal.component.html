@@ -1,0 +1,28 @@
+<mat-dialog-content>
+  <h2>{{ data.title }}</h2>
+
+  <div class="modal-content">
+    <mat-form-field appearance="outline">
+      <mat-label>Select Option 1</mat-label>
+      <mat-select [(ngModel)]="selectedOption1">
+        <mat-option *ngFor="let option of dropdownOptions" [value]="option.value">
+          {{ option.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Select Option 2</mat-label>
+      <mat-select [(ngModel)]="selectedOption2">
+        <mat-option *ngFor="let option of dropdownOptions" [value]="option.value">
+          {{ option.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="modal-actions">
+    <button mat-button (click)="close()">Cancel</button>
+    <button mat-button color="primary" (click)="submit()">Submit</button>
+  </div>
+</mat-dialog-content>
