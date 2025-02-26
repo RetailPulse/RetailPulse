@@ -77,11 +77,20 @@
 /* Ensure buttons have the same width */
 .button-container button {
   flex: 1; /* Makes buttons expand to fill available space */
-  min-width: 40px; /* Ensures a minimum width for consistency */
-  text-align: center; /* Centers the text inside the button */
+  min-width: 20px; /* Ensures a minimum width for consistency */
+  max-width: 50px; /* Ensures a maximum width for consistency */
+  text-align: center; /* Centers the text inside the button */ 
 }
 
 /* Custom styles for the p-dialog */
+.p-dialog .p-dialog-header {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.p-dialog .p-dialog-content {
+  font-size: 16px;
+}
 
 /* MUI-like text field styles */
 .mui-text-field {
@@ -142,4 +151,78 @@
   position: relative;
   cursor: pointer;
   transition: background-color 0.3s;
+}
+
+/* Style for the status container */
+.status-container {
+  display: flex;
+  flex-direction: column; /* Arrange children vertically */
+  align-items: flex-start; /* Align items to the left */
+  gap: 8px; /* Add spacing between the label and the radio group */
+}
+
+/* Style for the label */
+.status-label {
+  font-weight: bold; /* Make the label bold */
+  margin-left: 2px; /* Optional: Add a small left margin */
+}
+
+/* Style for the radio button group container */
+.radio-group-container {
+  display: flex; /* Arrange children horizontally */
+  align-items: center; /* Align items vertically in the center */
+  gap: 16px; /* Add spacing between the radio buttons */
+  padding: 8px 16px; /* Add padding inside the container */
+  border: 1px solid var(--pastel-border); /* Add a border */
+  border-radius: 16px; /* Make the border rounded */
+  background-color: var(--pastel-light); /* Optional: Add a background color */
+}
+
+/* Ensure labels and radio buttons are aligned properly */
+.radio-group-container .flex.items-center {
+  display: flex;
+  align-items: center;
+}
+
+.radio-group-container:hover {
+  border-color: var(--pastel-primary); /* Change border color on hover */
+}
+
+p-radiobutton:focus {
+  outline: 2px solid var(--pastel-primary); /* Highlight focused radio button */
+}
+
+/* Highlight invalid fields */
+.error {
+  border: 2px solid red !important;
+}
+
+/* Optional: Add a red asterisk to labels for required fields */
+.required::after {
+  content: '*';
+  color: red;
+  margin-left: 5px;
+}
+
+/* Error message styling */
+.label-error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+/* Error message styling */
+.error-message {
+  color: red;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+/* Success message styling */
+.success-message {
+  color: rgb(22, 94, 0);
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 5px;
 }

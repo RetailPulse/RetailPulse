@@ -1,12 +1,16 @@
-import { Component, signal, inject, Signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
-import {InputText} from "primeng/inputtext";
+import { InputText } from "primeng/inputtext";
 import { SelectModule } from 'primeng/select';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
+import { RadioButtonModule } from 'primeng/radiobutton';
 import Fuse from 'fuse.js';
 
 import {User, UserRoles} from './user.model';
@@ -16,6 +20,8 @@ import {UserService} from './user.service';
 @Component({
   selector: 'app-user-management',
   imports: [
+    ReactiveFormsModule,
+    ConfirmDialogModule,
     TableModule,
     TagModule,
     FormsModule,
@@ -23,6 +29,7 @@ import {UserService} from './user.service';
     ButtonModule,
     DialogModule,
     SelectModule,
+    RadioButtonModule,
     CommonModule
   ],
   templateUrl: './user-management.component.html',
@@ -31,24 +38,30 @@ import {UserService} from './user.service';
 
 export class UserManagementComponent {
 
+  private userService = inject(UserService);
+  private formBuilder = inject(FormBuilder);
+  private confirmationService = inject(ConfirmationService);
+  
   users = signal<User[]>([]);
   filteredUsers = signal<User[]>([]);
   isLoading = signal(true);
-  error = signal<string | null>(null);
-  newDialog_visible = signal(false);
+  error_msg = signal<string | null>(null);
+  success_msg = signal<string | null>(null);
 
-  newUser = signal<User>({
-    id: BigInt(0),
-    username: '',
-    email: '',
-    name: '',
-    roles: ['CASHIER'],
-    enabled: true
-  });
+  newUserForm: FormGroup;
+  newDialog_visible = signal(false);
+  newDialog_error_msg = signal<string | null>(null);
+
+  selectedUser = signal<User | null>(null);
+  editUserForm: FormGroup;
+  editDialog_visible = signal(false);
+  editDialog_error_msg = signal<string | null>(null);
 
   userRoles = UserRoles;
 
-  constructor(private userService: UserService) {
+  constructor() {
+
+    // Populate the users list
     this.userService.getUsers().subscribe({
       next: (data: User[]) => {
         this.users.set(data);
@@ -56,15 +69,41 @@ export class UserManagementComponent {
         this.isLoading.set(false);
       },
       error: (err) => {
-        this.error.set('Failed to load users. Please try again later.');
+        this.error_msg.set('Failed to load users. Please try again later.');
         this.isLoading.set(false);
         console.error('Error fetching users:', err);
       }
     });
+
+    // Initialize the New User Form
+    this.newUserForm = this.formBuilder.group({
+      ctlUsername: ['', Validators.required],
+      ctlName: ['', Validators.required],
+      ctlEmail: ['', [Validators.required, Validators.email]],
+      ctlRole: ['', Validators.required],
+    });
+
+    // Initialize the Edit User Form
+    this.editUserForm = this.formBuilder.group({
+      ctlUsername: ['', Validators.required],
+      ctlName: ['', Validators.required],
+      ctlEmail: ['', [Validators.required, Validators.email]],
+      ctlRole: ['', Validators.required],
+      ctlStatus: ['', Validators.required],
+    });
+
+    this.editUserForm.get('ctlUsername')?.disable();
+  }
+
+  resetMessages(): void {
+    this.error_msg.set(null);
+    this.success_msg.set(null);
+    this.newDialog_error_msg.set(null);
   }
 
   filterUsers(event: Event): void {
     console.log('Filtering users');
+    this.resetMessages();
     
     if (!event.target) {
       return;
@@ -87,40 +126,185 @@ export class UserManagementComponent {
     this.filteredUsers.set(results.map(result => result.item));
   }
 
+  isFieldInvalid(currForm: FormGroup, fieldName: string): boolean | undefined{
+    const control = currForm.get(fieldName);
+
+    const blnValid = control?.invalid && (control?.touched || control?.dirty);
+
+    if (blnValid === undefined){
+      return false;
+    }
+
+    return blnValid;      
+  }
+
   showNewUserDialog(): void {
+    this.resetMessages();
+    console.log('Form State:', this.newUserForm);
+    this.newUserForm.reset();
     this.newDialog_visible.set(true);
   }
 
-  registerNewUser(): void {
-    const user = this.newUser();
-    console.log('Saving new user:', user);
-    
-    this.userService.createUser(user).subscribe({
-      next: (createdUser: User) => {
-        console.log('User created:', createdUser);
-        this.users.set([...this.users(), createdUser]);
-        this.filteredUsers.set([...this.users()]);
-        this.newUser.set({
-          id: BigInt(0),
-          username: '',
-          email: '',
-          name: '',
-          roles: [],
-          enabled: true
-        });
-        this.newDialog_visible.set(false);
+  confirmRegisterUser(): void {
+    this.resetMessages();
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to register new user: <strong>' + this.newUserForm.value.ctlUsername + '</strong>?',
+      header: 'Confirm Registration',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        // User confirmed, proceed with deletion
+        this.registerNewUser();
       },
-      error: (err) => {
-        console.error('Error creating user:', err);
+      reject: () => {
+        // User rejected, do nothing
+        this.error_msg.set('Deletion canceled.');
+        console.log('Deletion canceled.');
       }
     });
   }
 
-  deleteUser(userId: BigInt): void {
-    console.log(`Delete user with ID: ${userId}`);
+  registerNewUser(): void {
+    this.resetMessages();
+
+    if (this.newUserForm.invalid) {
+      // Mark all fields as touched to trigger validation messages
+      this.newUserForm.markAllAsTouched();
+      this.newDialog_error_msg.set('Please fill in all required fields');
+      console.error('Form is invalid:', this.newUserForm.errors);
+      return;
+    }
+
+    console.log('Casper 0 Username:', this.newUserForm.value.username);
+
+    const newUser: User = {
+      id: 0,
+      username: this.newUserForm.value.ctlUsername,
+      password: 'password1', // Default password
+      email: this.newUserForm.value.ctlEmail,
+      name: this.newUserForm.value.ctlName,
+      roles: [this.newUserForm.value.ctlRole],
+      isEnabled: true
+    };
+    
+    console.log('Saving new user:', newUser);    
+    this.userService.createUser(newUser).subscribe({
+      next: (createdUser: User) => {
+        console.log('User created:', createdUser);
+        this.users.set([...this.users(), createdUser]);
+        this.filteredUsers.set([...this.users()]);        
+        this.newDialog_visible.set(false);
+        this.success_msg.set('User ' + createdUser.username + ' was successfully registered');
+      },
+      error: (err) => {
+        this.newDialog_error_msg.set(err);
+        console.error(err);
+      },
+    });
   }
 
-  editUser(user: User): void {
-    console.log(`Edit user:`, user);
+  confirmDeleteUser(deletedUser: User): void {
+    this.resetMessages();
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to delete user: <strong>' + deletedUser.username + '</strong>?',
+      header: 'Confirm Deletion',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        // User confirmed, proceed with deletion
+        this.deleteUser(deletedUser);
+      },
+      reject: () => {
+        // User rejected, do nothing
+        this.error_msg.set('Deletion canceled.');
+        console.log('Deletion canceled.');
+      }
+    });
+  }
+
+  deleteUser(deletedUser: User): void {
+    this.resetMessages();
+    console.log(`Deleting user ${deletedUser.name}`);
+    this.userService.deleteUser(deletedUser.id).subscribe({
+      next: () => {
+        console.log('User deleted:', deletedUser.username);
+        this.users.update((currentUsers) =>
+          currentUsers.filter((user) => user.id !== deletedUser.id)
+        );
+        this.filteredUsers.set([...this.users()]);        
+        this.newDialog_visible.set(false);
+        this.success_msg.set('User ' + deletedUser.username + ' was successfully deleted');
+      },
+      error: (err) => {
+        this.newDialog_error_msg.set(err);
+        console.error(err);
+      },
+    });
+  }
+
+  showEditUserForm(user: User): void {
+    this.selectedUser.set(user);
+    this.resetMessages();
+    this.editUserForm.reset();
+    this.editDialog_visible.set(true);
+
+    // Populate the form with the user's data
+    this.editUserForm.patchValue({
+      ctlUsername: user.username,
+      ctlName: user.name,
+      ctlEmail: user.email,
+      ctlRole: user.roles[0] || '',
+      ctlStatus: user.isEnabled ? 'true' : 'false',
+    });
+  }
+
+  confirmEditUser(): void {
+    this.resetMessages();
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to edit user: <strong>' + this.newUserForm.value.ctlUsername + '</strong>?',
+      header: 'Confirm Edit',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        // User confirmed, proceed with deletion
+        this.editUser();
+      },
+      reject: () => {
+        // User rejected, do nothing
+        this.error_msg.set('Edit canceled.');
+        console.log('Edit canceled.');
+      }
+    });
+  }
+
+  editUser(): void {
+    this.resetMessages();
+    console.log('Editing user');
+    console.log('User State:', this.editUserForm.value.ctlStatus === 'true');
+
+    const editedUser: User = {
+      id: this.selectedUser()?.id || 0,
+      username: this.editUserForm.value.ctlUsername,
+      password: 'dummy', // not in used
+      email: this.editUserForm.value.ctlEmail,
+      name: this.editUserForm.value.ctlName,
+      roles: [this.editUserForm.value.ctlRole],
+      isEnabled: this.editUserForm.value.ctlStatus === 'true'
+    };
+
+    this.userService.editUser(editedUser).subscribe({
+      next: (updatedUser: User) => {
+        console.log('User edited:', updatedUser);
+        this.users.update((currentUsers) =>
+          currentUsers.map((user) =>
+            user.id === updatedUser.id ? updatedUser : user
+          )
+        );
+        this.filteredUsers.set([...this.users()]);        
+        this.editDialog_visible.set(false);
+        this.success_msg.set('User ' + updatedUser.username + ' was successfully edited');
+      },
+      error: (err) => {
+        this.editDialog_error_msg.set(err);
+        console.error(err);
+      },
+    });
   }
 }
