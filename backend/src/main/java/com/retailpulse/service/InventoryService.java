@@ -1,15 +1,14 @@
 package com.retailpulse.service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
-
+import com.retailpulse.entity.Inventory;
+import com.retailpulse.repository.InventoryRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.retailpulse.entity.Inventory;
-import com.retailpulse.repository.InventoryRepository;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 @Service
 public class InventoryService {
@@ -20,14 +19,12 @@ public class InventoryService {
         return inventoryRepository.findAll();
     }
 
-    public Inventory getInventoryById(Long id) {
-        return inventoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Inventory not found with id: " + id));
+    public Optional<Inventory> getInventoryById(Long id) {
+        return inventoryRepository.findById(id);
     }
 
-    public Inventory getInventoryByProductId(Long productId) {
-        return inventoryRepository.findByProductId(productId)
-                .orElseThrow(() -> new RuntimeException("Inventory not found with product id: " + productId));
+    public List<Inventory> getInventoryByProductId(Long productId) {
+        return inventoryRepository.findByProductId(productId);
     }
     
     public List<Inventory> getInventoryByBusinessEntityId(Long businessEntityId) {
@@ -36,13 +33,14 @@ public class InventoryService {
 
     public Optional<Inventory> getInventoryByProductIdAndBusinessEntityId(Long productId, Long businessEntityId) {
         return inventoryRepository.findByProductIdAndBusinessEntityId(productId, businessEntityId);
-
     }
 
+    // Not exposed in controller - Inventory should only be changed by Inventory Summary
     public Inventory saveInventory(Inventory inventory) {
         return inventoryRepository.save(inventory);
     }
 
+    // Not exposed in controller - Inventory should only be changed by Inventory Summary
     public Inventory updateInventory(Long id, @NotNull Inventory inventoryDetails) {
         Inventory inventory = inventoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Inventory not found with id: " + id));
@@ -72,6 +70,7 @@ public class InventoryService {
         updater.accept(newValue);
     }
 
+    // Not exposed in controller - Inventory should only be changed by Inventory Summary
     public Inventory deleteInventory(Long id) {
         Inventory inventory = inventoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Inventory not found with id: " + id));

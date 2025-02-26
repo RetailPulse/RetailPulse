@@ -1,10 +1,6 @@
 package com.retailpulse.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
@@ -24,8 +20,8 @@ public class BusinessEntity {
     private String type;
 
     @Column(nullable = false)
-    private boolean isExternal;
+    private boolean external = false;
 
     @Column(nullable = false)
-    private boolean isActive = true;
+    private boolean active = true;
 }

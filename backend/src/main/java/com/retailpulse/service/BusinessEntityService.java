@@ -3,7 +3,7 @@ package com.retailpulse.service;
 import com.retailpulse.entity.BusinessEntity;
 import com.retailpulse.entity.Inventory;
 import com.retailpulse.repository.BusinessEntityRepository;
-import com.retailpulse.repository.InventoryRepository;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +18,7 @@ public class BusinessEntityService {
     BusinessEntityRepository businessEntityRepository;
 
     @Autowired
-    InventoryRepository inventoryRepository;
+    InventoryService inventoryService;
 
     public List<BusinessEntity> getAllBusinessEntities() {
         return businessEntityRepository.findAll();
@@ -44,17 +44,22 @@ public class BusinessEntityService {
         updateField(businessEntityDetails.getName(), businessEntity::setName);
         updateField(businessEntityDetails.getLocation(), businessEntity::setLocation);
         updateField(businessEntityDetails.getType(), businessEntity::setType);
+        updateField(businessEntityDetails.isExternal(), businessEntity::setExternal);
 
         // Do not update isActive field, this is used for soft delete
         // businessEntity.setActive(businessEntityDetails.isActive());
         return businessEntityRepository.save(businessEntity);
     }
 
-    // Helper method for updating fields
-    private void updateField(String newValue, Consumer<String> updater) {
-        if (newValue != null && !newValue.isEmpty()) {
-            updater.accept(newValue);
+    // Generic helper method for updating fields
+    private <T> void updateField(T newValue, Consumer<T> updater) {
+        if(newValue == null) {
+            return;
         }
+        if (newValue instanceof String && ((String) newValue).isEmpty()) {
+            return;
+        }
+        updater.accept(newValue);
     }
 
     public BusinessEntity deleteBusinessEntity(Long id) {
@@ -74,8 +79,8 @@ public class BusinessEntityService {
         return businessEntityRepository.save(businessEntity);
     }
 
-    private boolean hasProductsInInventory(BusinessEntity businessEntity) {
-        List<Inventory> inventories = inventoryRepository.findByBusinessEntityId(businessEntity.getId());
+    private boolean hasProductsInInventory(@NotNull BusinessEntity businessEntity) {
+        List<Inventory> inventories = inventoryService.getInventoryByBusinessEntityId(businessEntity.getId());
         return inventories.stream().anyMatch(inventory -> inventory.getQuantity() > 0);
     }
 

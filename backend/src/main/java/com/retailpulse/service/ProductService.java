@@ -2,6 +2,7 @@ package com.retailpulse.service;
 
 import com.retailpulse.entity.Product;
 import com.retailpulse.repository.ProductRepository;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +31,7 @@ public class ProductService {
         return productRepository.findBySku(sku);
     }
 
-    public Product saveProduct(Product product) {
+    public Product saveProduct(@NotNull Product product) {
         if (product.getRrp() < 0) {
             throw new IllegalArgumentException("Recommended retail price cannot be negative");
         }
