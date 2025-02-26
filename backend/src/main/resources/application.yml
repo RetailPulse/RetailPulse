@@ -1,9 +1,9 @@
-server.port: 8080
+server.port: 8085
 
 auth:
-  enabled: false
+  enabled: true
   origin: "http://localhost:4200"
-  jwt.key.set.uri: http://localhost:8080/oauth2/jwks
+  jwt.key.set.uri: http://app-iam:8081/oauth2/jwks
 
 spring:
   datasource:
@@ -21,6 +21,9 @@ spring:
 logging:
   level:
     root: INFO
+    org:
+      springframework:
+        security: TRACE
     com.retailpulse: DEBUG
   file:
     name: logs/retailpulse.log

@@ -1,0 +1,110 @@
+networks:
+  springboot-network:
+    driver: bridge
+
+services:
+  # IAM MySQL service
+  mysql-auth:
+    image: mysql:latest
+    container_name: mysql-auth
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: identity_access
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./deploy/build_docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 30s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+    networks:
+      - springboot-network
+
+  # RP MySQL service
+  mysql-rp:
+    image: mysql:latest
+    container_name: mysql-rp
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: RetailPulseDB
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 30s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+    networks:
+      - springboot-network
+
+  # IAM Spring Boot service
+  app-iam:
+    image: iam-server
+    container_name: app-iam
+    build:
+      context: ./identity-access-management
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-auth:3306/identity_access
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+      SERVER_PORT: 8081
+    ports:
+      - "8081:8081"
+    depends_on:
+      mysql-auth:
+        condition: service_healthy
+    networks:
+      - springboot-network
+
+  # User Management Spring Boot service
+  app-um:
+    image: um-server
+    container_name: app-um
+    build:
+      context: ./user-management
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-auth:3306/identity_access
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+      SERVER_PORT: 8083
+      AUTH_SERVER_URL: http://app-iam:8081
+    ports:
+      - "8083:8083"
+    depends_on:
+      mysql-auth:
+        condition: service_healthy
+      app-iam:
+        condition: service_started
+    networks:
+      - springboot-network
+
+  # RP Spring Boot service
+  app-rp:
+    image: rp-server
+    container_name: app-rp
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-rp:3306/RetailPulseDB
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+      SERVER_PORT: 8085
+      AUTH_SERVER_URL: http://app-iam:8081
+    ports:
+      - "8085:8085"
+    depends_on:
+      mysql-rp:
+        condition: service_healthy
+      app-iam:
+        condition: service_started
+    networks:
+      - springboot-network
