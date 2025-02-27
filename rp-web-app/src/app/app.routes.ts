@@ -4,6 +4,7 @@ import { AdminPageComponent } from './admin-page/admin-page.component';
 import { OperatorPageComponent } from './operator-page/operator-page.component';
 import { ProductManagementComponent } from './product-management/product-management.component';
 import { UserManagementComponent } from './user-management/user-management.component';
+import { BusinessEntityManagementComponent } from './business-entity-management/business-entity-management.component';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -16,7 +17,8 @@ export const routes: Routes = [
     children: [      
       { path: 'product-management', component: ProductManagementComponent },
       { path: 'user-management', component: UserManagementComponent },
-      { path: '', redirectTo: 'user-management', pathMatch: 'full' }, // Default route
+      { path: 'business-entity-management', component: BusinessEntityManagementComponent},
+      { path: '', redirectTo: 'business-entity-management', pathMatch: 'full' }, // Default route
     ] 
   },
   { path: 'operator', 

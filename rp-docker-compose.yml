@@ -2,6 +2,10 @@ networks:
   springboot-network:
     driver: bridge
 
+volumes:
+  mysql_identity_access_vol:
+    driver: local
+
 services:
   # IAM MySQL service
   mysql-auth:
@@ -14,7 +18,8 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./deploy/build_docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./deploy/identity.init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql_identity_access_vol:/var/lib/mysql
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 30s
@@ -100,7 +105,7 @@ services:
       SERVER_PORT: 8085
       AUTH_SERVER_URL: http://app-iam:8081
     ports:
-      - "8085:8085"
+      - "8085:8085"    
     depends_on:
       mysql-rp:
         condition: service_healthy

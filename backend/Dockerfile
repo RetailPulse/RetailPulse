@@ -1,5 +1,5 @@
 # First stage: Build the Spring Boot application
-FROM maven:3.9.5-eclipse-temurin-17 AS builder
+FROM maven:3.9.9-eclipse-temurin-23 AS builder
 
 # Set working directory
 WORKDIR /app
@@ -12,7 +12,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Second stage: Run the built JAR in a lightweight JDK image
-FROM openjdk:17-jdk-slim AS runner
+FROM eclipse-temurin:23-jdk-alpine AS runner
 
 # Set working directory
 WORKDIR /app

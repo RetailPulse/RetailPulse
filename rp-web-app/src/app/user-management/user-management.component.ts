@@ -135,7 +135,7 @@ export class UserManagementComponent {
       return false;
     }
 
-    return blnValid;      
+    return blnValid;
   }
 
   showNewUserDialog(): void {
@@ -174,8 +174,6 @@ export class UserManagementComponent {
       return;
     }
 
-    console.log('Casper 0 Username:', this.newUserForm.value.username);
-
     const newUser: User = {
       id: 0,
       username: this.newUserForm.value.ctlUsername,
@@ -205,7 +203,7 @@ export class UserManagementComponent {
   confirmDeleteUser(deletedUser: User): void {
     this.resetMessages();
     this.confirmationService.confirm({
-      message: 'Are you sure you want to delete user: <strong>' + deletedUser.username + '</strong>?',
+      message: 'Are you sure to delete user: <strong>' + deletedUser.username + '</strong>?',
       header: 'Confirm Deletion',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {

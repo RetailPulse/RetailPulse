@@ -8,7 +8,7 @@ export interface User {
   isEnabled: boolean;      // Status of the user. User may be disabled by the admin or too many entry of wrong password
 }
 
-export interface createUserDTO {
+export interface CreateUserDTO {
   username: string;
   password: string;
   email: string;
@@ -16,7 +16,7 @@ export interface createUserDTO {
   roles: string[];
 }
 
-export interface updateUserDTO {
+export interface UpdateUserDTO {
   name: string;
   email: string;
   roles: string[];
