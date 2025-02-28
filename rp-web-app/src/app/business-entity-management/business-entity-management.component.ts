@@ -67,9 +67,9 @@ export class BusinessEntityManagementComponent {
         this.isLoading.set(false);
       },
       error: (err) => {
-        this.error_msg.set('Failed to load users. Please try again later.');
+        this.error_msg.set('Failed to load business entities. Please try again later.');
         this.isLoading.set(false);
-        console.error('Error fetching users:', err);
+        console.error('Error fetching business entities:', err);
       }
     });
 

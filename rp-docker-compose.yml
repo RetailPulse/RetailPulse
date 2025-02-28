@@ -5,6 +5,8 @@ networks:
 volumes:
   mysql_identity_access_vol:
     driver: local
+  mysql_backend_vol:
+    driver: local
 
 services:
   # IAM MySQL service
@@ -39,6 +41,8 @@ services:
       MYSQL_DATABASE: RetailPulseDB
     ports:
       - "3307:3306"
+    volumes:
+      - mysql_backend_vol:/var/lib/mysql
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 30s
