@@ -55,8 +55,6 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '23' # Use the latest LTS version compatible with Angular 19
-        cache: 'npm' # Cache npm dependencies for faster builds
-        cache-dependency-path: package-lock.json
 
     # Step 7: Install Dependencies for RP Web App
     - name: Install Dependencies for RP Web App
