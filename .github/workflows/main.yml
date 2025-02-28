@@ -7,9 +7,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     # Step 1: Checkout the repository
     - uses: actions/checkout@v4
@@ -56,19 +54,21 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '22' # Use the latest LTS version compatible with Angular 19
+        node-version: '23' # Use the latest LTS version compatible with Angular 19
+        cache: 'npm' # Cache npm dependencies for faster builds
+        cache-dependency-path: package-lock.json
 
     # Step 7: Install Dependencies for RP Web App
     - name: Install Dependencies for RP Web App
       working-directory: rp-web-app
-      run: npm install
+      run: npm ci
 
-    # Step 8: Build RP Web App
+    # Step 8: Test RP Web App
+    - name: Test RP Web App
+      working-directory: rp-web-app
+      run: npm test:ci
+
+    # Step 9: Build RP Web App
     - name: Build RP Web App
       working-directory: rp-web-app
       run: npm run build --prod
-
-    # Step 9: Test RP Web App
-    - name: Test RP Web App
-      working-directory: rp-web-app
-      run: npm test
