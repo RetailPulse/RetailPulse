@@ -54,7 +54,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '23' # Use the latest LTS version compatible with Angular 19
+        node-version: '22' # Use the latest LTS version compatible with Angular 19
 
     # Step 7: Install Dependencies for RP Web App
     - name: Install Dependencies for RP Web App
