@@ -1,9 +1,9 @@
-name: Java CI with Maven
+name: CI with Maven and npm
 
 on:
   push:
     branches: 
-      - "main"
+      - "stage"
 
 jobs:
   build:
@@ -11,18 +11,62 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # Step 1: Checkout the repository
     - uses: actions/checkout@v4
+
+    # Step 2: Set up JDK 23
     - name: Set up JDK 23
       uses: actions/setup-java@v4
       with:
-        java-version: '23'
+        java-version: '23' # Use the latest JDK 23
         distribution: 'temurin'
-   
-    - name: Clean
+        cache: 'maven' # Cache Maven dependencies for faster builds
+
+    # Step 3: Backend Build and Test
+    - name: Clean Backend
       run: mvn clean --file backend/pom.xml
 
-    - name: Build
+    - name: Build Backend
       run: mvn --batch-mode -DskipTests package --file backend/pom.xml
-    
-    - name: Test
+
+    - name: Test Backend
       run: mvn --batch-mode test --file backend/pom.xml
+
+    # Step 4: Identity Access Management Build and Test
+    - name: Clean Identity Access Management
+      run: mvn clean --file identity-access-management/pom.xml
+
+    - name: Build Identity Access Management
+      run: mvn --batch-mode -DskipTests package --file identity-access-management/pom.xml
+
+    - name: Test Identity Access Management
+      run: mvn --batch-mode test --file identity-access-management/pom.xml
+
+    # Step 5: User Management Build and Test
+    - name: Clean User Management
+      run: mvn clean --file user-management/pom.xml
+
+    - name: Build User Management
+      run: mvn --batch-mode -DskipTests package --file user-management/pom.xml
+
+    - name: Test User Management
+      run: mvn --batch-mode test --file user-management/pom.xml
+
+    # Step 6: Set up Node.js for Angular 19
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '22' # Use the latest LTS version compatible with Angular 19
+        cache: 'npm' # Cache npm dependencies for faster builds
+
+    # Step 7: Install Dependencies for RP Web App
+    - name: Install Dependencies for RP Web App
+      run: npm install --prefix rp-web-app
+
+    # Step 8: Build RP Web App
+    - name: Build RP Web App
+      run: npm run build --prefix rp-web-app
+
+    # Step 9: Test RP Web App
+    - name: Test RP Web App
+      run: npm test --prefix rp-web-app
