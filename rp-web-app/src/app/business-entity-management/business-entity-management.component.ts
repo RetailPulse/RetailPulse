@@ -76,23 +76,22 @@ export class BusinessEntityManagementComponent {
     // Initialize the New User Form
     this.newBusinessEntityForm = this.formBuilder.group({      
       ctlName: ['', Validators.required],
-      ctlLocation: ['', [Validators.required]],
-      ctlExternal: ['', Validators.required],
+      ctlLocation: ['', [Validators.required]],      
       ctlType: ['', Validators.required],
+      ctlExternal: ['', Validators.required],
     });
 
     // Initialize the Edit User Form
     this.editBusinessEntityForm = this.formBuilder.group({
       ctlId: ['', Validators.required],
       ctlName: ['', Validators.required],
-      ctlLocation: ['', [Validators.required]],
-      ctlExternal: ['', Validators.required],
+      ctlLocation: ['', [Validators.required]],      
       ctlType: ['', Validators.required],
+      ctlExternal: ['', Validators.required],
     });
 
     this.editBusinessEntityForm.get('ctlId')?.disable();
   }
-
 
   resetMessages(): void {
     this.error_msg.set(null);
@@ -117,7 +116,7 @@ export class BusinessEntityManagementComponent {
     }
     
     let fuse = new Fuse(this.businessEntities(), {
-      keys: ['name', 'location', 'external'],
+      keys: ['name', 'location', 'type'],
       threshold: 0.3
     })
 
@@ -177,7 +176,7 @@ export class BusinessEntityManagementComponent {
       id: -1,
       name: this.newBusinessEntityForm.value.ctlName,
       location: this.newBusinessEntityForm.value.ctlLocation,
-      external: this.newBusinessEntityForm.value.ctlExternal,
+      external: this.newBusinessEntityForm.value.ctlExternal=== 'true', 
       type: this.newBusinessEntityForm.value.ctlType,
       active: true,
     };
@@ -234,15 +233,70 @@ export class BusinessEntityManagementComponent {
     });
   }
 
-  showEditBusinessEntityForm(BusinessEntity: BusinessEntity): void {
+  showEditBusinessEntityForm(businessEntity: BusinessEntity): void {
+    this.selectedBusinessEntity.set(businessEntity);
+    this.resetMessages();
+    this.editBusinessEntityForm.reset();
+    this.editDialog_visible.set(true);
 
+    // Populate the form with the user's data
+    this.editBusinessEntityForm.patchValue({
+      ctlId: businessEntity.id,
+      ctlName: businessEntity.name,
+      ctlLocation: businessEntity.location,
+      ctlType: businessEntity.type,
+      ctlExternal: businessEntity.external,
+    });
   }
 
   confirmEditBusinessEntity(): void {
-
+    this.resetMessages();
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to edit business entity: <strong>' + this.editBusinessEntityForm.value.ctlName + '</strong>?',
+      header: 'Confirm Edit',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        // User confirmed, proceed with edit
+        this.editBusinessEntity();
+      },
+      reject: () => {
+        // User rejected, do nothing
+        this.error_msg.set('Edit canceled.');
+        console.log('Edit canceled.');
+      }
+    });
   }
 
   editBusinessEntity(): void {
+    this.resetMessages();
+    console.log('Editing Business Entity');
 
+    const editedBusinessEntity: BusinessEntity = {
+      id: this.selectedBusinessEntity()?.id || 0,
+      name: this.editBusinessEntityForm.value.ctlName,
+      location: this.editBusinessEntityForm.value.ctlLocation,      
+      type: this.editBusinessEntityForm.value.ctlType,
+      external: this.newBusinessEntityForm.value.ctlExternal=== 'true', 
+      active: true
+    };
+
+    this.businessEntityService.editUser(editedBusinessEntity).subscribe({
+      next: (updatedBusinessEntity: BusinessEntity) => {
+        console.log('Business Enitity edited:', updatedBusinessEntity);
+        this.businessEntities.update((currentBusinessEntity) =>
+          currentBusinessEntity.map((businessEntity) =>
+            businessEntity.id === updatedBusinessEntity.id ? updatedBusinessEntity : businessEntity
+          )
+        );
+        this.filteredBusinessEntities.set([...this.businessEntities()]);        
+        this.editDialog_visible.set(false);
+        this.success_msg.set('Business Entity ' + updatedBusinessEntity.name + ' was successfully edited');
+      },
+      
+      error: (err) => {
+        this.editDialog_error_msg.set(err);
+        console.error(err);
+      },
+    });
   }
 }

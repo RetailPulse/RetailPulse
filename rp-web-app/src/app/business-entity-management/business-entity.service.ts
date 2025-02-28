@@ -25,9 +25,9 @@ export class BusinessEntityService {
   createBusinessEntity(newBusinessEntity: BusinessEntity): Observable<BusinessEntity> {  
     const businessEntity_dto: BusinessEntityDTO = {
       name: newBusinessEntity.name,
-      location: newBusinessEntity.location,
+      location: newBusinessEntity.location,      
+      type: newBusinessEntity.type,
       external: newBusinessEntity.external,
-      type: newBusinessEntity.type
     };
     
     return this.http.post<BusinessEntity>(this.apiUrl, businessEntity_dto).pipe(
@@ -40,9 +40,9 @@ export class BusinessEntityService {
   editUser(currBusinessEntity: BusinessEntity): Observable<BusinessEntity> {  
     const businessEntity_dto: BusinessEntityDTO = {
       name: currBusinessEntity.name,
-      location: currBusinessEntity.location,
+      location: currBusinessEntity.location,      
+      type: currBusinessEntity.type,
       external: currBusinessEntity.external,
-      type: currBusinessEntity.type
     };
 
     return this.http.put<BusinessEntity>(`${this.apiUrl}/${currBusinessEntity.id}`, businessEntity_dto).pipe(

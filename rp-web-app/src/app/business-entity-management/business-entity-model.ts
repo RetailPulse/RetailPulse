@@ -1,17 +1,17 @@
 export interface BusinessEntity {
   id: number;
   name: string;
-  location: string;
-  external?: string;
+  location: string;  
   type: string;
   active: boolean;
+  external: boolean;
 }
 
 export interface BusinessEntityDTO {
   name: string;
-  location: string;
-  external?: string;
+  location: string;  
   type: string;
+  external: boolean;
 }
 
 export const BusinessEntityType = [

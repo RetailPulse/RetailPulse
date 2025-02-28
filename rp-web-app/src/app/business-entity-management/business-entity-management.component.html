@@ -45,18 +45,18 @@
         <tr>
           <th>ID</th>
           <th>Name</th>
-          <th>Location</th>
-          <th>External</th>
-          <th>Type</th>            
+          <th>Location</th>          
+          <th>Type</th>
+          <th>External</th>        
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-businessEntity>
         <tr>
           <td>{{ businessEntity.id }}</td>
           <td>{{ businessEntity.name }}</td>
-          <td>{{ businessEntity.location }}</td>
-          <td>{{ businessEntity.external }}</td>
-          <td>{{ businessEntity.type }}</td>            
+          <td>{{ businessEntity.location }}</td>          
+          <td>{{ businessEntity.type }}</td>    
+          <td>{{ businessEntity.external }}</td>        
           <td>
             <div class="button-container">
               <button pButton type="button" icon="pi pi-pencil" class="p-button-primary p-button-sm mr-2" (click)="showEditBusinessEntityForm(businessEntity)"></button>
@@ -71,7 +71,7 @@
 
 <p-dialog id="newBusinessEntityDialog" [(visible)]="newDialog_visible" 
   [modal]="true" 
-  [header]="'Register New User'"
+  [header]="'Register New Business Entity'"
   [style]="{width: '70vw', height: '100vh'}">
   @if (newDialog_error_msg()) {
     <div class="error-message">
@@ -80,7 +80,7 @@
   }
   <form [formGroup]="newBusinessEntityForm" (ngSubmit)="confirmNewBusinessEntity()">    
     <div class="grid p-fluid">
-      <div class="col-4 mb-3 mui-text-field">
+      <div class="col-6 mb-3 mui-text-field">
         <label for="txtName">Name</label>
         <input pInputText id="txtName" 
           formControlName="ctlName" 
@@ -92,7 +92,7 @@
           </div>
         }         
       </div>
-      <div class="col-4 mb-3 mui-text-field">
+      <div class="col-6 mb-3 mui-text-field">
         <label for="txtLocation">Location</label>
         <input pInputText id="txtLocation"  
           formControlName="ctlLocation" 
@@ -103,20 +103,8 @@
             <p>Location is required.</p>
           </div>
         }
-      </div>
-      <div class="col-4 mb-3 mui-text-field">
-        <label for="txtExternal">External</label>
-        <input pInputText id="txtExternal" 
-          formControlName="ctlExternal" 
-          placeholder=" "
-        />          
-        @if (isFieldInvalid(newBusinessEntityForm, 'ctlExternal')) {
-          <div class="label-error-message">
-            <p>External is required.</p>
-          </div>
-        }
-      </div>
-      <div class="col-4 mb-3 mui-select-field">
+      </div>      
+      <div class="col-6 mb-3 mui-select-field">
           <label for="selectEntityType">Entity Type</label>
           <p-select
             id="selectEntityType" 
@@ -127,6 +115,19 @@
             optionValue="value">
           </p-select>
       </div>
+      <div class="col-6 mb-3 external-container">
+        <label for="divExternal" class="ml-2">External</label>
+        <div id="divExternal" class="radio-group-container">          
+          <div class="flex items-center">
+              <p-radiobutton value="true" inputId="radTrue" formControlName="ctlExternal"/>
+              <label for="radTrue" class="ml-2">True</label>
+          </div>
+          <div class="flex items-center">
+            <p-radiobutton value="false" inputId="radFalse" formControlName="ctlExternal"/>
+            <label for="radFalse" class="ml-2">False</label>
+          </div>
+        </div>
+      </div>
     </div>
   </form>
   <ng-template pTemplate="footer">      
@@ -136,9 +137,9 @@
 </p-dialog>
 
 
-<p-dialog id="editUserDialog" [(visible)]="editDialog_visible" 
+<p-dialog id="editBusinessEntityDialog" [(visible)]="editDialog_visible" 
   [modal]="true" 
-  [header]="'Edit User'"
+  [header]="'Edit Business Entity'"
   [style]="{width: '70vw', height: '100vh'}">
   @if (editDialog_error_msg()) {
     <div class="error-message">
@@ -178,18 +179,6 @@
           </div>
         }
       </div>
-      <div class="col-4 mb-3 mui-text-field">
-        <label for="txtExternal">External</label>
-        <input pInputText id="txtExternal" 
-          formControlName="ctlExternal" 
-          placeholder=" "
-        />          
-        @if (isFieldInvalid(editBusinessEntityForm, 'ctlExternal')) {
-          <div class="label-error-message">
-            <p>External is required.</p>
-          </div>
-        }
-      </div>
       <div class="col-4 mb-3 mui-select-field">
           <label for="selectEntityType">EntityType</label>
           <p-select
@@ -200,6 +189,19 @@
             optionLabel="label"
             optionValue="value">
           </p-select>
+      </div>
+      <div class="col-6 mb-3 external-container">
+        <label for="divExternal" class="ml-2">External</label>
+        <div id="divExternal" class="radio-group-container">          
+          <div class="flex items-center">
+              <p-radiobutton value="true" inputId="radTrue" formControlName="ctlExternal"/>
+              <label for="radTrue" class="ml-2">True</label>
+          </div>
+          <div class="flex items-center">
+            <p-radiobutton value="false" inputId="radFalse" formControlName="ctlExternal"/>
+            <label for="radFalse" class="ml-2">False</label>
+          </div>
+        </div>
       </div>
     </div>
   </form>

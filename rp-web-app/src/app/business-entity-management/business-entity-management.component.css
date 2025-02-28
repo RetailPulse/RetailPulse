@@ -153,8 +153,8 @@
   transition: background-color 0.3s;
 }
 
-/* Style for the status container */
-.status-container {
+/* Style for the external container */
+.external-container {
   display: flex;
   flex-direction: column; /* Arrange children vertically */
   align-items: flex-start; /* Align items to the left */

@@ -257,11 +257,11 @@ export class UserManagementComponent {
   confirmEditUser(): void {
     this.resetMessages();
     this.confirmationService.confirm({
-      message: 'Are you sure you want to edit user: <strong>' + this.newUserForm.value.ctlUsername + '</strong>?',
+      message: 'Are you sure you want to edit user: <strong>' + this.editUserForm.value.ctlUsername + '</strong>?',
       header: 'Confirm Edit',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        // User confirmed, proceed with deletion
+        // User confirmed, proceed with edit
         this.editUser();
       },
       reject: () => {
