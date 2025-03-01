@@ -5,7 +5,7 @@ ENV MYSQL_DATABASE=identity_access
 ENV MYSQL_USER=user
 ENV MYSQL_PASSWORD=password
 
-COPY ./init.sql /docker-entrypoint-initdb.d/
+COPY ../identity.init.sql /docker-entrypoint-initdb.d/init.sql
 
 EXPOSE 3306
 

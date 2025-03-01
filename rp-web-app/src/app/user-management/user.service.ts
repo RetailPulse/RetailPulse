@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable } from 'rxjs';
-import {User, createUserDTO, updateUserDTO} from './user.model';
+import {User, CreateUserDTO, UpdateUserDTO} from './user.model';
 import {apiConfig} from '../../environments/environment';
 
 
@@ -10,7 +10,7 @@ import {apiConfig} from '../../environments/environment';
 })
 export class UserService {
   private http: HttpClient = inject(HttpClient);
-  private apiUrl = apiConfig.user_api_url + 'api/users'; // Replace with your API URL  
+  private apiUrl = apiConfig.user_api_url + 'api/users'; 
 
   constructor() { }
 
@@ -24,7 +24,7 @@ export class UserService {
 
   createUser(newUser: User): Observable<User> {
 
-    const create_user_dto: createUserDTO = {
+    const create_user_dto: CreateUserDTO = {
       username: newUser.username,
       password: 'password1',
       email: newUser.email,
@@ -41,7 +41,7 @@ export class UserService {
 
   editUser(currUser: User): Observable<User> {
 
-    const update_user_dto: updateUserDTO = {      
+    const update_user_dto: UpdateUserDTO = {      
       email: currUser.email,
       name: currUser.name,
       roles: currUser.roles,
