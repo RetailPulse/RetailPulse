@@ -75,7 +75,7 @@ public class InventoryTransactionService {
                 newDestinationInventory.setBusinessEntityId(destinationId);
                 newDestinationInventory.setQuantity(quantity);
                 newDestinationInventory.setTotalCostPrice(costPricePerUnit * quantity);
-                destinationInventory = Optional.of(inventoryService.saveInventory(newDestinationInventory));
+                inventoryService.saveInventory(newDestinationInventory);
             } else {
                 // Update existing destination inventory by adding the quantity.
                 Inventory existingDestinationInventory = destinationInventory.get();
