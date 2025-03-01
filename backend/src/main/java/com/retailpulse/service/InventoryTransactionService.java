@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Consumer;
 
 @Service
 public class InventoryTransactionService {
@@ -31,40 +33,21 @@ public class InventoryTransactionService {
     }
 
     public InventoryTransaction saveInventoryTransaction(@NotNull InventoryTransaction inventoryTransaction) {
+        validateInventoryTransactionRequestBody(inventoryTransaction);
+
         long productId = inventoryTransaction.getProductId();
         long sourceId = inventoryTransaction.getSource();
         long destinationId = inventoryTransaction.getDestination();
         int quantity = inventoryTransaction.getQuantity();
         double costPricePerUnit = inventoryTransaction.getCostPricePerUnit();
 
-        // Validate input Product
-        Optional<Product> product = productService.getProductById(productId);
-        if (product.isEmpty()) {
-            throw new IllegalArgumentException("Product not found for product id: " + productId);
-        }
-        if (!product.get().isActive()) {
-            throw new IllegalArgumentException("Product deleted for product id: " + productId);
-        }
-        // Validate input source & destination
-        if (sourceId == destinationId) {
-            throw new IllegalArgumentException("Source and Destination cannot be the same");
-        }
-        // Validate input quantity
-        if (quantity <= 0) {
-            throw new IllegalArgumentException("Quantity cannot be negative or zero");
-        }
-        // Validate input cost price per unit
-        if (costPricePerUnit < 0) {
-            throw new IllegalArgumentException("Cost price per unit cannot be negative");
-        }
-
         boolean isSourceExternal = businessEntityService.isExternalBusinessEntity(sourceId);
-        // Source External: No need to validate source inventory
+        // Source External: No need to validate/deduct source inventory
         if (!isSourceExternal) {
             // Validate source inventory
             Optional<Inventory> sourceInventory = inventoryService.getInventoryByProductIdAndBusinessEntityId(productId, sourceId);
             if (sourceInventory.isEmpty()) {
-                throw new IllegalArgumentException("Source inventory not found for product id: " 
+                throw new IllegalArgumentException("Source inventory not found for product id: "
                         + productId + " and source id: " + sourceId);
             }
             if (sourceInventory.get().getQuantity() < quantity) {
@@ -76,13 +59,14 @@ public class InventoryTransactionService {
             // Update source inventory: deduct the quantity
             Inventory existingSourceInventory = sourceInventory.get();
             existingSourceInventory.setQuantity(existingSourceInventory.getQuantity() - quantity);
+            existingSourceInventory.setTotalCostPrice(existingSourceInventory.getTotalCostPrice() - (costPricePerUnit * quantity));
             inventoryService.updateInventory(existingSourceInventory.getId(), existingSourceInventory);
         }
 
         boolean isDestinationExternal = businessEntityService.isExternalBusinessEntity(destinationId);
-            // Destination External: No need to deduct destination inventory
-            if (!isDestinationExternal) {
-                        // Update or create destination inventory 
+        // Destination External: No need to deduct destination inventory
+        if (!isDestinationExternal) {
+            // Update or create destination inventory
             Optional<Inventory> destinationInventory = inventoryService.getInventoryByProductIdAndBusinessEntityId(productId, destinationId);
             if (destinationInventory.isEmpty()) {
                 // Create new inventory for destination since it does not exist.
@@ -103,5 +87,84 @@ public class InventoryTransactionService {
 
         // Proceed with saving the transaction
         return inventoryTransactionRepository.save(inventoryTransaction);
+    }
+    /* Some of the things to consider when creating Update/Delete method
+    * Update -
+    * If Product can be updated
+    * * Need to add original Product to source inventory
+    * If source can be updated
+    * * Need to add Product back to original source inventory
+    * If destination can be updated
+    * * Need to minus Product from original destination inventory
+    * If quantity can be updated
+    * * If source same then need see the difference; if positive or negative;
+    *
+    *
+    * Example Note:
+    *
+    * 1. If Original ProductId = Updated ProductId
+    * * 1.1 Original Source = Updated Source
+    * * * 1.1.1 If quantity > updatedQuantity -> Need to add back to source
+    * * * 1.1.2 If quantity < updatedQuantity -> Need to minus
+    * * 1.2 Original Source != Updated Source
+    * * * 1.2.1 Add back inventory to original source; Minus inventory from updated source
+    *
+    * 2. If Original ProductId != Updated ProductId
+    * * 2.1 Original Source = Updated Source
+    * * * 2.1.1 Add back inventory of original ProductId to source
+    * * * 2.1.2 If updatedQuantity
+    */
+
+
+    // Helper Method
+    private InventoryTransaction updateInventoryTransaction(UUID id, InventoryTransaction inventoryTransactionDetails) {
+        InventoryTransaction inventoryTransaction = inventoryTransactionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Inventory not found with id: " + id));
+
+        updateField(inventoryTransactionDetails.getProductId(), inventoryTransaction::setProductId);
+        updateField(inventoryTransactionDetails.getQuantity(), inventoryTransaction::setQuantity);
+        updateField(inventoryTransactionDetails.getCostPricePerUnit(), inventoryTransaction::setCostPricePerUnit);
+        updateField(inventoryTransactionDetails.getSource(), inventoryTransaction::setSource);
+        updateField(inventoryTransactionDetails.getDestination(), inventoryTransaction::setDestination);
+        return inventoryTransactionRepository.save(inventoryTransaction);
+    }
+
+    // Generic helper method for updating fields
+    private <T> void updateField(T newValue, Consumer<T> updater) {
+        if (newValue == null) {
+            return;
+        }
+        if (newValue instanceof String && ((String) newValue).isEmpty()) {
+            return;
+        }
+        updater.accept(newValue);
+    }
+
+    // Validation Method
+    private void validateInventoryTransactionRequestBody(@NotNull InventoryTransaction inventoryTransaction) {
+        long productId = inventoryTransaction.getProductId();
+        long sourceId = inventoryTransaction.getSource();
+        long destinationId = inventoryTransaction.getDestination();
+
+        // Validate input Product
+        Optional<Product> product = productService.getProductById(productId);
+        if (product.isEmpty()) {
+            throw new IllegalArgumentException("Product not found for product id: " + productId);
+        }
+        if (!product.get().isActive()) {
+            throw new IllegalArgumentException("Product deleted for product id: " + productId);
+        }
+        // Validate input source & destination
+        if (sourceId == destinationId) {
+            throw new IllegalArgumentException("Source and Destination cannot be the same");
+        }
+        // Validate input quantity
+        if (inventoryTransaction.getQuantity() <= 0) {
+            throw new IllegalArgumentException("Quantity cannot be negative or zero");
+        }
+        // Validate input cost price per unit
+        if (inventoryTransaction.getCostPricePerUnit() < 0) {
+            throw new IllegalArgumentException("Cost price per unit cannot be negative");
+        }
     }
 }
