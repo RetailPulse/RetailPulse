@@ -27,6 +27,7 @@ export const routes: Routes = [
     children: [
       { path: 'product-management', loadComponent: lazyProductManagement },
       { path: 'user-management', loadComponent: lazyUserManagement },
+      { path : 'inventory-management', component: InventoryManagementComponent},
       { path: 'business-entity-management', loadComponent: lazyBusinessEntityManagement },
       { path: 'report-generation', loadComponent: lazyReportGeneration},
       { path: 'profile', loadComponent: lazyProfile },

@@ -50,7 +50,19 @@
   </mat-tab>
 
   <mat-tab label="Summary View">
+    <div class="mt-4 d-flex align-items-center mb-3">
+      <mat-form-field  class="custom-mat-form-field">
+        <mat-select  class="custom-mat-select" [(ngModel)]="selectedFilter" (ngModelChange)="onFilterChange($event)">
+
+          <mat-option placeholder="Fliter by" *ngFor="let option of filterOptions" [value]="option.value" class="custom-mat-option">
+            {{ option.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
     <div class="table-responsive">
+      <!-- Filter container with Bootstrap grid -->
+      <!-- Table -->
       <p-table [value]="filteredProducts" [responsiveLayout]="'scroll'" class="table table-hover">
         <ng-template pTemplate="header">
           <tr>
