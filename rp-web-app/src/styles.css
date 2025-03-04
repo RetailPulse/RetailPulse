@@ -1,63 +1,18 @@
-@import '@angular/material/prebuilt-themes/indigo-pink.css';
 @import "assets/theme.css";
 
-
-:root {
-  --pastel-blue: #a6d8f0;
-  --pastel-blue-dark: #7ec4e6;
-  --pastel-dark: #333333;
-  --pastel-light: #f9f9f9;
-  --pastel-border: #d1d1d1;
-  --radius-medium: 8px;
-}
+/* styles.css or styles.scss */
 /* Table Container */
 /* Apply background to the entire body and html */
 body {
-  /*padding-top: 2px;*/
   background-image: var(--bs-backdrop-bg);
   background-repeat: no-repeat;
   background-size: cover;
   padding: var(--space-large);
-  padding-top: var(--space-top);
   /*background-color: var(--pastel-light);*/
   border-radius: var(--radius-medium);
   min-height: 100vh;
   overflow: auto;
 }
-
-.info-message {
-  background-color: var(--pastel-light); /* Light background for neutral tone */
-  border-radius: var(--radius-medium); /* Rounded corners */
-  font-size: 0.9rem; /* Slightly smaller font size */
-  font-weight: bold;
-  color: var(--pastel-dark); /* Neutral text color */
-  text-align: left; /* Center-align the text */
-}
-
-
-/* Error message styling */
-.label-error-message {
-  color: red;
-  font-size: 12px;
-  margin-top: 5px;
-}
-
-/* Error message styling */
-.error-message {
-  color: red;
-  font-size: 18px;
-  font-weight: bold;
-  margin-top: 5px;
-}
-
-/* Success message styling */
-.success-message {
-  color: rgb(22, 94, 0);
-  font-size: 18px;
-  font-weight: bold;
-  margin-top: 5px;
-}
-
 .p-table-wrapper {
   /*background-color: v/ar(--pastel-background);*/
   border: 1px solid var(--pastel-border) !important ;
@@ -72,8 +27,7 @@ body {
 }
 
 .p-datatable-tbody > tr {
-  background-color: white!important;
-  color: var(--pastel-dark) !important;
+  background-color: var(--pastel-light) !important;
   transition: background-color 0.2s ease !important;
 }
 
@@ -243,3 +197,20 @@ body {
 .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
   left: 27px;
 }
+
+/* For Angular Material mat-select dropdown */
+.mat-select-panel {
+  background-color: white !important; /* Set background color to white */
+  border: 1px solid var(--pastel-border) !important; /* Optional: Border color */
+}
+
+.mat-option {
+  background-color: white !important; /* Ensure items are white */
+  color: var(--pastel-dark) !important; /* Ensure text color is readable */
+}
+
+.mat-option:hover {
+  background-color: var(--pastel-primary) !important; /* Optional: Hover effect */
+  color: var(--pastel-dark) !important;
+}
+
