@@ -24,7 +24,7 @@ body {
 
 .info-message {
   background-color: var(--pastel-light); /* Light background for neutral tone */
-  border-radius: var(--radius-medium); /* Rounded corners */  
+  border-radius: var(--radius-medium); /* Rounded corners */
   font-size: 0.9rem; /* Slightly smaller font size */
   font-weight: bold;
   color: var(--pastel-dark); /* Neutral text color */
@@ -239,3 +239,20 @@ body {
 .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
   left: 27px;
 }
+
+/* For Angular Material mat-select dropdown */
+.mat-select-panel {
+  background-color: white !important; /* Set background color to white */
+  border: 1px solid var(--pastel-border) !important; /* Optional: Border color */
+}
+
+.mat-option {
+  background-color: white !important; /* Ensure items are white */
+  color: var(--pastel-dark) !important; /* Ensure text color is readable */
+}
+
+.mat-option:hover {
+  background-color: var(--pastel-primary) !important; /* Optional: Hover effect */
+  color: var(--pastel-dark) !important;
+}
+

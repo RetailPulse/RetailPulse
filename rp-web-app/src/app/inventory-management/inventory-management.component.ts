@@ -7,9 +7,13 @@ import { MenuItem } from 'primeng/api';
 import { MatTab, MatTabGroup } from '@angular/material/tabs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import Fuse from 'fuse.js';
-import { Column, Product } from './inventory.model';
+import {Column, FilterOption, Product} from './inventory.model';
 import { InventoryService } from './inventory.service';
 import { InventoryModalComponent } from '../inventory-modal/inventory-modal.component';
+import {MatFormField, MatFormFieldModule} from '@angular/material/form-field';
+import {MatOption, MatSelectModule} from '@angular/material/select';
+import {HttpClient} from '@angular/common/http';
+import {MatInputModule} from '@angular/material/input';
 
 @Component({
   selector: 'app-inventory-management',
@@ -17,11 +21,13 @@ import { InventoryModalComponent } from '../inventory-modal/inventory-modal.comp
   imports: [
     TableModule,
     TagModule,
-    FormsModule,
     CommonModule,
     MatTab,
     MatTabGroup,
     MatDialogModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    FormsModule,
   ],
   templateUrl: './inventory-management.component.html',
   styleUrls: ['./inventory-management.component.css'],
@@ -34,6 +40,8 @@ export class InventoryManagementComponent implements OnInit {
   isModalOpen: boolean = false;
   cols: Column[] = [];
   limitedCols: Column[] = [];
+  filterOptions: FilterOption[] = [];
+  selectedFilter: string = '';
 
   menuItems: MenuItem[] = [
     { label: 'Allocate Product', icon: 'pi pi-plus' },
@@ -49,11 +57,38 @@ export class InventoryManagementComponent implements OnInit {
   selectedOption1: number | null = null;
   selectedOption2: number | null = null;
 
-  constructor(private productService: InventoryService, private dialog: MatDialog) {}
+  constructor(private productService: InventoryService, private dialog: MatDialog, private http: HttpClient) {}
 
   ngOnInit(): void {
     this.loadProducts();
     this.initializeColumns();
+    this.fetchFilterOptions();
+  }
+
+  fetchFilterOptions(): void {
+    this.filterOptions = [
+    { "value": "option1", "label": "Option 1" },
+    { "value": "option2", "label": "Option 2" },
+    { "value": "option3", "label": "Option 3" }
+  ]
+  }
+    // Replace with your API endpoint
+    // const apiUrl = 'https://api.example.com/filter-options';
+    //
+    // this.http.get<FilterOption[]>(apiUrl).subscribe(
+    //   (data) => {
+    //     this.filterOptions = data; // Assign API response to filterOptions
+    //   },
+    //   (error) => {
+    //     console.error('Error fetching filter options:', error);
+    //   }
+    // );
+
+
+  onFilterChange(filterValue: string): void {
+    // Implement your filtering logic here
+    console.log('Selected Filter:', filterValue);
+    // Example: Filter the `filteredProducts` array based on `filterValue`
   }
 
   private loadProducts(): void {
@@ -72,8 +107,8 @@ export class InventoryManagementComponent implements OnInit {
     ];
 
     this.limitedCols = [
-      { field: 'sku', header: 'SKU' },
       { field: 'shop', header: 'Shop Name' },
+      { field: 'sku', header: 'SKU' },
       { field: 'quantity', header: 'Quantity' },
     ];
   }
@@ -112,6 +147,7 @@ export class InventoryManagementComponent implements OnInit {
         console.log('Selected Options:', result.selectedOption1, result.selectedOption2);
       }
       this.isModalOpen = false;
+      this.isMenuOpen = false;
     });
 
   }
