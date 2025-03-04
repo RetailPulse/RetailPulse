@@ -7,16 +7,13 @@ import { MenuItem } from 'primeng/api';
 import { MatTab, MatTabGroup } from '@angular/material/tabs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import Fuse from 'fuse.js';
-import { Column, Product } from './inventory.model';
-import { InventoryModalComponent } from '../inventory-modal/inventory-modal.component';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { FilterOption} from './inventory.model';
+import {Column, FilterOption, Product} from './inventory.model';
 import { InventoryService } from './inventory.service';
 import { InventoryModalComponent } from '../inventory-modal/inventory-modal.component';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import { MatSelectChange, MatSelectModule} from '@angular/material/select';
+import {MatFormField, MatFormFieldModule} from '@angular/material/form-field';
+import {MatOption, MatSelectModule} from '@angular/material/select';
 import {HttpClient} from '@angular/common/http';
-import {ProductService} from '../product-management/product.service';
+import {MatInputModule} from '@angular/material/input';
 
 @Component({
   selector: 'app-inventory-management',
@@ -24,7 +21,6 @@ import {ProductService} from '../product-management/product.service';
   imports: [
     TableModule,
     TagModule,
-    FormsModule,
     CommonModule,
     MatTab,
     MatTabGroup,
@@ -52,17 +48,16 @@ export class InventoryManagementComponent implements OnInit {
     { label: 'Import Products', icon: 'pi pi-upload' },
   ];
 
-  dropdownOptions = [ //fetch buiness entity
+  dropdownOptions = [
     { label: 'Option 1', value: 1 },
     { label: 'Option 2', value: 2 },
     { label: 'Option 3', value: 3 }
   ];
 
-  //would need to fliter in the second option based on the first option
-  selectedOption1: string | null = null;
-  selectedOption2: "Warehouse" | "Shop" | "Supplier" | null = null ;
+  selectedOption1: number | null = null;
+  selectedOption2: number | null = null;
 
-  constructor(private productService: ProductService, private dialog: MatDialog, private http: HttpClient) {}
+  constructor(private productService: InventoryService, private dialog: MatDialog, private http: HttpClient) {}
 
   ngOnInit(): void {
     this.loadProducts();
@@ -70,7 +65,7 @@ export class InventoryManagementComponent implements OnInit {
     this.fetchFilterOptions();
   }
 
-  fetchFilterOptions(): void { //fetch all the shop entity
+  fetchFilterOptions(): void {
     this.filterOptions = [
     { "value": "option1", "label": "Option 1" },
     { "value": "option2", "label": "Option 2" },
@@ -90,7 +85,7 @@ export class InventoryManagementComponent implements OnInit {
     // );
 
 
-  onFilterChange(filterValue: MatSelectChange): void {
+  onFilterChange(filterValue: string): void {
     // Implement your filtering logic here
     console.log('Selected Filter:', filterValue);
     // Example: Filter the `filteredProducts` array based on `filterValue`
@@ -155,4 +150,5 @@ export class InventoryManagementComponent implements OnInit {
       this.isMenuOpen = false;
     });
 
+  }
 }
