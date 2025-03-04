@@ -1,5 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
+
+import { createMockAuthService } from '../mock/auth.service.mock';
+import { ConfirmationService } from 'primeng/api'; 
 
 import { LoginFormComponent } from './login-form.component';
 
@@ -7,22 +12,17 @@ describe('LoginFormComponent', () => {
   let component: LoginFormComponent;
   let fixture: ComponentFixture<LoginFormComponent>;
 
-  // Mock AuthService
-  let authServiceSpy: jasmine.SpyObj<AuthService>;
-  const mockAuthService = {
-    login: jasmine.createSpy('login'),
-    logout: jasmine.createSpy('logout'), 
-    initializeAuth: jasmine.createSpy('initializeAuth').and.returnValue(Promise.resolve()),
-    isAuthenticated: jasmine.createSpy('isAuthenticated').and.returnValue(true),
-    accessToken: jasmine.createSpy('isAuthenticated').and.returnValue('dummy-access-token'),
-    getUserRoles: jasmine.createSpy('getUserRoles').and.returnValue(['ADMIN']),
-  };
-
   beforeEach(async () => {
+     // Mock AuthService
+     const mockAuthService = createMockAuthService();
+
     await TestBed.configureTestingModule({
       imports: [LoginFormComponent],
       providers: [
+         provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: AuthService, useValue: mockAuthService }, // Mock AuthService
+        ConfirmationService,
       ]
     })
     .compileComponents();

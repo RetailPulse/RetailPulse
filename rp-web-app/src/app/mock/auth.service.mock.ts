@@ -2,14 +2,31 @@
 import { AuthService } from '../services/auth.service';
 
 export const createMockAuthService = (): jasmine.SpyObj<AuthService> => {
-  return {
-    login: jasmine.createSpy('login'),
-    logout: jasmine.createSpy('logout'),
-    initializeAuth: jasmine.createSpy('initializeAuth').and.returnValue(Promise.resolve()),
-    get isAuthenticated() { return true; },
-    get accessToken() { return 'dummy-access-token'; },
-    getUserRole: jasmine.createSpy('getUserRole').and.returnValue(['ADMIN']),
-    router: jasmine.createSpyObj('router', ['navigate']),
-    oauthService: jasmine.createSpyObj('oauthService', ['initImplicitFlow', 'logOut']),
-  };
+
+  const mockAuthService = jasmine.createSpyObj<AuthService>('AuthService', [
+    'login',
+    'logout',
+    'initializeAuth',
+    'isAuthenticated',
+    'accessToken',
+    'getUserRole',
+  ]);
+
+  // Add properties for isAuthenticated and accessToken
+  mockAuthService.initializeAuth.and.returnValue(Promise.resolve());    
+  mockAuthService.getUserRole.and.returnValue(['ADMIN']);
+
+  Object.defineProperty(mockAuthService, 'isAuthenticated', {
+    value: true, // Set the value to `true`
+    writable: false, // Make it read-only
+    configurable: true, // Allow redefining if needed
+  });
+
+  Object.defineProperty(mockAuthService, 'accessToken', {
+    value: 'dummy-access-token', // Set the dummy token value
+    writable: false, // Make it read-only
+    configurable: true, // Allow redefining if needed
+  });
+  
+  return mockAuthService;
 };
