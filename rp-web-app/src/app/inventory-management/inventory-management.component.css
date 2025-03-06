@@ -175,14 +175,11 @@
 /* Custom styles for mat-form-field */
 .custom-mat-form-field {
   min-width: 200px;
-  display: inline-block;
 }
 
 /* Custom styles for mat-select */
 .custom-mat-select {
-  border-radius: 25px;  /* Make dropdown container rounded */
   width: 100%;
-  background-color: white;  /* Set background color */
   padding: 0.5rem; /* Add padding for better spacing */
   color: var(--pastel-dark);
 }
@@ -203,14 +200,16 @@
 }
 
 /* Mat-select dropdown panel customization */
-::ng-deep .mat-select-panel {
-  background-color: white !important;  /* White background for the panel */
-  border-radius: 15px !important;  /* Rounded corners for the dropdown panel */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);  /* Light shadow effect */
+.mat-select-panel {
+  background-color: white !important; /* Set solid background */
+  opacity: 1 !important; /* Ensure full opacity */
+  border-radius: 10px; /* Optional styling */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Optional shadow */
 }
 
+
 /* Styling for mat-select trigger (input box) */
-::ng-deep .mat-select-trigger {
+.mat-select-trigger {
   background-color: var(--pastel-light);  /* Light background for trigger */
   color: var(--pastel-dark) !important;  /* Text color */
   border-radius: 25px;  /* Rounded corners for the trigger */
@@ -220,7 +219,7 @@
 }
 
 /* Optional: Customize the dropdown icon */
-::ng-deep .mat-select-arrow {
+.mat-select-arrow {
   color: var(--pastel-dark) !important;  /* Color of the dropdown icon */
 }
 

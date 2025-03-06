@@ -28,6 +28,7 @@
               "src/assets"
             ],
             "styles": [
+              "src/custom-theme.scss",
               "src/styles.css",
               "src/assets/theme.css",
               "node_modules/primeicons/primeicons.css",

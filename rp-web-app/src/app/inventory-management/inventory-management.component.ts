@@ -10,10 +10,9 @@ import Fuse from 'fuse.js';
 import {Column, FilterOption, Product} from './inventory.model';
 import { InventoryService } from './inventory.service';
 import { InventoryModalComponent } from '../inventory-modal/inventory-modal.component';
-import {MatFormField, MatFormFieldModule} from '@angular/material/form-field';
-import {MatOption, MatSelectModule} from '@angular/material/select';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatSelectChange, MatSelectModule} from '@angular/material/select';
 import {HttpClient} from '@angular/common/http';
-import {MatInputModule} from '@angular/material/input';
 
 @Component({
   selector: 'app-inventory-management',
@@ -85,7 +84,7 @@ export class InventoryManagementComponent implements OnInit {
     // );
 
 
-  onFilterChange(filterValue: string): void {
+  onFilterChange(filterValue: MatSelectChange): void {
     // Implement your filtering logic here
     console.log('Selected Filter:', filterValue);
     // Example: Filter the `filteredProducts` array based on `filterValue`
