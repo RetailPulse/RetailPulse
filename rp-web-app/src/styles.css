@@ -1,13 +1,17 @@
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
 @import "assets/theme.css";
+
 
 /* styles.css or styles.scss */
 /* Table Container */
 /* Apply background to the entire body and html */
 body {
+  /*padding-top: 2px;*/
   background-image: var(--bs-backdrop-bg);
   background-repeat: no-repeat;
   background-size: cover;
   padding: var(--space-large);
+  padding-top: var(--space-top);
   /*background-color: var(--pastel-light);*/
   border-radius: var(--radius-medium);
   min-height: 100vh;
@@ -197,20 +201,3 @@ body {
 .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
   left: 27px;
 }
-
-/* For Angular Material mat-select dropdown */
-.mat-select-panel {
-  background-color: white !important; /* Set background color to white */
-  border: 1px solid var(--pastel-border) !important; /* Optional: Border color */
-}
-
-.mat-option {
-  background-color: white !important; /* Ensure items are white */
-  color: var(--pastel-dark) !important; /* Ensure text color is readable */
-}
-
-.mat-option:hover {
-  background-color: var(--pastel-primary) !important; /* Optional: Hover effect */
-  color: var(--pastel-dark) !important;
-}
-
