@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable } from 'rxjs';
-import {User, CreateUserDTO, UpdateUserDTO} from './user.model';
+import {User, CreateUserDTO, UpdateUserDTO} from '../models/user.model';
 import {apiConfig} from '../../environments/environment';
 
 
@@ -16,6 +16,15 @@ export class UserService {
 
   getUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.apiUrl).pipe(
+      catchError((err) => {        
+        throw new Error(err.error.message);
+      })
+    );
+  }
+
+  getUserByUsername(username: string): Observable<User> {
+    const urlSearch = `${this.apiUrl}/search?name=${encodeURIComponent(username)}`;
+    return this.http.get<User>(urlSearch).pipe(
       catchError((err) => {        
         throw new Error(err.error.message);
       })

@@ -1,0 +1,59 @@
+<div class="table-header-container">
+  <div class="table-header">My Profile</div>
+  <!-- Loading Indicator -->
+  @if (isLoading()) {
+    <div class="loading-indicator">
+      <p>Loading My Profile Page...</p>
+    </div>
+  }
+</div>
+  
+<!-- Error Message -->
+@if (error_msg()) {
+  <div class="error-message">
+    <p>{{ error_msg() }}</p>
+  </div>
+}
+
+<!-- Success Message -->
+@if (success_msg()) {
+  <div class="success-message">
+    <p>{{ success_msg() }}</p>
+  </div>
+}
+
+<!-- Profile Content -->
+@if (!isLoading() && myProfile()) {
+  <div class="profile-container">
+    <div class="profile-table">
+      <div class="profile-row">
+        <div class="profile-label">ID</div>
+        <div class="profile-value">{{ myProfile()?.id }}</div>
+      </div>
+      <div class="profile-row">
+        <div class="profile-label">Username</div>
+        <div class="profile-value">{{ myProfile()?.username }}</div>
+      </div>
+      <div class="profile-row">
+        <div class="profile-label">Full Name</div>
+        <div class="profile-value">{{ myProfile()?.name }}</div>
+      </div>
+      <div class="profile-row">
+        <div class="profile-label">Email</div>
+        <div class="profile-value">{{ myProfile()?.email }}</div>
+      </div>
+      <div class="profile-row">
+        <div class="profile-label">Role</div>
+        <div class="profile-value">{{ getFirstRole() }}</div>
+      </div>
+    </div>
+    <div class="button-container">
+      <button pButton 
+        type="button" 
+        label="Change Password" 
+        class="p-button-secondary" 
+        (click)="onChangePassword()">
+      </button>
+    </div>
+  </div>
+} 

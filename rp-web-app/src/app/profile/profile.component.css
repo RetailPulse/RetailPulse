@@ -1,0 +1,58 @@
+.table-header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.table-header {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--pastel-dark);
+}
+
+/* Center the profile container */
+.profile-container {
+  max-width: 600px; /* Adjust as needed */
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: left; /* Left-align text within the container */
+}
+
+/* Style the vertical table */
+.profile-table {
+  display: grid;
+  grid-template-columns: 1fr 2fr; /* Two columns: labels (1/3 width) and values (2/3 width) */
+  gap: 1rem;
+  border: 1px solid var(--pastel-border);
+  border-radius: var(--radius-medium);
+  padding: 1rem;
+  background-color: var(--pastel-light);
+}
+
+/* Style rows and labels */
+.profile-row {
+  display: contents; /* Ensure rows span the grid columns */
+}
+
+.profile-label {
+  font-weight: bold;
+  color: var(--pastel-dark);
+  padding: 0.5rem 0;
+}
+
+.profile-value {
+  padding: 0.5rem 0;
+  color: var(--pastel-dark);
+}
+
+/* Center the "Change Password" button */
+.button-container {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+/* Reuse existing button styles if needed */
+.button-container button {
+  width: 200px; /* Adjust width as needed */
+}

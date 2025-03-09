@@ -7,14 +7,17 @@ export const createMockAuthService = (): jasmine.SpyObj<AuthService> => {
     'login',
     'logout',
     'initializeAuth',
-    'isAuthenticated',
-    'accessToken',
+    'isAuthenticated',    
     'getUserRole',
+    'getUserName',
+    'accessToken',
+    'getDecodedToken',
   ]);
 
   // Add properties for isAuthenticated and accessToken
   mockAuthService.initializeAuth.and.returnValue(Promise.resolve());    
   mockAuthService.getUserRole.and.returnValue(['ADMIN']);
+  mockAuthService.getUserName.and.returnValue('superadmin');
 
   Object.defineProperty(mockAuthService, 'isAuthenticated', {
     value: true, // Set the value to `true`
@@ -24,6 +27,12 @@ export const createMockAuthService = (): jasmine.SpyObj<AuthService> => {
 
   Object.defineProperty(mockAuthService, 'accessToken', {
     value: 'dummy-access-token', // Set the dummy token value
+    writable: false, // Make it read-only
+    configurable: true, // Allow redefining if needed
+  });
+
+  Object.defineProperty(mockAuthService, 'getDecodedToken', {
+    value: 'dummy-decoded-access-token', // Set the dummy token value
     writable: false, // Make it read-only
     configurable: true, // Allow redefining if needed
   });

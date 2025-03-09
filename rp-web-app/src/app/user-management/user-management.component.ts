@@ -13,8 +13,8 @@ import { ConfirmationService } from 'primeng/api';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import Fuse from 'fuse.js';
 
-import {User, UserRoles} from './user.model';
-import {UserService} from './user.service';
+import {User, UserRoles} from '../models/user.model';
+import {UserService} from '../services/user.service';
 
 
 @Component({

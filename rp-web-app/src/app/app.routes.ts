@@ -8,6 +8,7 @@ const lazyOperatorPage = () => import('./operator-page/operator-page.component')
 const lazyProductManagement = () => import('./product-management/product-management.component').then(mod => mod.ProductManagementComponent);
 const lazyUserManagement = () => import('./user-management/user-management.component').then(mod => mod.UserManagementComponent);
 const lazyBusinessEntityManagement = () => import('./business-entity-management/business-entity-management.component').then(mod => mod.BusinessEntityManagementComponent);
+const lazyProfile = () => import('./profile/profile.component').then(mod => mod.ProfileComponent);
 
 export const routes: Routes = [
   // Login route
@@ -24,6 +25,7 @@ export const routes: Routes = [
       { path: 'product-management', loadComponent: lazyProductManagement },
       { path: 'user-management', loadComponent: lazyUserManagement },
       { path: 'business-entity-management', loadComponent: lazyBusinessEntityManagement },
+      { path: 'profile', loadComponent: lazyProfile },
       { path: '', redirectTo: 'business-entity-management', pathMatch: 'full' }, // Default child route
     ],
   },
@@ -34,6 +36,10 @@ export const routes: Routes = [
     loadComponent: lazyOperatorPage,
     canActivate: [authGuard],
     data: { roles: ['CASHER', 'MANAGER'] },
+    children: [      
+      { path: 'profile', loadComponent: lazyProfile },
+      { path: '', redirectTo: 'profile', pathMatch: 'full' }, // Default child route
+    ],
   },
 
   // Default route redirects to login
