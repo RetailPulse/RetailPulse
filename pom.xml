@@ -15,5 +15,7 @@
 
     <properties>
         <java.version>23</java.version>
+        <sonar.organization>retailpulse</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 </project>
