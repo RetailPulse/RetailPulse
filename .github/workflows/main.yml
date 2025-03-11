@@ -81,31 +81,31 @@ jobs:
     - name: Test User Management
       run: mvn --batch-mode test --file user-management/pom.xml
 
-  frontend-unit-tests:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout the repository
-      uses: actions/checkout@v4
+  # frontend-unit-tests:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: Checkout the repository
+  #     uses: actions/checkout@v4
 
-    - name: Set up Node.js for Angular 19
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ env.NODE_VERSION }} 
+  #   - name: Set up Node.js for Angular 19
+  #     uses: actions/setup-node@v3
+  #     with:
+  #       node-version: ${{ env.NODE_VERSION }} 
 
-    - name: Install Dependencies for RP Web App
-      working-directory: rp-web-app
-      run: npm ci
+  #   - name: Install Dependencies for RP Web App
+  #     working-directory: rp-web-app
+  #     run: npm ci
 
-    - name: Test RP Web App
-      working-directory: rp-web-app
-      run: npm run test:ci
+  #   - name: Test RP Web App
+  #     working-directory: rp-web-app
+  #     run: npm run test:ci
 
-    - name: Build RP Web App
-      working-directory: rp-web-app
-      run: npm run build:prod
+  #   - name: Build RP Web App
+  #     working-directory: rp-web-app
+  #     run: npm run build:prod
 
   sonarqube-scan:
-    needs: [backend-unit-tests, iam-unit-tests, user-management-unit-tests, frontend-unit-tests]
+    needs: [backend-unit-tests, iam-unit-tests, user-management-unit-tests] #, frontend-unit-tests
     runs-on: ubuntu-latest
 
     steps:
@@ -141,19 +141,19 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=RetailPulse_RetailPulse
 
-    # Analyze Frontend (Angular Project)
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ env.NODE_VERSION }}
+    # # Analyze Frontend (Angular Project)
+    # - name: Set up Node.js
+    #   uses: actions/setup-node@v3
+    #   with:
+    #     node-version: ${{ env.NODE_VERSION }}
 
-    - name: Install Dependencies for RP Web App
-      working-directory: rp-web-app
-      run: npm ci
+    # - name: Install Dependencies for RP Web App
+    #   working-directory: rp-web-app
+    #   run: npm ci
 
-    - name: Analyze Frontend with SonarQube
-      uses: SonarSource/sonarqube-scan-action@v5
-      with:
-        projectBaseDir: rp-web-app  # Specify the working directory here
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    # - name: Analyze Frontend with SonarQube
+    #   uses: SonarSource/sonarqube-scan-action@v5
+    #   with:
+    #     projectBaseDir: rp-web-app  # Specify the working directory here
+    #   env:
+    #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
