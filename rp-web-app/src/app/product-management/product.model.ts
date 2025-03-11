@@ -11,6 +11,7 @@ export class Product {
   origin!: string;        // Product's country of origin
   uom!: string;           // Unit of Measure (e.g., kg, liters, etc.)
   vendorCode!: string;   // Vendor code for the product
+  // You can add more fields here if needed
 
 }
 
