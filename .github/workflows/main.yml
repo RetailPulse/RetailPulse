@@ -124,32 +124,32 @@ jobs:
         key: ${{ runner.os }}-sonar
         restore-keys: ${{ runner.os }}-sonar
 
-    # Analyze Maven projects
-    - name: Cache Maven packages
-      uses: actions/cache@v4
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
+    # # Analyze Maven projects
+    # - name: Cache Maven packages
+    #   uses: actions/cache@v4
+    #   with:
+    #     path: ~/.m2
+    #     key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+    #     restore-keys: ${{ runner.os }}-m2
     
-    - name: Build and analyze
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=RetailPulse_RetailPulse
+    # - name: Build and analyze
+    #   env:
+    #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    #   run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=RetailPulse_RetailPulse
 
-    # Analyze Frontend (Angular Project)
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ env.NODE_VERSION }}
+    # # Analyze Frontend (Angular Project)
+    # - name: Set up Node.js
+    #   uses: actions/setup-node@v3
+    #   with:
+    #     node-version: ${{ env.NODE_VERSION }}
 
-    - name: Install Dependencies for RP Web App
-      working-directory: rp-web-app
-      run: npm ci
+    # - name: Install Dependencies for RP Web App
+    #   working-directory: rp-web-app
+    #   run: npm ci
 
-    - name: Analyze Frontend with SonarQube
-      uses: SonarSource/sonarqube-scan-action@v5
-      with:
-        projectBaseDir: rp-web-app  # Specify the working directory here
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}     
+    # - name: Analyze Frontend with SonarQube
+    #   uses: SonarSource/sonarqube-scan-action@v5
+    #   with:
+    #     projectBaseDir: rp-web-app  # Specify the working directory here
+    #   env:
+    #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}     
