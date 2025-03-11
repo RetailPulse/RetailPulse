@@ -11,9 +11,10 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private String sku;
 
+    @Column(nullable = false)
     private String description;
     private String category;
     private String subcategory;
@@ -22,6 +23,9 @@ public class Product {
     private String uom;
     private String vendorCode;
     private String barcode;
-    private double rrp; // Recommended Retail Price
+    @Column(nullable = false)
+    private double rrp = 0.0; // Recommended Retail Price
+
+    @Column(nullable = false)
     private boolean isActive = true;
 }

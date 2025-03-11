@@ -65,6 +65,6 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable Long id) {
         logger.info("Deleting product with id: " + id);
-        productService.deleteProduct(id);
+        productService.softDeleteProduct(id);
     }
 }

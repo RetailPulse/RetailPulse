@@ -36,4 +36,17 @@ public class InventoryTransactionController {
             throw e;
         }
     }
+
+//    @PutMapping("/{id}")
+//    public InventoryTransaction updateInventoryTransaction(@PathVariable UUID id, @RequestBody InventoryTransaction inventoryTransaction) {
+//        logger.info("Received request to update inventory transaction with id: " + id);
+//        try {
+//            InventoryTransaction updatedInventoryTransaction = inventoryTransactionService.updateInventoryTransaction(id, inventoryTransaction);
+//            logger.info("Successfully updated inventory transaction with id: " + updatedInventoryTransaction.getId());
+//            return updatedInventoryTransaction;
+//        } catch (Exception e) {
+//            logger.severe("Error updating inventory transaction: " + e.getMessage());
+//            throw e;
+//        }
+//    }
 }
