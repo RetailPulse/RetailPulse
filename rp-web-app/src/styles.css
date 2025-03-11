@@ -72,7 +72,8 @@ body {
 }
 
 .p-datatable-tbody > tr {
-  background-color: var(--pastel-light) !important;
+  background-color: white!important;
+  color: var(--pastel-dark) !important;
   transition: background-color 0.2s ease !important;
 }
 

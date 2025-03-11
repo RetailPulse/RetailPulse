@@ -13,6 +13,7 @@ import { InventoryModalComponent } from '../inventory-modal/inventory-modal.comp
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatSelectChange, MatSelectModule} from '@angular/material/select';
 import {HttpClient} from '@angular/common/http';
+import {ProductService} from '../product-management/product.service';
 
 @Component({
   selector: 'app-inventory-management',
@@ -47,16 +48,17 @@ export class InventoryManagementComponent implements OnInit {
     { label: 'Import Products', icon: 'pi pi-upload' },
   ];
 
-  dropdownOptions = [
+  dropdownOptions = [ //fetch buiness entity
     { label: 'Option 1', value: 1 },
     { label: 'Option 2', value: 2 },
     { label: 'Option 3', value: 3 }
   ];
 
-  selectedOption1: number | null = null;
-  selectedOption2: number | null = null;
+  //would need to fliter in the second option based on the first option
+  selectedOption1: string | null = null;
+  selectedOption2: "Warehouse" | "Shop" | "Supplier" | null = null ;
 
-  constructor(private productService: InventoryService, private dialog: MatDialog, private http: HttpClient) {}
+  constructor(private productService: ProductService, private dialog: MatDialog, private http: HttpClient) {}
 
   ngOnInit(): void {
     this.loadProducts();
@@ -64,7 +66,7 @@ export class InventoryManagementComponent implements OnInit {
     this.fetchFilterOptions();
   }
 
-  fetchFilterOptions(): void {
+  fetchFilterOptions(): void { //fetch all the shop entity
     this.filterOptions = [
     { "value": "option1", "label": "Option 1" },
     { "value": "option2", "label": "Option 2" },
