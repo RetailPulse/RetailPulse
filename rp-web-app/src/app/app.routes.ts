@@ -26,7 +26,7 @@ export const routes: Routes = [
       { path: 'user-management', loadComponent: lazyUserManagement },
       { path: 'business-entity-management', loadComponent: lazyBusinessEntityManagement },
       { path: 'profile', loadComponent: lazyProfile },
-      { path: '', redirectTo: 'business-entity-management', pathMatch: 'full' }, // Default child route
+      { path: '', redirectTo: 'user-management', pathMatch: 'full' }, // Default child route
     ],
   },
 

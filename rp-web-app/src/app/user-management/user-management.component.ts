@@ -200,6 +200,28 @@ export class UserManagementComponent {
     });
   }
 
+  // confirmResetPassword(selectedUser: User): void {
+  //   this.resetMessages();
+  //   this.confirmationService.confirm({
+  //     message: 'Are you sure to reset password for user: <strong>' + selectedUser.username + '</strong>?',
+  //     header: 'Confirm Reset Password',
+  //     icon: 'pi pi-exclamation-triangle',
+  //     accept: () => {
+  //       // User confirmed, proceed with deletion
+  //       console.log('Resetting password for user:', selectedUser.username);
+  //     },
+  //     reject: () => {
+  //       // User rejected, do nothing
+  //       this.error_msg.set('Reset Password canceled.');
+  //       console.log('Reset Password canceled.');
+  //     }
+  //   });
+  // }
+
+  // resetPassword(selectedUser: User): void {
+  //   this.resetMessages();   
+  // }
+
   confirmDeleteUser(deletedUser: User): void {
     this.resetMessages();
     this.confirmationService.confirm({

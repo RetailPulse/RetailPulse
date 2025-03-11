@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable } from 'rxjs';
-import {User, CreateUserDTO, UpdateUserDTO} from '../models/user.model';
+import {User, CreateUserDTO, UpdateUserDTO, ChangePasswordDTO} from '../models/user.model';
 import {apiConfig} from '../../environments/environment';
 
 
@@ -68,6 +68,20 @@ export class UserService {
     return this.http.delete<void>(`${this.apiUrl}/${userId}`).pipe(
       catchError((err) => {        
         throw new Error(err.error.message);
+      })
+    );
+  }
+
+  changePassword(userId: number, oldPassword: string, newPassword: string): Observable<void> {
+
+    const change_password_dto: ChangePasswordDTO = {
+      oldPassword: oldPassword,
+      newPassword: newPassword
+    };
+
+    return this.http.patch<void>(`${this.apiUrl}/${userId}/change-password`, change_password_dto).pipe(
+      catchError((err) => {        
+        throw new Error(err.error.message); 
       })
     );
   }
