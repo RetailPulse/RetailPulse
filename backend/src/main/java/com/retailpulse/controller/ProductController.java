@@ -67,4 +67,10 @@ public class ProductController {
         logger.info("Deleting product with id: " + id);
         productService.softDeleteProduct(id);
     }
+
+    @PutMapping("/reverseSoftDelete/{id}")
+    public Product reverseSoftDeleteProduct(@PathVariable Long id) {
+        logger.info("Reverse soft delete of product with id: " + id);
+        return productService.reverseSoftDelete(id);
+    }
 }
