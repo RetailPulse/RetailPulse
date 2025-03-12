@@ -45,6 +45,11 @@ public class UserService {
         return userEntityOptional.map(UserMapper::toDomain).map(UserMapper::toDTO);
     }
 
+    public Optional<ViewUserDTO> getUserByUsername(String username) {
+        Optional<UserEntity> userEntityOptional = userRepository.findByUsername(username);
+        return userEntityOptional.map(UserMapper::toDomain).map(UserMapper::toDTO);
+    }
+
     public Optional<ViewUserDTO> getUserByName(String name) {
         Optional<UserEntity> userEntityOptional = userRepository.findByNameContaining(name);
         return userEntityOptional.map(UserMapper::toDomain).map(UserMapper::toDTO);
