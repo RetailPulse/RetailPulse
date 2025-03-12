@@ -83,6 +83,6 @@ public class ProductControllerTest {
         mockMvc.perform(delete("/api/products/1"))
                 .andExpect(status().isOk());
 
-        verify(productService, times(1)).deleteProduct(1L);
+        verify(productService, times(1)).softDeleteProduct(1L);
     }
 }
