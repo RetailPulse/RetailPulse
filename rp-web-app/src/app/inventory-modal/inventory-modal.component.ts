@@ -1,162 +1,250 @@
-import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogContent } from '@angular/material/dialog';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
-import { MatTableModule } from '@angular/material/table';
-import { MatIconModule } from '@angular/material/icon';
-import { MatCheckbox } from '@angular/material/checkbox';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Inject,
+  OnInit
+} from '@angular/core';
+import {
+  MatDialogRef,
+  MAT_DIALOG_DATA, MatDialogContent
+} from '@angular/material/dialog';
 import { SelectionModel } from '@angular/cdk/collections';
 import Fuse from 'fuse.js';
 import { Product } from '../product-management/product.model';
 import { ProductService } from '../product-management/product.service';
 import { BusinessEntity } from '../business-entity-management/business-entity-model';
 import { BusinessEntityService } from '../business-entity-management/business-entity.service';
+import {MatError, MatFormField, MatLabel} from '@angular/material/form-field';
+import {
+  MatCell, MatCellDef,
+  MatColumnDef,
+  MatHeaderCell,
+  MatHeaderCellDef,
+  MatHeaderRow, MatHeaderRowDef,
+  MatRow, MatRowDef,
+  MatTable
+} from '@angular/material/table';
+import {MatCheckbox} from '@angular/material/checkbox';
+import {MatOption, MatSelect} from '@angular/material/select';
+import {MatIconModule} from '@angular/material/icon';
+import {MatInput} from '@angular/material/input';
+import {MatButton, MatIconButton} from '@angular/material/button';
+import {NgForOf, NgIf} from '@angular/common';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 
 interface Allocation {
-  productId: number;
+  productId: string;
+  productSku: string;
   storeId: number;
+  storeName: string;
   quantity: number;
 }
 
 @Component({
   selector: 'app-inventory-modal',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatInputModule,
-    MatTableModule,
-    MatIconModule,
-    MatDialogContent,
-    MatCheckbox
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './inventory-modal.component.html',
-  styleUrls: ['./inventory-modal.component.css']
+  styleUrls: ['./inventory-modal.component.css'],
+  imports: [
+    MatFormField,
+    FormsModule,
+    MatTable,
+    MatCheckbox,
+    MatSelect,
+    MatOption,
+    MatInput,
+    MatButton,
+    MatHeaderCell,
+    MatCell,
+    MatColumnDef,
+    MatIconButton,
+    MatIconModule,
+    MatLabel,
+    MatError,
+    MatHeaderRow,
+    MatRow,
+    MatDialogContent,
+    MatHeaderCellDef,
+    NgIf,
+    MatCellDef,
+    MatRowDef,
+    MatHeaderRowDef,
+    NgForOf,
+    FormsModule,
+    ReactiveFormsModule
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InventoryModalComponent implements OnInit {
-  // Table Configuration
-  displayedColumns = ['select', 'name', 'sku', 'quantity'];
-  displayedColumnsForAllocation = ['product', 'store', 'quantity', 'actions'];
-  selection = new SelectionModel<Product>(true, []);
-
-  get allSelected(): boolean {
-    return !(this.selection.selected.length === this.filteredProducts.length);
-  }
-  // Data Sources
-  products: Product[] = []
+  importForm: FormGroup;
+  allocationForm: FormGroup;
+  products: Product[] = [];
   stores: BusinessEntity[] = [];
   filteredProducts: Product[] = [];
   allocations: Allocation[] = [];
-  warehouses = [{ id: 1, name: 'Main Warehouse' }];
-
-  // Form Controls
+  displayedColumns = ['select', 'sku', 'quantity'];
+  displayedColumnsForAllocation = ['product', 'store', 'quantity', 'actions'];
+  selection = new SelectionModel<Product>(true, []);
   searchTerm = '';
-  selectedSupplier?: number;
-  selectedDestination?: number;
-  selectedProduct?: number;
-  selectedStore?: number;
-  allocationQty = 1;
+  productSkus: string[] = [];
+  businessEntityNames: string[] = [];
+  selectedProductSku: string | null = null;
+  selectedBusinessEntityName: string | null = null;
 
   constructor(
     private dialogRef: MatDialogRef<InventoryModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: {
-      title: string;
-      isModalOpen: boolean;
-      products?: Product[];
-      stores?: BusinessEntity[];
-    },
+    @Inject(MAT_DIALOG_DATA) public data: { title: string, isModalOpen: boolean },
     private productService: ProductService,
-    private businessEntityService: BusinessEntityService
-  ) {}
-
-  ngOnInit(): void {
-    this.initializeData();
-
-  }
-
-  private initializeData(): void {
-    this.products = this.data.products || [];
-    this.stores = this.data.stores || [];
-
-    if (this.products.length === 0) {
-      this.fetchProducts();
-    } else {
-      this.filteredProducts = [...this.products];
-    }
-
-    if (this.stores.length === 0) {
-      this.fetchStores();
-    }
-  }
-
-  private fetchProducts(): void {
-    this.productService.getProducts().subscribe({
-      next: (products) => {
-        this.products = products.filter(p => p.active);
-        this.filteredProducts = [...this.products];
-      },
-      error: (error) => console.error('Error fetching products:', error)
+    private businessEntityService: BusinessEntityService,
+    private fb: FormBuilder
+  ) {
+    this.importForm = this.fb.group({
+      productQuantities: this.fb.array([])
     });
-  }
 
-  private fetchStores(): void {
-    this.businessEntityService.getBusinessEntities().subscribe({
-      next: (stores) => this.stores = stores,
-      error: (error) => console.error('Error fetching stores:', error)
+    this.allocationForm = this.fb.group({
+      productSku: ['', Validators.required],
+      businessEntityName: ['', Validators.required],
+      allocationQty: [1, [Validators.required, Validators.min(1)]]
     });
   }
 
   filterProducts(): void {
     const term = this.searchTerm.trim().toLowerCase();
-
     if (!term) {
       this.filteredProducts = [...this.products];
-      return;
+    } else {
+      const fuse = new Fuse(this.products, {
+        keys: ['name', 'sku'],
+        threshold: 0.3,
+        ignoreLocation: true,
+      });
+      this.filteredProducts = fuse.search(term).map(result => result.item);
     }
-
-    const fuse = new Fuse(this.products, {
-      keys: ['name', 'sku'],
-      threshold: 0.3,
-      ignoreLocation: true,
-    });
-
-    this.filteredProducts = fuse.search(term).map(result => result.item);
+    this.initProductQuantityControls();
   }
 
-  // Selection Handlers
+  // Controls are added to the productQuantities FormArray in the filterProducts method
+  // which is called whenever the product list is filtered:
+  initProductQuantityControls(): void {
+    const quantitiesFormArray = this.importForm.get('productQuantities') as FormArray;
+    quantitiesFormArray.clear();
+
+    this.filteredProducts.forEach(() => {
+      const control = new FormControl(1, {
+        validators: [Validators.required, Validators.min(1)],
+        nonNullable: true // Ensures default value is considered valid
+      });
+
+      // Immediately validate and mark as touched
+      control.updateValueAndValidity();
+      control.markAsTouched();
+
+      quantitiesFormArray.push(control);
+    });
+
+    // Trigger parent form validation
+    this.importForm.updateValueAndValidity();
+  }
+
+
+  get productQuantities(): FormArray {
+    return this.importForm.get('productQuantities') as FormArray;
+  }
+
+  getProductQuantityControl(index: number): FormControl {
+    if (!this.productQuantities?.controls[index]) {
+      return new FormControl(1, [Validators.required, Validators.min(1)]);
+    }
+    return this.productQuantities.at(index) as FormControl;
+  }
+
+  ngOnInit(): void {
+    this.importForm = this.fb.group({
+      productQuantities: this.fb.array([]) // Initialize empty array first
+    });
+    this.initializeData();
+  }
+
+  private initializeData(): void {
+    this.loadProducts();
+    this.loadStores();
+  }
+
+  loadProducts(): void {
+    this.productService.getProducts().subscribe(products => {
+    this.products = products.filter(p => p.active);
+    this.filteredProducts = [...this.products];
+    this.initProductQuantityControls();
+    this.productQuantities.updateValueAndValidity(); // Ensure form state update
+    });
+  }
+
+  loadStores(): void {
+    this.businessEntityService.getBusinessEntities().subscribe(stores => {
+      this.stores = stores;
+      this.businessEntityNames = this.stores.map(store => store.name);
+    });
+  }
+
   toggleProduct(product: Product): void {
     this.selection.toggle(product);
+    const index = this.filteredProducts.indexOf(product);
+    const control = this.getProductQuantityControl(index);
     if (!this.selection.isSelected(product)) {
-      console.log(product);
-      // put inside the inventory
-      // assuming that the product have the quantity to be imported
-      // add into the inventory
+      control.reset(1);
     }
   }
 
   toggleAllProducts(): void {
-    this.selection.hasValue() && this.selection.selected.length === this.filteredProducts.length
-      ? this.selection.clear()
-      : this.selection.select(...this.filteredProducts);
+    if (this.allSelected) {
+      this.selection.clear();
+      this.productQuantities.controls.forEach((control) => {
+        control.disable();
+        control.reset(1);
+      });
+    } else {
+      this.filteredProducts.forEach((product) => this.selection.select(product));
+      this.productQuantities.controls.forEach((control) => control.enable());
+    }
   }
 
-  // Allocation Management
+  get allSelected(): boolean {
+    return this.selection.selected.length === this.filteredProducts.length && this.filteredProducts.length > 0;
+  }
+
+  onProductSkuSelected(sku: string): void {
+    this.selectedProductSku = sku;
+  }
+
+  onBusinessEntitySelected(name: string): void {
+    this.selectedBusinessEntityName = name;
+  }
+
   addAllocation(): void {
-    if (this.selectedProduct && this.selectedStore && this.allocationQty > 0) {
-      this.allocations.push({
-        productId: this.selectedProduct,
-        storeId: this.selectedStore,
-        quantity: this.allocationQty
-      });
-      this.clearAllocationFields();
+    if (this.allocationForm.valid && this.selectedProductSku && this.selectedBusinessEntityName) {
+      const product = this.products.find(p => p.sku === this.selectedProductSku);
+      const store = this.stores.find(s => s.name === this.selectedBusinessEntityName);
+      if (product && store) {
+        const allocation: Allocation = {
+          productId: product.id,
+          productSku: product.sku,
+          storeId: store.id,
+          storeName: store.name,
+          quantity: this.allocationForm.get('allocationQty')?.value
+        };
+        this.allocations.push(allocation);
+        this.allocationForm.reset({ allocationQty: 1 });
+        this.selectedProductSku = null;
+        this.selectedBusinessEntityName = null;
+      }
     }
   }
 
@@ -164,34 +252,33 @@ export class InventoryModalComponent implements OnInit {
     this.allocations.splice(index, 1);
   }
 
-  private clearAllocationFields(): void {
-    this.selectedProduct = undefined;
-    this.selectedStore = undefined;
-    this.allocationQty = 1;
-  }
-
-  // Helper Methods
-  //getproductSKU
-
-  getProductSKU(productId: string): string {
-    return this.products.find(p => p.id === productId)?.sku || 'Unknown';
-  }
-  getStoreName(storeId: number): string {
-    return this.stores.find(s => s.id === storeId)?.name || 'Unknown';
-  }
-
-  // Dialog Actions
-
   submit(): void {
-    const importData = {
-      supplierId: this.selectedSupplier,
-      destinationId: this.selectedDestination,
-      products: this.selection.selected.map(p => ({
-        productId: p.id,
-        productSku: p.sku
-      }))
-    };
-    this.dialogRef.close(importData);
+    if (this.data.title === 'Import Products') {
+      this.submitImport();
+    } else if (this.data.title === 'Allocate Product') {
+      this.submitAllocation();
+    }
+  }
+
+  submitImport(): void {
+    if (this.importForm.valid) {
+      const importData = this.selection.selected.map((product, index) => ({
+        productId: product.id,
+        productSku: product.sku,
+        quantity: (this.productQuantities.at(index) as FormControl).value,
+      }));
+
+      console.log('Import Data:', importData);
+      // Submit import data here
+    }
+    else{
+      console.log('Please select at least one product to import');
+    }
+  }
+
+  submitAllocation(): void {
+    console.log('Allocation Data:', this.allocations);
+    this.dialogRef.close(this.allocations);
   }
 
   close(): void {
