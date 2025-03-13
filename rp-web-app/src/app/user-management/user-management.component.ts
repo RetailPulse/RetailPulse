@@ -1,9 +1,8 @@
 import { Component, signal, inject } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputText } from "primeng/inputtext";
@@ -140,7 +139,6 @@ export class UserManagementComponent {
 
   showNewUserDialog(): void {
     this.resetMessages();
-    console.log('Form State:', this.newUserForm);
     this.newUserForm.reset();
     this.newDialog_visible.set(true);
   }

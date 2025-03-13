@@ -23,8 +23,11 @@ export class UserService {
   }
 
   getUserByUsername(username: string): Observable<User> {
-    const urlSearch = `${this.apiUrl}/search?name=${encodeURIComponent(username)}`;
-    return this.http.get<User>(urlSearch).pipe(
+    const urlGetUser = `${this.apiUrl}/username/${username}`; 
+
+    console.log('Get User URL: ' + urlGetUser);
+    
+    return this.http.get<User>(urlGetUser).pipe(
       catchError((err) => {        
         throw new Error(err.error.message);
       })
@@ -72,14 +75,17 @@ export class UserService {
     );
   }
 
-  changePassword(userId: number, oldPassword: string, newPassword: string): Observable<void> {
+  changePassword(userId: number, oldPasswordIn: string, newPasswordIn: string): Observable<void> {
 
     const change_password_dto: ChangePasswordDTO = {
-      oldPassword: oldPassword,
-      newPassword: newPassword
+      oldPassword: oldPasswordIn,
+      newPassword: newPasswordIn
     };
 
-    return this.http.patch<void>(`${this.apiUrl}/${userId}/change-password`, change_password_dto).pipe(
+    const fullURL = `${this.apiUrl}/${userId}/change-password`;
+    console.log('Change Password URL: ' + fullURL);
+
+    return this.http.patch<void>(`${this.apiUrl}/${userId}/change-password`, change_password_dto, { responseType: 'text' as 'json' }).pipe(
       catchError((err) => {        
         throw new Error(err.error.message); 
       })

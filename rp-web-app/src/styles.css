@@ -1,5 +1,14 @@
 @import "assets/theme.css";
 
+:root {
+  --pastel-blue: #a6d8f0;
+  --pastel-blue-dark: #7ec4e6;
+  --pastel-dark: #333333;
+  --pastel-light: #f9f9f9;
+  --pastel-border: #d1d1d1;
+  --radius-medium: 8px;
+}
+
 /* Table Container */
 /* Apply background to the entire body and html */
 body {
@@ -12,6 +21,40 @@ body {
   min-height: 100vh;
   overflow: auto;
 }
+
+.info-message {
+  background-color: var(--pastel-light); /* Light background for neutral tone */
+  border-radius: var(--radius-medium); /* Rounded corners */  
+  font-size: 0.9rem; /* Slightly smaller font size */
+  font-weight: bold;
+  color: var(--pastel-dark); /* Neutral text color */
+  text-align: left; /* Center-align the text */
+}
+
+
+/* Error message styling */
+.label-error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+/* Error message styling */
+.error-message {
+  color: red;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+/* Success message styling */
+.success-message {
+  color: rgb(22, 94, 0);
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
 .p-table-wrapper {
   /*background-color: v/ar(--pastel-background);*/
   border: 1px solid var(--pastel-border);

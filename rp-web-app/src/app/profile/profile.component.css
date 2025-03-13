@@ -46,13 +46,32 @@
   color: var(--pastel-dark);
 }
 
-/* Center the "Change Password" button */
+.mui-text-field {
+  display: flex;
+  flex-direction: column; /* Stack the label and input vertically */
+  gap: 0.5rem; /* Add spacing between the label and the input */
+}
+
+/* Align the "Change Password" button to the right */
 .button-container {
-  text-align: center;
+  text-align: right; /* Align button to the right */
   margin-top: 2rem;
 }
 
-/* Reuse existing button styles if needed */
+/* Customize the button style */
 .button-container button {
-  width: 200px; /* Adjust width as needed */
+  background-color: var(--pastel-blue); /* Pastel blue background */
+  color: var(--pastel-dark); /* Text color */  
+  border-radius: 8px; /* Slightly rounded corners */
+  padding: 0.75rem 1.5rem; /* Adjust padding for better sizing */
+  font-size: 1rem; /* Font size */
+  font-weight: bold; /* Bold text */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth hover effects */
+}
+
+/* Hover effect for the button */
+.button-container button:hover {
+  background-color: var(--pastel-blue-dark); /* Darker pastel blue on hover */
+  transform: scale(1.05); /* Slightly enlarge the button */
 }

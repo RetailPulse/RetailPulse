@@ -203,26 +203,3 @@ p-radiobutton:focus {
   color: red;
   margin-left: 5px;
 }
-
-/* Error message styling */
-.label-error-message {
-  color: red;
-  font-size: 12px;
-  margin-top: 5px;
-}
-
-/* Error message styling */
-.error-message {
-  color: red;
-  font-size: 18px;
-  font-weight: bold;
-  margin-top: 5px;
-}
-
-/* Success message styling */
-.success-message {
-  color: rgb(22, 94, 0);
-  font-size: 18px;
-  font-weight: bold;
-  margin-top: 5px;
-}

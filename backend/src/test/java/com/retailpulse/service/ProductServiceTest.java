@@ -221,7 +221,7 @@ public class ProductServiceTest {
             return invocation.<Product>getArgument(0);
         });
 
-        productService.deleteProduct(1L);
+        productService.softDeleteProduct(1L);
 
         assertFalse(product.isActive()); // Ensure the product is marked as inactive
         verify(productRepository, times(1)).save(product); // Ensure the product is saved
