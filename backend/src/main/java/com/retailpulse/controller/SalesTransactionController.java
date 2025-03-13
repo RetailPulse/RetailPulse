@@ -79,7 +79,7 @@ public class SalesTransactionController {
      * @param newSalesDetails a list of new SalesDetails to replace the old ones
      * @return the updated SalesTransaction
      */
-    @PutMapping("/{transactionId}")
+    @PutMapping("updateSalesTransaction/{transactionId}")
     public ResponseEntity<SalesTransaction> updateSalesTransaction(
             @PathVariable Long transactionId,
             @RequestBody List<SalesDetails> newSalesDetails) {
