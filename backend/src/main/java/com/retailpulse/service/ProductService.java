@@ -2,6 +2,7 @@ package com.retailpulse.service;
 
 import com.retailpulse.entity.Product;
 import com.retailpulse.repository.ProductRepository;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,9 +31,12 @@ public class ProductService {
         return productRepository.findBySku(sku);
     }
 
-    public Product saveProduct(Product product) {
+    public Product saveProduct(@NotNull Product product) {
+        if (product.getRrp() < 0) {
+            throw new IllegalArgumentException("Recommended retail price cannot be negative");
+        }
         // Generate SKU before saving
-        String generatedSKU = skuGeneratorService.generateSKU();
+        String generatedSKU = skuGeneratorService.generateSKU(); 
         product.setSku(generatedSKU);
         return productRepository.save(product);
     }
@@ -69,9 +73,15 @@ public class ProductService {
         }
     }
 
-    public Product deleteProduct(Long id) {
+    public Product softDeleteProduct(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+
+        if (!product.isActive()) {
+            throw new IllegalArgumentException("Product with id " + id + " is already deleted.");
+        }
+
+        // TODO - Add check if Inventory have product; If yes, cannot delete
 
         product.setActive(false);
         return productRepository.save(product);

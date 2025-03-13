@@ -26,10 +26,18 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<ViewUserDTO> getUserById(@PathVariable Long id) {
         logger.info("Fetching user with id: " + id);
         return userService.getUserById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/username/{username}")
+    public ResponseEntity<ViewUserDTO> getUserByUsername(@PathVariable String username) {
+        logger.info("Fetching user with username: " + username);
+        return userService.getUserByUsername(username)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

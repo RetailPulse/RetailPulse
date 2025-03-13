@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
 import { LoginPageComponent } from './login-page/login-page.component';
+import {ReportGenerationComponent} from './report-generation/report-generation.component';
 
 // Lazy-loaded components
 const lazyAdminPage = () => import('./admin-page/admin-page.component').then(mod => mod.AdminPageComponent);
@@ -9,6 +10,7 @@ const lazyProductManagement = () => import('./product-management/product-managem
 const lazyUserManagement = () => import('./user-management/user-management.component').then(mod => mod.UserManagementComponent);
 const lazyBusinessEntityManagement = () => import('./business-entity-management/business-entity-management.component').then(mod => mod.BusinessEntityManagementComponent);
 const lazyProfile = () => import('./profile/profile.component').then(mod => mod.ProfileComponent);
+const lazyReportGeneration = () => import('./report-generation/report-generation.component').then(mod => mod.ReportGenerationComponent);
 
 export const routes: Routes = [
   // Login route
@@ -25,6 +27,7 @@ export const routes: Routes = [
       { path: 'product-management', loadComponent: lazyProductManagement },
       { path: 'user-management', loadComponent: lazyUserManagement },
       { path: 'business-entity-management', loadComponent: lazyBusinessEntityManagement },
+      { path: 'report-generation', loadComponent: lazyReportGeneration},
       { path: 'profile', loadComponent: lazyProfile },
       { path: '', redirectTo: 'user-management', pathMatch: 'full' }, // Default child route
     ],
