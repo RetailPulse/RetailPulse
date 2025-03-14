@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable } from 'rxjs';
-import { BusinessEntity, BusinessEntityDTO } from './business-entity-model';
+import { BusinessEntity, BusinessEntityDTO } from './business-entity.model';
 import { apiConfig } from '../../environments/environment';
 
 @Injectable({

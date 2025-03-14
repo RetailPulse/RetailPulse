@@ -59,14 +59,6 @@ export class AuthService {
     return this.oauthService.hasValidAccessToken();
   }
 
-  get accessToken(): string {
-    if (!environment.authEnabled) {
-      return 'dummy-access-token';
-    }
-
-    return this.oauthService.getAccessToken();
-  }
-
   public getUserRole(): string[] {
     if (!environment.authEnabled) {
       return [environment.devModeRole];
@@ -75,13 +67,53 @@ export class AuthService {
       return ['UNAUTHORIZED'];
     }
 
-    interface DecodedToken {
-      roles: Array<string>;
-    }
-
     let decodedToken = jwtDecode<DecodedToken>(this.accessToken);
 
     return decodedToken.roles;
   }
 
+  public getUsername(): string {
+
+    console.log('Casper Auth Mode: ' + environment.authEnabled);    
+    if (!environment.authEnabled) {
+      return environment.devModeUser;
+    }
+
+    if (!this.accessToken) {
+      return 'UNAUTHORIZED';
+    }
+
+    let decodedToken: DecodedToken = jwtDecode(this.accessToken);
+
+    return decodedToken.sub;
+  }
+
+  get accessToken(): string {
+    if (!environment.authEnabled) {
+      return 'dummy-access-token';
+    }
+
+    return this.oauthService.getAccessToken();
+  }
+
+  public getDecodedToken() {
+
+    if (!environment.authEnabled) {
+      console.log('Authentication is disabled');
+
+      const dummyToken: DecodedToken = {
+        roles: [environment.devModeRole],
+        sub: environment.devModeUser
+      };
+
+      return dummyToken;
+    }
+
+    return jwtDecode(this.accessToken);
+  }
+}
+
+export interface DecodedToken{
+  roles: Array<string>;
+  sub: string;  
 }

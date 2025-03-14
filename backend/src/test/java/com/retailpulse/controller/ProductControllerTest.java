@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -83,6 +84,6 @@ public class ProductControllerTest {
         mockMvc.perform(delete("/api/products/1"))
                 .andExpect(status().isOk());
 
-        verify(productService, times(1)).deleteProduct(1L);
+        verify(productService, times(1)).softDeleteProduct(1L);
     }
 }

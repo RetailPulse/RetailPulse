@@ -1,28 +1,159 @@
-name: Java CI with Maven
+name: RetailPulse CI Pipeline
 
 on:
-  push:
-    branches: 
-      - "main"
+  pull_request:
+    branches:
+      - "main" # Trigger on pull requests targeting the "stage" branch
+    types:
+      - opened
+      - synchronize
+      - reopened
+env:
+  JAVA_VERSION: '23'          # Centralized JDK version
+  DISTRIBUTION: 'temurin'     # Centralized distribution
+  MAVEN_CACHE: 'maven'        # Centralized cache type
+  NODE_VERSION: '22'          # Centralized Node.js version. Use the latest LTS version compatible with Angular 19
 
 jobs:
-  build:
-
+  backend-unit-tests:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 23
+    - name: Checkout the repository
+      uses: actions/checkout@v4
+
+    - name: Set up JDK
       uses: actions/setup-java@v4
       with:
-        java-version: '23'
-        distribution: 'temurin'
-   
-    - name: Clean
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: ${{ env.DISTRIBUTION }}
+        cache: ${{ env.MAVEN_CACHE }}
+
+    - name: Clean Backend
       run: mvn clean --file backend/pom.xml
 
-    - name: Build
+    - name: Build Backend
       run: mvn --batch-mode -DskipTests package --file backend/pom.xml
-    
-    - name: Test
+
+    - name: Test Backend
       run: mvn --batch-mode test --file backend/pom.xml
+
+  iam-unit-tests:      
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout the repository
+      uses: actions/checkout@v4
+
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: ${{ env.DISTRIBUTION }}
+        cache: ${{ env.MAVEN_CACHE }}
+
+    - name: Clean Identity Access Management
+      run: mvn clean --file identity-access-management/pom.xml
+
+    - name: Build Identity Access Management
+      run: mvn --batch-mode -DskipTests package --file identity-access-management/pom.xml
+
+    - name: Test Identity Access Management
+      run: mvn --batch-mode test --file identity-access-management/pom.xml
+
+  user-management-unit-tests:      
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout the repository
+      uses: actions/checkout@v4
+
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: ${{ env.DISTRIBUTION }}
+        cache: ${{ env.MAVEN_CACHE }}
+        
+    - name: Clean User Management
+      run: mvn clean --file user-management/pom.xml
+
+    - name: Build User Management
+      run: mvn --batch-mode -DskipTests package --file user-management/pom.xml
+
+    - name: Test User Management
+      run: mvn --batch-mode test --file user-management/pom.xml
+
+  frontend-unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout the repository
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js for Angular 19
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }} 
+
+    - name: Install Dependencies for RP Web App
+      working-directory: rp-web-app
+      run: npm ci
+
+    - name: Test RP Web App
+      working-directory: rp-web-app
+      run: npm run test:ci
+
+    - name: Build RP Web App
+      working-directory: rp-web-app
+      run: npm run build:prod
+
+  # sonarqube-scan:
+  #   needs: [backend-unit-tests, iam-unit-tests, user-management-unit-tests] #, frontend-unit-tests
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #   - name: Checkout the repository
+  #     uses: actions/checkout@v4
+  #     with:
+  #       fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+  #   - name: Set up JDK
+  #     uses: actions/setup-java@v4
+  #     with:
+  #       java-version: ${{ env.JAVA_VERSION }}
+  #       distribution: ${{ env.DISTRIBUTION }}
+  #       cache: ${{ env.MAVEN_CACHE }}
+
+  #   - name: Cache SonarQube packages
+  #     uses: actions/cache@v4
+  #     with:
+  #       path: ~/.sonar/cache
+  #       key: ${{ runner.os }}-sonar
+  #       restore-keys: ${{ runner.os }}-sonar
+
+  #   # Analyze Maven projects
+  #   - name: Cache Maven packages
+  #     uses: actions/cache@v4
+  #     with:
+  #       path: ~/.m2
+  #       key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+  #       restore-keys: ${{ runner.os }}-m2
+    
+  #   - name: Build and analyze
+  #     env:
+  #       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #     run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=RetailPulse_RetailPulse
+
+    # # Analyze Frontend (Angular Project)
+    # - name: Set up Node.js
+    #   uses: actions/setup-node@v3
+    #   with:
+    #     node-version: ${{ env.NODE_VERSION }}
+
+    # - name: Install Dependencies for RP Web App
+    #   working-directory: rp-web-app
+    #   run: npm ci
+
+    # - name: Analyze Frontend with SonarQube
+    #   uses: SonarSource/sonarqube-scan-action@v5
+    #   with:
+    #     projectBaseDir: rp-web-app  # Specify the working directory here
+    #   env:
+    #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
