@@ -140,7 +140,10 @@ jobs:
       working-directory: identity-access-management
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=RetailPulse_RetailPulse
+      run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+        -Dsonar.projectKey=RetailPulse_RetailPulse \
+        -Dsonar.sources=src/main/java \
+        -Dsonar.tests=src/test/java
 
     # # Analyze Frontend (Angular Project)
     # - name: Set up Node.js
