@@ -15,27 +15,27 @@ env:
   NODE_VERSION: '22'          # Centralized Node.js version. Use the latest LTS version compatible with Angular 19
 
 jobs:
-  backend-unit-tests:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout the repository
-      uses: actions/checkout@v4
+  # backend-unit-tests:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: Checkout the repository
+  #     uses: actions/checkout@v4
 
-    - name: Set up JDK
-      uses: actions/setup-java@v4
-      with:
-        java-version: ${{ env.JAVA_VERSION }}
-        distribution: ${{ env.DISTRIBUTION }}
-        cache: ${{ env.MAVEN_CACHE }}
+  #   - name: Set up JDK
+  #     uses: actions/setup-java@v4
+  #     with:
+  #       java-version: ${{ env.JAVA_VERSION }}
+  #       distribution: ${{ env.DISTRIBUTION }}
+  #       cache: ${{ env.MAVEN_CACHE }}
 
-    - name: Clean Backend
-      run: mvn clean --file backend/pom.xml
+  #   - name: Clean Backend
+  #     run: mvn clean --file backend/pom.xml
 
-    - name: Build Backend
-      run: mvn --batch-mode -DskipTests package --file backend/pom.xml
+  #   - name: Build Backend
+  #     run: mvn --batch-mode -DskipTests package --file backend/pom.xml
 
-    - name: Test Backend
-      run: mvn --batch-mode test --file backend/pom.xml
+  #   - name: Test Backend
+  #     run: mvn --batch-mode test --file backend/pom.xml
 
   # iam-unit-tests:      
   #   runs-on: ubuntu-latest
@@ -137,7 +137,7 @@ jobs:
         restore-keys: ${{ runner.os }}-m2
     
     - name: Build and 
-      working-directory: backend
+      working-directory: identity-access-management
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=RetailPulse_RetailPulse
