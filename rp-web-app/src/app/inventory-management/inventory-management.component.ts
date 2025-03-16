@@ -7,13 +7,11 @@ import { MenuItem } from 'primeng/api';
 import { MatTab, MatTabGroup } from '@angular/material/tabs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import Fuse from 'fuse.js';
-import {Column, FilterOption, Product} from './inventory.model';
+import {Column, FilterOption, InventoryTransaction} from './inventory.model';
 import { InventoryService } from './inventory.service';
-import { InventoryModalComponent } from '../inventory-modal/inventory-modal.component';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatSelectChange, MatSelectModule} from '@angular/material/select';
-import {HttpClient} from '@angular/common/http';
-import {ProductService} from '../product-management/product.service';
+import { InventoryModalComponent} from "../inventory-modal/inventory-modal.component";
 
 @Component({
   selector: 'app-inventory-management',
@@ -33,8 +31,6 @@ import {ProductService} from '../product-management/product.service';
   styleUrls: ['./inventory-management.component.css'],
 })
 export class InventoryManagementComponent implements OnInit {
-  products: Product[] = [];
-  filteredProducts: Product[] = [];
   searchTerm: string = '';
   isMenuOpen: boolean = false;
   isModalOpen: boolean = false;
@@ -42,26 +38,27 @@ export class InventoryManagementComponent implements OnInit {
   limitedCols: Column[] = [];
   filterOptions: FilterOption[] = [];
   selectedFilter: string = '';
+  inventoryTransactions: InventoryTransaction[] = [];
 
   menuItems: MenuItem[] = [
     { label: 'Allocate Product', icon: 'pi pi-plus' },
     { label: 'Import Products', icon: 'pi pi-upload' },
   ];
 
-  dropdownOptions = [ //fetch buiness entity
-    { label: 'Option 1', value: 1 },
-    { label: 'Option 2', value: 2 },
-    { label: 'Option 3', value: 3 }
-  ];
+  // dropdownOptions = [ //fetch buiness entity
+  //   { label: 'Option 1', value: 1 },
+  //   { label: 'Option 2', value: 2 },
+  //   { label: 'Option 3', value: 3 }
+  // ];
 
   //would need to fliter in the second option based on the first option
   selectedOption1: string | null = null;
   selectedOption2: "Warehouse" | "Shop" | "Supplier" | null = null ;
 
-  constructor(private productService: ProductService, private dialog: MatDialog, private http: HttpClient) {}
+  constructor(private inventoryService: InventoryService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
-    this.loadProducts();
+    this.loadInventoryTransaction();
     this.initializeColumns();
     this.fetchFilterOptions();
   }
@@ -92,19 +89,20 @@ export class InventoryManagementComponent implements OnInit {
     // Example: Filter the `filteredProducts` array based on `filterValue`
   }
 
-  private loadProducts(): void {
-    this.productService.getProducts().subscribe((data: Product[]) => {
-      this.products = data.filter(product => product.active);
-      this.filteredProducts = [...this.products];
+  private loadInventoryTransaction(): void {
+    this.inventoryService.getInventoryTransaction().subscribe((data: InventoryTransaction[]) => {
+      this.inventoryTransactions = [... data];
     });
   }
 
   private initializeColumns(): void {
     this.cols = [
-      { field: 'sku', header: 'SKU' },
-      { field: 'brand', header: 'Brand' },
-      { field: 'category', header: 'Category' },
-      { field: 'shop', header: 'Shop Name' },
+      { field: 'productId', header: 'Product Id' },
+      { field: 'quantity', header: 'Quantity' },
+      { field: 'costPerUnit', header: 'Cost Per Unit' },
+      { field: 'source', header: 'Source' },
+      { field: 'destination', header: 'Destination' },
+
     ];
 
     this.limitedCols = [
@@ -117,18 +115,18 @@ export class InventoryManagementComponent implements OnInit {
   filterProducts(): void {
     const term = this.searchTerm.trim().toLowerCase();
     if (!term) {
-      this.filteredProducts = [...this.products];
+      this.inventoryTransactions = [...this.inventoryTransactions];
       return;
     }
 
-    const fuse = new Fuse(this.products, {
+    const fuse = new Fuse(this.inventoryTransactions, {
       keys: ['sku', 'shop', 'category'],
       includeScore: true,
       threshold: 0.3,
       ignoreLocation: true,
     });
 
-    this.filteredProducts = fuse.search(term).map(result => result.item);
+    this.inventoryTransactions = fuse.search(term).map(result => result.item);
   }
 
   toggleMenu(event: MouseEvent): void {

@@ -25,23 +25,23 @@
 <mat-tab-group [attr.inert]="isModalOpen ? true : null">
   <mat-tab label="Full Inventory">
     <div class="table-responsive">
-      <p-table [value]="filteredProducts" [responsiveLayout]="'scroll'" class="table table-hover">
+      <p-table [value]="inventoryTransactions" [responsiveLayout]="'scroll'" class="table table-hover">
         <ng-template pTemplate="header">
           <tr>
             <th *ngFor="let col of cols">{{ col.header }}</th>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-product>
+        <ng-template pTemplate="body">
           <tr>
             <td *ngFor="let col of cols">
-              <ng-container [ngSwitch]="col.field">
-                <ng-container *ngSwitchCase="'is_active'">
-                  <p-tag [value]="product[col.field] ? 'Active' : 'Inactive'"></p-tag>
-                </ng-container>
-                <ng-container *ngSwitchDefault>
-                  {{ product[col.field] }}
-                </ng-container>
-              </ng-container>
+<!--              <ng-container [ngSwitch]="col.field">-->
+<!--                <ng-container *ngSwitchCase="'is_active'">-->
+<!--                  <p-tag [value]="product[col.field] ? 'Active' : 'Inactive'"></p-tag>-->
+<!--                </ng-container>-->
+<!--                <ng-container *ngSwitchDefault>-->
+<!--                  {{ product[col.field] }}-->
+<!--                </ng-container>-->
+<!--              </ng-container>-->
             </td>
           </tr>
         </ng-template>
@@ -60,24 +60,24 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <div class="table-responsive">
-      <!-- Filter container with Bootstrap grid -->
-      <!-- Table -->
-      <p-table [value]="filteredProducts" [responsiveLayout]="'scroll'" class="table table-hover">
-        <ng-template pTemplate="header">
-          <tr>
-            <th *ngFor="let col of limitedCols">{{ col.header }}</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-product>
-          <tr>
-            <td *ngFor="let col of limitedCols">
-              {{ product[col.field] }}
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </div>
+<!--    <div class="table-responsive">-->
+<!--      &lt;!&ndash; Filter container with Bootstrap grid &ndash;&gt;-->
+<!--      &lt;!&ndash; Table &ndash;&gt;-->
+<!--      <p-table [value]="filteredProducts" [responsiveLayout]="'scroll'" class="table table-hover">-->
+<!--        <ng-template pTemplate="header">-->
+<!--          <tr>-->
+<!--            <th *ngFor="let col of limitedCols">{{ col.header }}</th>-->
+<!--          </tr>-->
+<!--        </ng-template>-->
+<!--        <ng-template pTemplate="body" let-product>-->
+<!--          <tr>-->
+<!--            <td *ngFor="let col of limitedCols">-->
+<!--              {{ product[col.field] }}-->
+<!--            </td>-->
+<!--          </tr>-->
+<!--        </ng-template>-->
+<!--      </p-table>-->
+<!--    </div>-->
   </mat-tab>
 </mat-tab-group>
 

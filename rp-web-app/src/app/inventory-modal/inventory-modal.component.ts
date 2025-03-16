@@ -6,30 +6,64 @@ import {
 } from '@angular/core';
 import {
   MatDialogRef,
-  MAT_DIALOG_DATA, MatDialogContent
+  MAT_DIALOG_DATA,
+  MatDialogContent
 } from '@angular/material/dialog';
-import { SelectionModel } from '@angular/cdk/collections';
-import Fuse from 'fuse.js';
-import { Product } from '../product-management/product.model';
-import { ProductService } from '../product-management/product.service';
-import { BusinessEntity } from '../business-entity-management/business-entity-model';
-import { BusinessEntityService } from '../business-entity-management/business-entity.service';
-import {MatError, MatFormField, MatLabel} from '@angular/material/form-field';
 import {
-  MatCell, MatCellDef,
+  SelectionModel
+} from '@angular/cdk/collections';
+import Fuse from 'fuse.js';
+import {
+  Product
+} from '../product-management/product.model';
+import {
+  ProductService
+} from '../product-management/product.service';
+import {
+  BusinessEntity
+} from '../business-entity-management/business-entity-model';
+import {
+  BusinessEntityService
+} from '../business-entity-management/business-entity.service';
+import {
+  MatError,
+  MatFormField,
+  MatLabel
+} from '@angular/material/form-field';
+import {
+  MatCell,
+  MatCellDef,
   MatColumnDef,
   MatHeaderCell,
   MatHeaderCellDef,
-  MatHeaderRow, MatHeaderRowDef,
-  MatRow, MatRowDef,
+  MatHeaderRow,
+  MatHeaderRowDef,
+  MatRow,
+  MatRowDef,
   MatTable
 } from '@angular/material/table';
-import {MatCheckbox} from '@angular/material/checkbox';
-import {MatOption, MatSelect} from '@angular/material/select';
-import {MatIconModule} from '@angular/material/icon';
-import {MatInput} from '@angular/material/input';
-import {MatButton, MatIconButton} from '@angular/material/button';
-import {NgForOf, NgIf} from '@angular/common';
+import {
+  MatCheckbox
+} from '@angular/material/checkbox';
+import {
+  MatOption,
+  MatSelect
+} from '@angular/material/select';
+import {
+  MatIconModule
+} from '@angular/material/icon';
+import {
+  MatInput
+} from '@angular/material/input';
+import {
+  MatButton,
+  MatIconButton
+} from '@angular/material/button';
+import {
+  NgForOf,
+  NgIf,
+  CurrencyPipe
+} from '@angular/common';
 import {
   FormArray,
   FormBuilder,
@@ -37,8 +71,11 @@ import {
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
-  Validators,
+  Validators
 } from '@angular/forms';
+import {CurrencyMaskModule} from "ng2-currency-mask";
+import {InventoryModalService} from './inventory-modal.service';
+import {InventoryTransaction} from './inventory-modal.model';
 
 interface Allocation {
   productId: string;
@@ -78,9 +115,11 @@ interface Allocation {
     MatHeaderRowDef,
     NgForOf,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    CurrencyMaskModule
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [CurrencyPipe]
 })
 export class InventoryModalComponent implements OnInit {
   importForm: FormGroup;
@@ -89,24 +128,28 @@ export class InventoryModalComponent implements OnInit {
   stores: BusinessEntity[] = [];
   filteredProducts: Product[] = [];
   allocations: Allocation[] = [];
-  displayedColumns = ['select', 'sku', 'quantity'];
+  displayedColumns = ['select', 'sku', 'quantity', 'costPerUnit'];
   displayedColumnsForAllocation = ['product', 'store', 'quantity', 'actions'];
   selection = new SelectionModel<Product>(true, []);
   searchTerm = '';
-  productSkus: string[] = [];
   businessEntityNames: string[] = [];
   selectedProductSku: string | null = null;
   selectedBusinessEntityName: string | null = null;
 
   constructor(
     private dialogRef: MatDialogRef<InventoryModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { title: string, isModalOpen: boolean },
+    @Inject(MAT_DIALOG_DATA) public data: {
+      title: string,
+      isModalOpen: boolean
+    },
     private productService: ProductService,
     private businessEntityService: BusinessEntityService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private inventoryModalService: InventoryModalService,
   ) {
     this.importForm = this.fb.group({
-      productQuantities: this.fb.array([])
+      productQuantities: this.fb.array([]),
+      costPerUnits: this.fb.array([])
     });
 
     this.allocationForm = this.fb.group({
@@ -114,6 +157,18 @@ export class InventoryModalComponent implements OnInit {
       businessEntityName: ['', Validators.required],
       allocationQty: [1, [Validators.required, Validators.min(1)]]
     });
+  }
+
+  get productQuantities(): FormArray {
+    return this.importForm.get('productQuantities') as FormArray;
+  }
+
+  get costPerUnits(): FormArray {
+    return this.importForm.get('costPerUnits') as FormArray;
+  }
+
+  get allSelected(): boolean {
+    return this.selection.selected.length === this.filteredProducts.length && this.filteredProducts.length > 0;
   }
 
   filterProducts(): void {
@@ -131,32 +186,35 @@ export class InventoryModalComponent implements OnInit {
     this.initProductQuantityControls();
   }
 
-  // Controls are added to the productQuantities FormArray in the filterProducts method
-  // which is called whenever the product list is filtered:
   initProductQuantityControls(): void {
     const quantitiesFormArray = this.importForm.get('productQuantities') as FormArray;
+    const costPerUnitsFormArray = this.importForm.get('costPerUnits') as FormArray;
+
     quantitiesFormArray.clear();
+    costPerUnitsFormArray.clear();
 
     this.filteredProducts.forEach(() => {
-      const control = new FormControl(1, {
+      const quantityControl = new FormControl(1, {
         validators: [Validators.required, Validators.min(1)],
-        nonNullable: true // Ensures default value is considered valid
+        nonNullable: true
       });
 
-      // Immediately validate and mark as touched
-      control.updateValueAndValidity();
-      control.markAsTouched();
+      const costPerUnitControl = new FormControl(0, {
+        validators: [Validators.required, Validators.min(0.01)],
+        nonNullable: true
+      });
 
-      quantitiesFormArray.push(control);
+      quantityControl.updateValueAndValidity();
+      quantityControl.markAsTouched();
+
+      costPerUnitControl.updateValueAndValidity();
+      costPerUnitControl.markAsTouched();
+
+      quantitiesFormArray.push(quantityControl);
+      costPerUnitsFormArray.push(costPerUnitControl);
     });
 
-    // Trigger parent form validation
     this.importForm.updateValueAndValidity();
-  }
-
-
-  get productQuantities(): FormArray {
-    return this.importForm.get('productQuantities') as FormArray;
   }
 
   getProductQuantityControl(index: number): FormControl {
@@ -166,24 +224,27 @@ export class InventoryModalComponent implements OnInit {
     return this.productQuantities.at(index) as FormControl;
   }
 
+  getCostPerUnitControl(index: number): FormControl {
+    if (!this.costPerUnits?.controls[index]) {
+      return new FormControl(0, [Validators.required, Validators.min(0.01)]);
+    }
+    return this.costPerUnits.at(index) as FormControl;
+  }
+
   ngOnInit(): void {
     this.importForm = this.fb.group({
-      productQuantities: this.fb.array([]) // Initialize empty array first
+      productQuantities: this.fb.array([]),
+      costPerUnits: this.fb.array([])
     });
     this.initializeData();
   }
 
-  private initializeData(): void {
-    this.loadProducts();
-    this.loadStores();
-  }
-
   loadProducts(): void {
     this.productService.getProducts().subscribe(products => {
-    this.products = products.filter(p => p.active);
-    this.filteredProducts = [...this.products];
-    this.initProductQuantityControls();
-    this.productQuantities.updateValueAndValidity(); // Ensure form state update
+      this.products = products.filter(p => p.active);
+      this.filteredProducts = [...this.products];
+      this.initProductQuantityControls();
+      this.productQuantities.updateValueAndValidity();
     });
   }
 
@@ -216,10 +277,6 @@ export class InventoryModalComponent implements OnInit {
     }
   }
 
-  get allSelected(): boolean {
-    return this.selection.selected.length === this.filteredProducts.length && this.filteredProducts.length > 0;
-  }
-
   onProductSkuSelected(sku: string): void {
     this.selectedProductSku = sku;
   }
@@ -241,7 +298,9 @@ export class InventoryModalComponent implements OnInit {
           quantity: this.allocationForm.get('allocationQty')?.value
         };
         this.allocations.push(allocation);
-        this.allocationForm.reset({ allocationQty: 1 });
+        this.allocationForm.reset({
+          allocationQty: 1
+        });
         this.selectedProductSku = null;
         this.selectedBusinessEntityName = null;
       }
@@ -262,16 +321,24 @@ export class InventoryModalComponent implements OnInit {
 
   submitImport(): void {
     if (this.importForm.valid) {
-      const importData = this.selection.selected.map((product, index) => ({
+      const importData: InventoryTransaction[] = this.selection.selected.map((product, index) => ({
         productId: product.id,
-        productSku: product.sku,
         quantity: (this.productQuantities.at(index) as FormControl).value,
+        costPricePerUnit: (this.costPerUnits.at(index) as FormControl).value,
+        source: 'Supplier',
+        destination: 'Warehouse'
       }));
-
-      console.log('Import Data:', importData);
-      // Submit import data here
-    }
-    else{
+      console.log("Import Data:", importData);
+      this.inventoryModalService.createInventoryTransaction(importData).subscribe(
+        response => {
+          console.log('Inventory Transaction Created:', response);
+          this.dialogRef.close(response);
+        },
+        error => {
+          console.error('Error creating inventory transaction:', error);
+        }
+      );
+    } else {
       console.log('Please select at least one product to import');
     }
   }
@@ -284,5 +351,10 @@ export class InventoryModalComponent implements OnInit {
   close(): void {
     this.dialogRef.close();
     this.data.isModalOpen = false;
+  }
+
+  private initializeData(): void {
+    this.loadProducts();
+    this.loadStores();
   }
 }
