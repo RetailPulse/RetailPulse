@@ -1,9 +1,8 @@
 import { Component, signal, inject } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputText } from "primeng/inputtext";
@@ -13,8 +12,8 @@ import { ConfirmationService } from 'primeng/api';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import Fuse from 'fuse.js';
 
-import {User, UserRoles} from './user.model';
-import {UserService} from './user.service';
+import {User, UserRoles} from '../models/user.model';
+import {UserService} from '../services/user.service';
 
 
 @Component({
@@ -140,7 +139,6 @@ export class UserManagementComponent {
 
   showNewUserDialog(): void {
     this.resetMessages();
-    console.log('Form State:', this.newUserForm);
     this.newUserForm.reset();
     this.newDialog_visible.set(true);
   }
@@ -199,6 +197,28 @@ export class UserManagementComponent {
       },
     });
   }
+
+  // confirmResetPassword(selectedUser: User): void {
+  //   this.resetMessages();
+  //   this.confirmationService.confirm({
+  //     message: 'Are you sure to reset password for user: <strong>' + selectedUser.username + '</strong>?',
+  //     header: 'Confirm Reset Password',
+  //     icon: 'pi pi-exclamation-triangle',
+  //     accept: () => {
+  //       // User confirmed, proceed with deletion
+  //       console.log('Resetting password for user:', selectedUser.username);
+  //     },
+  //     reject: () => {
+  //       // User rejected, do nothing
+  //       this.error_msg.set('Reset Password canceled.');
+  //       console.log('Reset Password canceled.');
+  //     }
+  //   });
+  // }
+
+  // resetPassword(selectedUser: User): void {
+  //   this.resetMessages();   
+  // }
 
   confirmDeleteUser(deletedUser: User): void {
     this.resetMessages();

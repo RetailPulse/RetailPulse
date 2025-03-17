@@ -1,4 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { AuthService } from '../services/auth.service';
+
+import { createMockAuthService } from '../mock/auth.service.mock';
+import { ConfirmationService } from 'primeng/api'; 
 
 import { ProductManagementComponent } from './product-management.component';
 
@@ -7,8 +13,17 @@ describe('ProductManagementComponent', () => {
   let fixture: ComponentFixture<ProductManagementComponent>;
 
   beforeEach(async () => {
+    // Mock AuthService
+    const mockAuthService = createMockAuthService();
+
     await TestBed.configureTestingModule({
-      imports: [ProductManagementComponent]
+      imports: [ProductManagementComponent],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: AuthService, useValue: mockAuthService }, // Mock AuthService
+        ConfirmationService,
+      ]
     })
     .compileComponents();
 
@@ -21,3 +36,4 @@ describe('ProductManagementComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+

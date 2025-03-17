@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable } from 'rxjs';
-import {User, CreateUserDTO, UpdateUserDTO} from './user.model';
+import {User, CreateUserDTO, UpdateUserDTO, ChangePasswordDTO} from '../models/user.model';
 import {apiConfig} from '../../environments/environment';
 
 
@@ -16,6 +16,18 @@ export class UserService {
 
   getUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.apiUrl).pipe(
+      catchError((err) => {        
+        throw new Error(err.error.message);
+      })
+    );
+  }
+
+  getUserByUsername(username: string): Observable<User> {
+    const urlGetUser = `${this.apiUrl}/username/${username}`; 
+
+    console.log('Get User URL: ' + urlGetUser);
+    
+    return this.http.get<User>(urlGetUser).pipe(
       catchError((err) => {        
         throw new Error(err.error.message);
       })
@@ -59,6 +71,23 @@ export class UserService {
     return this.http.delete<void>(`${this.apiUrl}/${userId}`).pipe(
       catchError((err) => {        
         throw new Error(err.error.message);
+      })
+    );
+  }
+
+  changePassword(userId: number, oldPasswordIn: string, newPasswordIn: string): Observable<void> {
+
+    const change_password_dto: ChangePasswordDTO = {
+      oldPassword: oldPasswordIn,
+      newPassword: newPasswordIn
+    };
+
+    const fullURL = `${this.apiUrl}/${userId}/change-password`;
+    console.log('Change Password URL: ' + fullURL);
+
+    return this.http.patch<void>(`${this.apiUrl}/${userId}/change-password`, change_password_dto, { responseType: 'text' as 'json' }).pipe(
+      catchError((err) => {        
+        throw new Error(err.error.message); 
       })
     );
   }

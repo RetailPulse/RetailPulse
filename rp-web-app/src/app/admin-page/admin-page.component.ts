@@ -26,6 +26,7 @@ export class AdminPageComponent {
   ) {
 
     console.log('Token: ' + this.authService.accessToken);
+    console.log('Decoded Token: ' + this.authService.getDecodedToken());    
     if (!this.authService.isAuthenticated) {
       console.log("User is not authenticated. Going back to login page.");
       this.router.navigate(['/login']);

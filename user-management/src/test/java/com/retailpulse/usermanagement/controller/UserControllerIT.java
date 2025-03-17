@@ -14,6 +14,7 @@ import static org.hamcrest.Matchers.*;
 public class UserControllerIT {
 
     private static Long createdUserId;
+    private static final String ADMIN_USERNAME = "admin";
 
     @LocalServerPort
     private int port;
@@ -26,15 +27,15 @@ public class UserControllerIT {
     @Test
     @Order(1)
     void shouldCreateUser() {
-        String requestBody = """
+        String requestBody = String.format("""
                 {
-                    "username": "admin",
+                    "username": "%s",
                     "password": "password1",
                     "name": "Admin",
                     "email": "admin@retailpulse.com",
                     "roles": ["ADMIN"]
                 }
-                """;
+                """, ADMIN_USERNAME);
 
         createdUserId = given()
                 .port(port)
@@ -54,7 +55,7 @@ public class UserControllerIT {
         given()
                 .port(port)
                 .when()
-                .get("/api/users/" + createdUserId)
+                .get("/api/users/id/" + createdUserId)
                 .then()
                 .statusCode(200)
                 .body("username", equalTo("admin"));
@@ -62,6 +63,18 @@ public class UserControllerIT {
 
     @Test
     @Order(3)
+    void shouldGetUserByUsername() {
+        given()
+                .port(port)
+                .when()
+                .get("/api/users/username/" + ADMIN_USERNAME)
+                .then()
+                .statusCode(200)
+                .body("username", equalTo("admin"));
+    }
+
+    @Test
+    @Order(4)
     void shouldGetAllUsers() {
         given()
                 .port(port)
@@ -73,18 +86,18 @@ public class UserControllerIT {
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     void shouldReturnNotFoundForNonExistentUser() {
         given()
                 .port(port)
                 .when()
-                .get("/api/users/999")
+                .get("/api/users/id/999")
                 .then()
                 .statusCode(404);
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     void shouldGetUserByName() {
         given()
                 .port(port)
@@ -96,7 +109,7 @@ public class UserControllerIT {
     }
 
     @Test
-    @Order(6)
+    @Order(7)
     void shouldReturnNotFoundForNonExistentUserByName() {
         given()
                 .port(port)
@@ -107,7 +120,7 @@ public class UserControllerIT {
     }
 
     @Test
-    @Order(7)
+    @Order(8)
     void shouldUpdateUser() {
         String requestBody = """
                 {
@@ -132,7 +145,7 @@ public class UserControllerIT {
     }
 
     @Test
-    @Order(8)
+    @Order(9)
     void shouldChangePassword() {
         String requestBody = """
                 {
@@ -151,7 +164,7 @@ public class UserControllerIT {
     }
 
     @Test
-    @Order(9)
+    @Order(10)
     void shouldReturnNotFoundForNonExistentUserToDelete() {
         given()
                 .port(port)
@@ -162,7 +175,7 @@ public class UserControllerIT {
     }
 
     @Test
-    @Order(10)
+    @Order(11)
     void shouldDeleteUser() {
         given()
                 .port(port)

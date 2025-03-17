@@ -23,6 +23,11 @@ export interface UpdateUserDTO {
   isEnabled: boolean;
 }
 
+export interface ChangePasswordDTO {
+  oldPassword: string;
+  newPassword: string;
+}
+
 
 export const UserRoles = [
   { label: 'Admin', value: 'ADMIN' },

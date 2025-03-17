@@ -1,7 +1,7 @@
 server.port: 8085
 
 auth:
-  enabled: false
+  enabled: true
   origin: "http://localhost:4200"
   jwt.key.set.uri: http://app-iam:8081/oauth2/jwks
 
@@ -14,7 +14,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     database-platform: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
 

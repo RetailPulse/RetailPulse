@@ -13,7 +13,7 @@ import { ConfirmationService } from 'primeng/api';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import Fuse from 'fuse.js';
 
-import { BusinessEntity, BusinessEntityType } from './business-entity-model';
+import { BusinessEntity, BusinessEntityType } from './business-entity.model';
 import { BusinessEntityService } from './business-entity.service';
 
 @Component({
@@ -57,7 +57,7 @@ export class BusinessEntityManagementComponent {
 
   entityTypes = BusinessEntityType;
 
-  constructor() {  
+  constructor() {
     // Populate the users list
     this.businessEntityService.getBusinessEntities().subscribe({
       next: (data: BusinessEntity[]) => {
