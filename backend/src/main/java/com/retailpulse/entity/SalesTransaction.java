@@ -34,11 +34,16 @@ public class SalesTransaction {
     @PrePersist
     @PreUpdate
     private void calculateSalesTaxAndTotal() {
-        if (salesTax == null) {
-            salesTax = new SalesTax();
-        }
         double tax = subtotal * SalesTax.getTaxRate();
-        salesTax.setValue(Math.round(tax * 100.0) / 100.0);
+        double salesTaxValue = Math.round(tax * 100.0) / 100.0;
+        if (salesTax != null) {
+            // Update the existing salesTax value rather than creating a new instance
+            salesTax.setValue(salesTaxValue);
+        } else {
+            // Create a new SalesTax only if it doesn't already exist
+            salesTax = new SalesTax();
+            salesTax.setValue(salesTaxValue);
+        }
         total = subtotal + salesTax.getValue();
     }
 

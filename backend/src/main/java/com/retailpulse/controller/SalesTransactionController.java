@@ -32,7 +32,7 @@ public class SalesTransactionController {
 
     /**
      * Endpoint to retrieve a SalesTransaction by its ID.
-     * Returns 200 OK if found, or 404 NOT FOUND if not found.
+     * Returns 200 OK if found, or 400 BAD REQUEST if not found.
      *
      * @param id the ID of the SalesTransaction
      * @return the SalesTransaction if found, or 404 if not
@@ -41,7 +41,7 @@ public class SalesTransactionController {
     public ResponseEntity<SalesTransaction> getSalesTransaction(@PathVariable Long id) {
         return salesTransactionService.getSalesTransaction(id)
                 .map(transaction -> new ResponseEntity<>(transaction, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
     /**
@@ -54,7 +54,7 @@ public class SalesTransactionController {
     public ResponseEntity<SalesTransactionDetailsDto> getFullTransaction(@PathVariable Long transactionId) {
         return salesTransactionService.getFullTransaction(transactionId)
                 .map(transaction -> new ResponseEntity<>(transaction, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
     /**
@@ -69,7 +69,7 @@ public class SalesTransactionController {
             @PathVariable Long businessEntityId,
             @RequestBody List<SalesDetails> salesDetails) {
         SalesTransaction transaction = salesTransactionService.createSalesTransaction(businessEntityId, salesDetails);
-        return new ResponseEntity<>(transaction, HttpStatus.CREATED);
+        return new ResponseEntity<>(transaction, HttpStatus.OK);
     }
 
     /**

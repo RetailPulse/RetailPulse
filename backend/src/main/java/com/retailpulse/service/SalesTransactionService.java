@@ -158,9 +158,10 @@ public class SalesTransactionService {
             salesDetailsRepository.save(newDetail);
         }
 
-        // Update the transaction's subtotal and persist the changes
+        // Update the transaction's subtotal and update the existing salesTax manually
         existingTransaction.setSubtotal(newSubtotal);
-        salesTransactionRepository.save(existingTransaction);
+        // Simply saving will trigger calculateSalesTaxAndTotal() so that salesTax is updated.
+        salesTransactionRepository.saveAndFlush(existingTransaction);
 
         return existingTransaction;
     }
