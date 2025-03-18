@@ -3,7 +3,6 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { MenuItem } from 'primeng/api';
 import { MatTab, MatTabGroup } from '@angular/material/tabs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import Fuse from 'fuse.js';
@@ -12,6 +11,8 @@ import { InventoryService } from './inventory.service';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatSelectChange, MatSelectModule} from '@angular/material/select';
 import { InventoryModalComponent} from "../inventory-modal/inventory-modal.component";
+import {forkJoin, map, switchMap} from 'rxjs';
+import {BusinessEntityService} from '../business-entity-management/business-entity.service';
 
 @Component({
   selector: 'app-inventory-management',
@@ -39,11 +40,14 @@ export class InventoryManagementComponent implements OnInit {
   filterOptions: FilterOption[] = [];
   selectedFilter: string = '';
   inventoryTransactions: InventoryTransaction[] = [];
+  errorMessage: string = '';  // This will hold the error message to be displayed in the table
+  shopMap:{[id:number]:string}={};
 
-  menuItems: MenuItem[] = [
-    { label: 'Allocate Product', icon: 'pi pi-plus' },
-    { label: 'Import Products', icon: 'pi pi-upload' },
-  ];
+
+  // menuItems: MenuItem[] = [
+  //   { label: 'Allocate Product', },
+  //   { label: 'Import Products', icon: 'pi pi-upload' },
+  // ];
 
   // dropdownOptions = [ //fetch buiness entity
   //   { label: 'Option 1', value: 1 },
@@ -55,7 +59,7 @@ export class InventoryManagementComponent implements OnInit {
   selectedOption1: string | null = null;
   selectedOption2: "Warehouse" | "Shop" | "Supplier" | null = null ;
 
-  constructor(private inventoryService: InventoryService, private dialog: MatDialog) {}
+  constructor(private businessEntityService : BusinessEntityService,private inventoryService: InventoryService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.loadInventoryTransaction();
@@ -70,19 +74,6 @@ export class InventoryManagementComponent implements OnInit {
     { "value": "option3", "label": "Option 3" }
   ]
   }
-    // Replace with your API endpoint
-    // const apiUrl = 'https://api.example.com/filter-options';
-    //
-    // this.http.get<FilterOption[]>(apiUrl).subscribe(
-    //   (data) => {
-    //     this.filterOptions = data; // Assign API response to filterOptions
-    //   },
-    //   (error) => {
-    //     console.error('Error fetching filter options:', error);
-    //   }
-    // );
-
-
   onFilterChange(filterValue: MatSelectChange): void {
     // Implement your filtering logic here
     console.log('Selected Filter:', filterValue);
@@ -90,14 +81,49 @@ export class InventoryManagementComponent implements OnInit {
   }
 
   private loadInventoryTransaction(): void {
-    this.inventoryService.getInventoryTransaction().subscribe((data: InventoryTransaction[]) => {
-      this.inventoryTransactions = [... data];
+    this.inventoryService.getInventoryTransaction().pipe(
+      switchMap((data: any[]) => {
+        if (!data || data.length === 0) {
+          this.errorMessage = 'No inventory transactions found.';
+          return [];
+        }
+
+        // Collect all entity ID requests
+        const entityRequests = data.flatMap(item => [
+          this.businessEntityService.getBusinessEntityById(item.inventoryTransaction.source),
+          this.businessEntityService.getBusinessEntityById(item.inventoryTransaction.destination)
+        ]);
+
+        // Perform all requests concurrently
+        return forkJoin(entityRequests).pipe(
+          map((entities) => {
+            return data.map((item, index) => ({
+              productSku: item.product.sku,
+              quantity: item.inventoryTransaction.quantity,
+              costPerUnit: item.inventoryTransaction.costPricePerUnit,
+              source: entities[index].name,      // Source entity
+              destination: entities[index+1].name // Destination entity
+            }));
+          })
+        );
+      })
+    ).subscribe({
+      next: (result) => {
+        this.inventoryTransactions = result;
+        this.errorMessage = ''; // Clear error message on success
+      },
+      error: (error) => {
+        console.error('Error fetching inventory transactions:', error);
+        this.inventoryTransactions = [];
+        this.errorMessage = 'An error occurred while fetching inventory transactions.';
+      }
     });
   }
 
+
   private initializeColumns(): void {
     this.cols = [
-      { field: 'productId', header: 'Product Id' },
+      { field: 'productSku', header: 'Product SKU' },
       { field: 'quantity', header: 'Quantity' },
       { field: 'costPerUnit', header: 'Cost Per Unit' },
       { field: 'source', header: 'Source' },
@@ -134,11 +160,11 @@ export class InventoryManagementComponent implements OnInit {
     event.stopPropagation();
   }
 
-  openModal(index: number): void {
+  openModal(): void {
     const dialogRef = this.dialog.open(InventoryModalComponent, {
-      data: { title: this.menuItems[index].label,isModalOpen: this.isModalOpen },
-      width: '3200px',
-      height: '700px',
+      // data: { title: this.menuItems[index].label,isModalOpen: this.isModalOpen },
+      width: '60%',
+      height: 'auto',
     });
 
     dialogRef.afterClosed().subscribe(result => {
