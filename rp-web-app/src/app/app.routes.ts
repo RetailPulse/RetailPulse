@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
-import {InventoryManagementComponent} from './inventory-management/inventory-management.component';
 import { LoginPageComponent } from './login-page/login-page.component';
 import {ReportGenerationComponent} from './report-generation/report-generation.component';
 
@@ -12,7 +11,7 @@ const lazyUserManagement = () => import('./user-management/user-management.compo
 const lazyBusinessEntityManagement = () => import('./business-entity-management/business-entity-management.component').then(mod => mod.BusinessEntityManagementComponent);
 const lazyProfile = () => import('./profile/profile.component').then(mod => mod.ProfileComponent);
 const lazyReportGeneration = () => import('./report-generation/report-generation.component').then(mod => mod.ReportGenerationComponent);
-import {InventoryManagementComponent} from './inventory-management/inventory-management.component';
+const lazyInvenotryManagement=()=> import ('./inventory-management/inventory-management.component').then(mod=>mod.InventoryManagementComponent);
 
 export const routes: Routes = [
   // Login route
@@ -28,9 +27,8 @@ export const routes: Routes = [
     children: [
       { path: 'product-management', loadComponent: lazyProductManagement },
       { path: 'user-management', loadComponent: lazyUserManagement },
-      { path : 'inventory-management', component: InventoryManagementComponent},
-      { path : 'inventory-management', component: InventoryManagementComponent},
-      { path: 'business-entity-management', loadComponent: lazyBusinessEntityManagement },
+      { path : 'inventory-management', loadComponent: lazyInvenotryManagement},
+      { path: 'business-entity-management', loadComponent: lazyBusinessEntityManagement},
       { path: 'report-generation', loadComponent: lazyReportGeneration},
       { path: 'profile', loadComponent: lazyProfile },
       { path: '', redirectTo: 'user-management', pathMatch: 'full' }, // Default childroute
