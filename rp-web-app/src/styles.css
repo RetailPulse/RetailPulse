@@ -36,9 +36,14 @@ body {
   transition: background-color 0.2s ease !important;
 }
 
-.p-datatable-tbody > tr:hover > td:not(:last-child) {
+.p-datatable-tbody > tr:hover > td {
   background-color: var(--pastel-purple-background) !important;
 }
+
+
+/*.table.p-datatable-tbody > tr:hover > td {*/
+/*  background-color: var(--pastel-purple-background);*/
+/*}*/
 
 
 /* Dialog Container */

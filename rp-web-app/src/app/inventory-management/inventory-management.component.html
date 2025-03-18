@@ -6,18 +6,18 @@
       <input pInputText type="text" placeholder="Search..." [(ngModel)]="searchTerm" (input)="filterProducts()" class="search-bar" />
     </span>
     <div class="mui-split-button-container">
-      <span class="create-label">
-        Create
-      </span>
-      <button class="split-button-dropdown" (click)="toggleMenu($event)">
-        <i class="pi pi-chevron-down"></i>
+<!--      <span class="create-label">-->
+<!--        Create-->
+<!--      </span>-->
+      <button class="split-button-dropdown" (click)="openModal()">
+        Allocate inventory
       </button>
 
-      <div *ngIf="isMenuOpen" class="split-menu">
-        <button *ngFor="let item of menuItems; let i = index" (click)="openModal(i)" class="menu-item">
-          <i [class]="item.icon"></i> {{ item.label }}
-        </button>
-      </div>
+<!--      <div class="split-menu">-->
+<!--        <button  (click)="" class="menu-item">-->
+<!--          Allocate Inventory-->
+<!--        </button>-->
+<!--      </div>-->
     </div>
   </div>
 </div>
@@ -25,24 +25,15 @@
 <mat-tab-group [attr.inert]="isModalOpen ? true : null">
   <mat-tab label="Full Inventory">
     <div class="table-responsive">
-      <p-table [value]="inventoryTransactions" [responsiveLayout]="'scroll'" class="table table-hover">
+      <p-table *ngIf="!errorMessage" [value]="inventoryTransactions" [responsiveLayout]="'scroll'" class="table table-hover">
         <ng-template pTemplate="header">
           <tr>
             <th *ngFor="let col of cols">{{ col.header }}</th>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body">
+        <ng-template pTemplate="body" let-rowData>
           <tr>
-            <td *ngFor="let col of cols">
-<!--              <ng-container [ngSwitch]="col.field">-->
-<!--                <ng-container *ngSwitchCase="'is_active'">-->
-<!--                  <p-tag [value]="product[col.field] ? 'Active' : 'Inactive'"></p-tag>-->
-<!--                </ng-container>-->
-<!--                <ng-container *ngSwitchDefault>-->
-<!--                  {{ product[col.field] }}-->
-<!--                </ng-container>-->
-<!--              </ng-container>-->
-            </td>
+            <td *ngFor="let col of cols">{{ rowData[col.field] }}</td>
           </tr>
         </ng-template>
       </p-table>

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {apiConfig} from '../../environments/environment';
-import {InventoryTransaction} from './inventory.model';
+import {InventoryTransaction} from '../inventory-modal/inventory-modal.model';
 
 
 @Injectable({
