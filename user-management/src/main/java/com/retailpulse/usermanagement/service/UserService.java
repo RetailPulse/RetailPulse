@@ -5,6 +5,7 @@ import com.retailpulse.usermanagement.controller.UpdateUserDTO;
 import com.retailpulse.usermanagement.controller.ViewUserDTO;
 import com.retailpulse.usermanagement.domain.Authorities;
 import com.retailpulse.usermanagement.domain.User;
+import com.retailpulse.usermanagement.domain.exception.InvalidPasswordException;
 import com.retailpulse.usermanagement.domain.exception.MalformedEmailException;
 import com.retailpulse.usermanagement.domain.exception.MalformedPasswordException;
 import com.retailpulse.usermanagement.infrastructure.persistence.UserEntity;
@@ -130,7 +131,9 @@ public class UserService {
 
         User user = UserMapper.toDomain(userEntity);
 
-        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+        try {
+            passwordEncoder.matches(oldPassword, user.getPassword());
+        } catch (InvalidPasswordException e) {
             throw new BusinessException(INVALID_OLD_PASSWORD, "Wrong Old Password. Failed to change password.");
         }
 

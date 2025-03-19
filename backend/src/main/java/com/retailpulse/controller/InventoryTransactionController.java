@@ -4,6 +4,7 @@ import com.retailpulse.DTO.InventoryTransactionProductDto;
 import com.retailpulse.entity.InventoryTransaction;
 import com.retailpulse.service.InventoryTransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,19 +19,19 @@ public class InventoryTransactionController {
     InventoryTransactionService inventoryTransactionService;
 
     @GetMapping
-    public List<InventoryTransactionProductDto> getAllInventoryTransactionWithProduct() {
+    public ResponseEntity<List<InventoryTransactionProductDto>> getAllInventoryTransactionWithProduct() {
         logger.info("Fetching all inventory transactions");
-        return inventoryTransactionService.getAllInventoryTransactionWithProduct();
+        return ResponseEntity.ok(inventoryTransactionService.getAllInventoryTransactionWithProduct());
     }
 
     @PostMapping
-    public InventoryTransaction createInventoryTransaction(@RequestBody InventoryTransaction inventoryTransaction) {
+    public ResponseEntity<InventoryTransaction> createInventoryTransaction(@RequestBody InventoryTransaction inventoryTransaction) {
         // inventoryTransaction.getQuantity() will always be positive
         logger.info("Received request to create inventoryTransaction: " + inventoryTransaction);
         try {
             InventoryTransaction createdInventoryTransaction = inventoryTransactionService.saveInventoryTransaction(inventoryTransaction);
             logger.info("Successfully created createdInventoryTransaction: " + createdInventoryTransaction);
-            return createdInventoryTransaction;
+            return ResponseEntity.ok(createdInventoryTransaction);
         } catch (Exception e) {
             logger.severe("Error creating createdInventoryTransaction: " + e.getMessage());
             throw e;

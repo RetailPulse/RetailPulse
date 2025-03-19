@@ -27,5 +27,5 @@ public class Product {
     private double rrp = 0.0; // Recommended Retail Price
 
     @Column(nullable = false)
-    private boolean isActive = true;
+    private boolean active = true;
 }
