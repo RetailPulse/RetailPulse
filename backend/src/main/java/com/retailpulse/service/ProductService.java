@@ -67,10 +67,15 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    private void updateField(String newValue, Consumer<String> updater) {
-        if (newValue != null && !newValue.isEmpty()) {
-            updater.accept(newValue);
+    // Generic helper method for updating fields
+    private <T> void updateField(T newValue, Consumer<T> updater) {
+        if(newValue == null) {
+            return;
         }
+        if (newValue instanceof String && ((String) newValue).isEmpty()) {
+            return;
+        }
+        updater.accept(newValue);
     }
 
     public Product softDeleteProduct(Long id) {
@@ -86,4 +91,14 @@ public class ProductService {
         product.setActive(false);
         return productRepository.save(product);
     }
+
+    public Product reverseSoftDelete(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+
+        updateField(true, product::setActive);
+
+        return productRepository.save(product);
+    }
+
 }

@@ -2,6 +2,8 @@ package com.retailpulse.service;
 
 import com.retailpulse.entity.BusinessEntity;
 import com.retailpulse.repository.BusinessEntityRepository;
+import com.retailpulse.repository.InventoryRepository;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -9,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,8 +24,14 @@ public class BusinessEntityServiceTest {
     @Mock
     private BusinessEntityRepository businessEntityRepository;
 
+    @Mock
+    private InventoryRepository inventoryRepository;
+
     @InjectMocks
     private BusinessEntityService businessEntityService;
+
+    @Mock
+    private InventoryService inventoryService;
 
     @BeforeEach
     public void setUp() {
@@ -36,12 +45,14 @@ public class BusinessEntityServiceTest {
         businessEntity1.setName("Shop 1");
         businessEntity1.setLocation("Location 1");
         businessEntity1.setType("Shop");
+        businessEntity1.setExternal(false);
 
         BusinessEntity businessEntity2 = new BusinessEntity();
         businessEntity2.setId(2L);
         businessEntity2.setName("Warehouse");
         businessEntity2.setLocation("Location 2");
         businessEntity2.setType("Warehouse");
+        businessEntity2.setExternal(true);
 
         List<BusinessEntity> businessEntities = Arrays.asList(businessEntity1, businessEntity2);
         when(businessEntityRepository.findAll()).thenReturn(businessEntities);
@@ -72,6 +83,7 @@ public class BusinessEntityServiceTest {
         businessEntity.setName("Shop 1");
         businessEntity.setLocation("Location 1");
         businessEntity.setType("Shop");
+        businessEntity.setExternal(false);
 
         when(businessEntityRepository.save(any(BusinessEntity.class))).thenAnswer(invocation -> {
             BusinessEntity savedBusinessEntity = invocation.getArgument(0);
@@ -92,12 +104,14 @@ public class BusinessEntityServiceTest {
         existingEntity.setName("Old Name");
         existingEntity.setLocation("Old Location");
         existingEntity.setType("Old Type");
+        existingEntity.setExternal(false);
         existingEntity.setActive(true);
 
         BusinessEntity updatedEntityDetails = new BusinessEntity();
         updatedEntityDetails.setName("New Name");
         updatedEntityDetails.setLocation("New Location");
         updatedEntityDetails.setType("New Type");
+        updatedEntityDetails.setExternal(true);
 
         when(businessEntityRepository.findById(businessId)).thenReturn(Optional.of(existingEntity));
         when(businessEntityRepository.save(any(BusinessEntity.class))).thenReturn(existingEntity);
@@ -107,6 +121,7 @@ public class BusinessEntityServiceTest {
         assertEquals("New Name", result.getName());
         assertEquals("New Location", result.getLocation());
         assertEquals("New Type", result.getType());
+        assertTrue(result.isExternal());
         verify(businessEntityRepository, times(1)).findById(businessId);
         verify(businessEntityRepository, times(1)).save(existingEntity);
     }
@@ -118,6 +133,7 @@ public class BusinessEntityServiceTest {
         updatedEntityDetails.setName("New Name");
         updatedEntityDetails.setLocation("New Location");
         updatedEntityDetails.setType("New Type");
+        updatedEntityDetails.setExternal(false);
 
         when(businessEntityRepository.findById(businessId)).thenReturn(Optional.empty());
 
@@ -138,12 +154,14 @@ public class BusinessEntityServiceTest {
         existingEntity.setName("Old Name");
         existingEntity.setLocation("Old Location");
         existingEntity.setType("Old Type");
+        existingEntity.setExternal(false);
         existingEntity.setActive(false);
 
         BusinessEntity updatedEntityDetails = new BusinessEntity();
         updatedEntityDetails.setName("New Name");
         updatedEntityDetails.setLocation("New Location");
         updatedEntityDetails.setType("New Location");
+        updatedEntityDetails.setExternal(false);
 
         when(businessEntityRepository.findById(businessId)).thenReturn(Optional.of(existingEntity));
 
@@ -163,6 +181,7 @@ public class BusinessEntityServiceTest {
         updatedBusinessEntityDetails.setName("New Name");
         updatedBusinessEntityDetails.setLocation("New Location");
         updatedBusinessEntityDetails.setType("New Type");
+        updatedBusinessEntityDetails.setExternal(false);
 
         when(businessEntityRepository.findById(businessEntityId)).thenReturn(Optional.empty());
 
@@ -183,6 +202,7 @@ public class BusinessEntityServiceTest {
         existingBusinessEntity.setName("Old Name");
         existingBusinessEntity.setLocation("Old Location");
         existingBusinessEntity.setType("Old Type");
+        existingBusinessEntity.setExternal(false);
         existingBusinessEntity.setActive(true);
 
         // Arrange: update details with new values and an attempt to change isActive to false
@@ -190,6 +210,7 @@ public class BusinessEntityServiceTest {
         updatedBusinessEntity.setName("New Name");
         updatedBusinessEntity.setLocation("New Location");
         updatedBusinessEntity.setType("New Type");
+        updatedBusinessEntity.setExternal(true);
         updatedBusinessEntity.setActive(false); // This should be ignored
 
         when(businessEntityRepository.findById(1L)).thenReturn(Optional.of(existingBusinessEntity));
@@ -203,6 +224,7 @@ public class BusinessEntityServiceTest {
         assertEquals("New Name", result.getName());
         assertEquals("New Location", result.getLocation());
         assertEquals("New Type", result.getType());
+        assertTrue(result.isExternal());
         assertTrue(result.isActive(), "BusinessEntity should remain active");
     }
 
@@ -214,11 +236,16 @@ public class BusinessEntityServiceTest {
         existingEntity.setName("Old Name");
         existingEntity.setLocation("Old Location");
         existingEntity.setType("Old Type");
+        existingEntity.setExternal(false);
         existingEntity.setActive(true);
 
         when(businessEntityRepository.findById(businessId)).thenReturn(Optional.of(existingEntity));
         when(businessEntityRepository.save(any(BusinessEntity.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Fix: Return an empty list to simulate no associated inventory exists.
+        when(inventoryService.getInventoryByBusinessEntityId(businessId))
+                .thenReturn(Collections.emptyList());
 
         BusinessEntity deletedEntity = businessEntityService.deleteBusinessEntity(businessId);
 
