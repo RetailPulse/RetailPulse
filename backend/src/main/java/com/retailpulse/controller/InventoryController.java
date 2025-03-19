@@ -20,8 +20,11 @@ public class InventoryController {
 
     private static final Logger logger = Logger.getLogger(InventoryController.class.getName());
 
-    @Autowired
-    InventoryService inventoryService;
+    private final InventoryService inventoryService;
+
+    public InventoryController(InventoryService inventoryService) {
+        this.inventoryService = inventoryService;
+    }
 
     @GetMapping
     public ResponseEntity<List<Inventory>> getAllInventories() {
