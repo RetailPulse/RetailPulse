@@ -105,7 +105,7 @@ jobs:
       run: npm run build:prod
 
   # sonarqube-scan:
-  #   needs: [backend-unit-tests, iam-unit-tests, user-management-unit-tests] #, frontend-unit-tests
+  #   # needs: [backend-unit-tests, iam-unit-tests, user-management-unit-tests] #, frontend-unit-tests
   #   runs-on: ubuntu-latest
 
   #   steps:
@@ -136,11 +136,15 @@ jobs:
   #       key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
   #       restore-keys: ${{ runner.os }}-m2
     
-  #   - name: Build and analyze
+  #   - name: Build and 
+  #     working-directory: identity-access-management
   #     env:
   #       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  #     run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=RetailPulse_RetailPulse
-
+  #     run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+  #       -Dsonar.projectKey=RetailPulse_RetailPulse \
+  #       -Dsonar.sources=src/main/java \
+  #       -Dsonar.tests=src/test/java
+    
     # # Analyze Frontend (Angular Project)
     # - name: Set up Node.js
     #   uses: actions/setup-node@v3
