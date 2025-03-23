@@ -51,5 +51,75 @@
 .split-button-dropdown:hover {
   background-color: var(--pastel-success);
 }
+/* Container for the filter and table */
+.mt-4.d-flex.align-items-center.mb-3 {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-medium); /* Use theme variable for spacing */
+  padding: var(--space-medium);
+  border-radius: var(--radius-medium); /* Use theme border radius */
+}
 
+/* Mat-form-field styling */
+.custom-mat-form-field {
+  width: 100%;
+  max-width: 300px; /* Limit the width of the filter dropdown */
+}
+
+/* Mat-select styling */
+.custom-mat-select .mat-select-value {
+  color: var(--pastel-dark); /* Use theme dark color for text */
+}
+
+.custom-mat-select .mat-select-arrow {
+  color: var(--pastel-muted-text); /* Use theme muted text color for the dropdown arrow */
+}
+
+/* Table container */
+p-table {
+  width: 100% !important;
+  background-color: white; /* White background for the table */
+  border-radius: var(--radius-medium); /* Use theme border radius */
+  overflow: hidden; /* Ensures rounded corners are visible */
+  box-shadow: 0 4px 8px var(--pastel-shadow); /* Use theme shadow color */
+}
+
+/* Table header */
+p-table .p-datatable-thead > tr > th {
+  background-color: var(--pastel-primary); /* Use theme primary color for header */
+  color: var(--pastel-dark); /* Use theme dark color for header text */
+  font-weight: 600;
+  padding: var(--space-medium);
+  border-bottom: 2px solid var(--pastel-border); /* Use theme border color */
+}
+
+/* Table rows */
+p-table .p-datatable-tbody > tr {
+  background-color: white; /* White background for rows */
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+p-table .p-datatable-tbody > tr:hover {
+  background-color: var(--pastel-light); /* Use theme light color for hover */
+}
+
+/* Table cells */
+p-table .p-datatable-tbody > tr > td {
+  padding: var(--space-medium);
+  color: var(--pastel-dark); /* Use theme dark color for text */
+  border-bottom: 1px solid var(--pastel-border); /* Use theme border color */
+}
+
+/* Remove border from the last row */
+p-table .p-datatable-tbody > tr:last-child > td {
+  border-bottom: none;
+}
+
+/* Error message styling */
+.error-message {
+  color: var(--pastel-danger); /* Use theme danger color for error messages */
+  font-weight: 500;
+  margin-top: var(--space-medium);
+}
 

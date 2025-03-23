@@ -28,12 +28,12 @@
       <p-table *ngIf="!errorMessage" [value]="inventoryTransactions" [responsiveLayout]="'scroll'" class="table table-hover">
         <ng-template pTemplate="header">
           <tr>
-            <th *ngFor="let col of cols">{{ col.header }}</th>
+            <th *ngFor="let col of inventoryTransactionCols">{{ col.header }}</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-rowData>
           <tr>
-            <td *ngFor="let col of cols">{{ rowData[col.field] }}</td>
+            <td *ngFor="let col of inventoryTransactionCols">{{ rowData[col.field] }}</td>
           </tr>
         </ng-template>
       </p-table>
@@ -41,34 +41,35 @@
   </mat-tab>
 
   <mat-tab label="Summary View">
-    <div class="mt-4 d-flex align-items-center mb-3">
-      <mat-form-field  class="custom-mat-form-field">
-        <mat-select  class="custom-mat-select" [(ngModel)]="selectedFilter" (ngModelChange)="onFilterChange($event)">
+     <div class="mt-4 d-flex align-items-center mb-3">
+       <mat-form-field appearance="fill" class="custom-mat-form-field">
+         <mat-select
+           [(ngModel)]="selectedFilter"
+           (ngModelChange)="onFilterChange($event)"
+           placeholder="Filter by Business Entity"
+           class="custom-mat-select"
+         >
+           <mat-option *ngFor="let entity of businessOptions" [value]="entity.id">
+             {{ entity.name }}
+           </mat-option>
+         </mat-select>
+       </mat-form-field>
+       <div class>
+         <p-table *ngIf="!errorMessage" [value]="tableData" [responsiveLayout]="'scroll'" >
+           <ng-template pTemplate="header">
+             <tr>
+               <th *ngFor="let col of summaryCols">{{ col.header }}</th>
+             </tr>
+           </ng-template>
+           <ng-template pTemplate="body" let-rowData>
+             <tr>
+               <td *ngFor="let col of summaryCols">{{ rowData[col.field] }}</td>
+             </tr>
+           </ng-template>
+         </p-table>
+       </div>
+  </div>
 
-          <mat-option placeholder="Fliter by" *ngFor="let option of filterOptions" [value]="option.value" class="custom-mat-option">
-            {{ option.label }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-<!--    <div class="table-responsive">-->
-<!--      &lt;!&ndash; Filter container with Bootstrap grid &ndash;&gt;-->
-<!--      &lt;!&ndash; Table &ndash;&gt;-->
-<!--      <p-table [value]="filteredProducts" [responsiveLayout]="'scroll'" class="table table-hover">-->
-<!--        <ng-template pTemplate="header">-->
-<!--          <tr>-->
-<!--            <th *ngFor="let col of limitedCols">{{ col.header }}</th>-->
-<!--          </tr>-->
-<!--        </ng-template>-->
-<!--        <ng-template pTemplate="body" let-product>-->
-<!--          <tr>-->
-<!--            <td *ngFor="let col of limitedCols">-->
-<!--              {{ product[col.field] }}-->
-<!--            </td>-->
-<!--          </tr>-->
-<!--        </ng-template>-->
-<!--      </p-table>-->
-<!--    </div>-->
   </mat-tab>
 </mat-tab-group>
 

@@ -9,6 +9,11 @@ export class InventoryTransaction {
 }
 
 
-
-
+export interface Inventory{
+  id: number;
+  productId: number;
+  businessEntityId: number;
+  quantity: number;
+  totalCostPrice: number;
+}
 

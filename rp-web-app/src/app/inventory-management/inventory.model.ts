@@ -12,7 +12,9 @@ export class Column {
   header!: string;
 }
 
-export interface FilterOption {
-  label: string;
-  value: string;
+export interface Inventory{
+  productId: string;
+  quantity: number;
+  businessEntityId: number;
+  totalCostPrice: number;
 }

@@ -60,11 +60,6 @@ import {InventoryTransaction} from "./inventory-modal.model";
     MatPaginatorModule,
     MatSortModule,
     MatTableModule
-
-
-
-
-
   ],
   providers: [CurrencyPipe]
 })

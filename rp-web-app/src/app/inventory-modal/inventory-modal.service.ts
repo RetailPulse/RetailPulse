@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpResponse} from '@angular/common/http';
 import {catchError, forkJoin, map, Observable, throwError} from 'rxjs';
 import {apiConfig} from '../../environments/environment';
-import {InventoryTransaction} from "./inventory-modal.model";
+import {Inventory, InventoryTransaction} from "./inventory-modal.model";
 
 
 @Injectable({
@@ -13,6 +13,7 @@ import {InventoryTransaction} from "./inventory-modal.model";
 export class InventoryModalService {
 
   private inventoryTransactionApiUrl = `${apiConfig.backend_api_url}api/inventoryTransaction`;
+  private inventoryApiUrl = `${apiConfig.backend_api_url}api/inventory`;
 
   constructor(private http: HttpClient) { }
 
@@ -35,5 +36,6 @@ export class InventoryModalService {
       })
     );
   }
+
 
 }
