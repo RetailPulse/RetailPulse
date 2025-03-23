@@ -75,9 +75,14 @@ export class InventoryManagementComponent implements OnInit {
     });
   }
 
-  onFilterChange(filterValue: number): void {
+ onFilterChange(filterValue: number): void {
     this.inventoryService.getInventoryByBusinessEntity(filterValue).subscribe({
       next: (inventoryData) => {
+        if (!inventoryData || inventoryData.length === 0) {
+          this.tableData = [];
+          return;
+        }
+
         // Array to store the combined data
         const tableData: {
             productSKU: string; // Assuming the product object has a `name` field

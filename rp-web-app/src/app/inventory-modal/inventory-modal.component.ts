@@ -205,11 +205,11 @@ export class InventoryModalComponent implements OnInit {
 
     console.log("Import Data:", importData);
     this.inventoryModalService.createInventoryTransaction(importData).subscribe(
-      response => {
+        (response: any) => {
         console.log('Inventory Transaction Created:', response);
         this.dialogRef.close(response);
       },
-      error => console.error('Error creating inventory transaction:', error)
+        (error: any) => console.error('Error creating inventory transaction:', error)
     );
   }
 
