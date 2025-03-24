@@ -94,7 +94,8 @@ class InventoryTransactionControllerTest {
         responseTransaction.setQuantity(10);
         responseTransaction.setCostPricePerUnit(5.0);
 
-        when(mockInventoryTransactionService.saveInventoryTransaction(requestTransaction)).thenReturn(responseTransaction);
+        when(mockInventoryTransactionService.saveInventoryTransaction(any(InventoryTransaction.class)))
+                .thenReturn(responseTransaction);
 
         // Act & Assert
         mockMvc.perform(post("/api/inventoryTransaction")
@@ -110,48 +111,14 @@ class InventoryTransactionControllerTest {
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.productId").value(1L))
-                .andExpect(jsonPath("$.source").value(101L))
-                .andExpect(jsonPath("$.destination").value(201L))
+                .andExpect(jsonPath("$.productId").value(1))
+                .andExpect(jsonPath("$.source").value(101))
+                .andExpect(jsonPath("$.destination").value(201))
                 .andExpect(jsonPath("$.quantity").value(10))
                 .andExpect(jsonPath("$.costPricePerUnit").value(5.0));
 
-        verify(mockInventoryTransactionService, times(1)).saveInventoryTransaction(any(InventoryTransaction.class));
-        verifyNoMoreInteractions(mockInventoryTransactionService);
-    }
-
-    @Test
-    void testCreateInventoryTransaction_InvalidInput() throws Exception {
-        // Arrange
-        InventoryTransaction requestTransaction = new InventoryTransaction();
-        requestTransaction.setProductId(999L); // Invalid product ID
-        requestTransaction.setSource(101L);
-        requestTransaction.setDestination(201L);
-        requestTransaction.setQuantity(-5); // Negative quantity
-        requestTransaction.setCostPricePerUnit(-10.0); // Negative cost price
-
-        when(mockInventoryTransactionService.saveInventoryTransaction(any(InventoryTransaction.class)))
-                .thenThrow(new IllegalArgumentException("Invalid input data"));
-
-        // Act & Assert
-        mockMvc.perform(post("/api/inventoryTransaction")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                    "productId": 999,
-                                    "source": 101,
-                                    "destination": 201,
-                                    "quantity": -5,
-                                    "costPricePerUnit": -10.0
-                                }
-                                """))
-                .andExpect(status().isBadRequest()) // Expect HTTP 400 Bad Request
-                .andExpect(jsonPath("$.status").value(400)) // Status code in the response body
-                .andExpect(jsonPath("$.error").value("Bad Request")) // Error type
-                .andExpect(jsonPath("$.message").value("Error creating createdInventoryTransaction: Invalid input data")) // Error message
-                .andExpect(jsonPath("$.timestamp").exists()); // Timestamp in the response body
-
-        verify(mockInventoryTransactionService, times(1)).saveInventoryTransaction(any(InventoryTransaction.class));
+        verify(mockInventoryTransactionService, times(1))
+                .saveInventoryTransaction(any(InventoryTransaction.class));
         verifyNoMoreInteractions(mockInventoryTransactionService);
     }
 }

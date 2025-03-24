@@ -1,6 +1,5 @@
 package com.retailpulse.service;
 
-import com.retailpulse.entity.BusinessEntity;
 import com.retailpulse.entity.Product;
 import com.retailpulse.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +22,9 @@ public class ProductServiceTest {
 
     @Mock
     private SKUGeneratorService skuGeneratorService;
+
+    @Mock
+    private InventoryService inventoryService;  // Add this
 
     @InjectMocks
     private ProductService productService;
@@ -58,7 +60,7 @@ public class ProductServiceTest {
         assertTrue(result.isPresent());
         assertEquals(1L, result.get().getId());
     }
-      
+
     @Test
     void testGetProductBySKU_Success() {
         // Mock Product object
@@ -116,6 +118,18 @@ public class ProductServiceTest {
         assertEquals("New Description", result.getDescription(), "Description should be updated");
         assertEquals(10, result.getRrp(), "RRP should remain unchanged when updated value is negative");
         assertTrue(result.isActive(), "Product should remain active");
+    }
+
+    @Test
+    void testSaveProduct_NegativeRrp() {
+        Product product = new Product();
+        product.setRrp(-5);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            productService.saveProduct(product);
+        });
+        assertEquals("Recommended retail price cannot be negative", exception.getMessage());
+        verifyNoInteractions(skuGeneratorService);
+        verify(productRepository, never()).save(any(Product.class));
     }
 
     @Test
@@ -226,5 +240,33 @@ public class ProductServiceTest {
         assertFalse(product.isActive()); // Ensure the product is marked as inactive
         verify(productRepository, times(1)).save(product); // Ensure the product is saved
     }
+    @Test
+    void testReverseSoftDelete_Success() {
+        Product product = new Product();
+        product.setId(1L);
+        product.setActive(false); // Initially inactive
 
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(productRepository.save(any(Product.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Product result = productService.reverseSoftDelete(1L);
+
+        assertTrue(result.isActive(), "Product should be re-activated");
+        verify(productRepository, times(1)).findById(1L);
+        verify(productRepository, times(1)).save(product);
+    }
+
+    @Test
+    void testReverseSoftDelete_ProductNotFound() {
+        Long productId = 1L;
+        when(productRepository.findById(productId)).thenReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            productService.reverseSoftDelete(productId);
+        });
+
+        assertEquals("Product not found with id: " + productId, exception.getMessage());
+        verify(productRepository, times(1)).findById(productId);
+        verify(productRepository, never()).save(any(Product.class));
+    }
 }

@@ -19,6 +19,9 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private InventoryService inventoryService;
+
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
@@ -86,8 +89,9 @@ public class ProductService {
             throw new IllegalArgumentException("Product with id " + id + " is already deleted.");
         }
 
-        // TODO - Add check if Inventory have product; If yes, cannot delete
-
+        if (inventoryService.inventoryContainsProduct(product.getId())) {
+            throw new IllegalStateException("Cannot delete product with id " + id + " because it exists in inventory.");
+        }
         product.setActive(false);
         return productRepository.save(product);
     }
