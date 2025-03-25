@@ -1,81 +1,49 @@
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
 @import "assets/theme.css";
 
-:root {
-  --pastel-blue: #a6d8f0;
-  --pastel-blue-dark: #7ec4e6;
-  --pastel-dark: #333333;
-  --pastel-light: #f9f9f9;
-  --pastel-border: #d1d1d1;
-  --radius-medium: 8px;
-}
 
+/* styles.css or styles.scss */
 /* Table Container */
 /* Apply background to the entire body and html */
 body {
+  /*padding-top: 2px;*/
   background-image: var(--bs-backdrop-bg);
   background-repeat: no-repeat;
   background-size: cover;
   padding: var(--space-large);
+  padding-top: var(--space-top);
   /*background-color: var(--pastel-light);*/
   border-radius: var(--radius-medium);
   min-height: 100vh;
   overflow: auto;
 }
-
-.info-message {
-  background-color: var(--pastel-light); /* Light background for neutral tone */
-  border-radius: var(--radius-medium); /* Rounded corners */  
-  font-size: 0.9rem; /* Slightly smaller font size */
-  font-weight: bold;
-  color: var(--pastel-dark); /* Neutral text color */
-  text-align: left; /* Center-align the text */
-}
-
-
-/* Error message styling */
-.label-error-message {
-  color: red;
-  font-size: 12px;
-  margin-top: 5px;
-}
-
-/* Error message styling */
-.error-message {
-  color: red;
-  font-size: 18px;
-  font-weight: bold;
-  margin-top: 5px;
-}
-
-/* Success message styling */
-.success-message {
-  color: rgb(22, 94, 0);
-  font-size: 18px;
-  font-weight: bold;
-  margin-top: 5px;
-}
-
 .p-table-wrapper {
   /*background-color: v/ar(--pastel-background);*/
-  border: 1px solid var(--pastel-border);
-  border-radius: var(--radius-medium);
+  border: 1px solid var(--pastel-border) !important ;
+  border-radius: var(--radius-medium) !important;
   /*box-shadow: 0 2px 4px var(--pastel-shadow);*/
 }
 
 .p-datatable-thead > tr > th {
-  background-color: var(--pastel-info);
-  color: var(--pastel-dark);
-  font-weight: 600;
+  background-color: white!important;
+  color: var(--pastel-dark) !important;
+  font-weight: 600 !important;
 }
 
 .p-datatable-tbody > tr {
-  background-color: var(--pastel-light);
-  transition: background-color 0.2s ease;
+  background-color: white!important;
+  color: var(--pastel-dark) !important;
+  transition: background-color 0.2s ease !important;
 }
 
-.p-datatable-tbody > tr:hover > td:not(:last-child) {
-  background-color: var(--pastel-purple-background);
+.p-datatable-tbody > tr:hover > td {
+  background-color: var(--pastel-purple-background) !important;
 }
+
+
+/*.table.p-datatable-tbody > tr:hover > td {*/
+/*  background-color: var(--pastel-purple-background);*/
+/*}*/
 
 
 /* Dialog Container */
