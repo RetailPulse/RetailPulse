@@ -1,6 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { InventoryModalComponent } from './inventory-modal.component';
+import { MatDialogRef } from '@angular/material/dialog';
+
+beforeEach(async () => {
+  await TestBed.configureTestingModule({
+    declarations: [InventoryModalComponent],
+    providers: [
+      { provide: MatDialogRef, useValue: {} }  // Mock MatDialogRef
+    ]
+  }).compileComponents();
+});
+
 
 describe('InventoryModalComponent', () => {
   let component: InventoryModalComponent;
