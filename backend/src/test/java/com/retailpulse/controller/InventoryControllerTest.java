@@ -171,32 +171,46 @@ class InventoryControllerTest {
         verifyNoMoreInteractions(mockInventoryService);
     }
 
-    // @Test
-    // void testGetInventoryById_NotFound() throws Exception {
-    //     Long inventoryId = 999L;
+    @Test
+    void testGetInventoryByProductIdAndBusinessEntityIdFound() throws Exception {
+        Long productId = 101L;
+        Long businessEntityId = 201L;
+        
+        Inventory mockInventory = new Inventory();
+        mockInventory.setId(1L);
+        mockInventory.setProductId(productId);
+        mockInventory.setBusinessEntityId(businessEntityId);
+        mockInventory.setQuantity(50);
+        
+        when(mockInventoryService.getInventoryByProductIdAndBusinessEntityId(productId, businessEntityId))
+                .thenReturn(Optional.of(mockInventory));
+        
+        mockMvc.perform(get("/api/inventory/productId/{productId}/businessEntityId/{businessEntityId}",
+                        productId, businessEntityId))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.productId").value(productId))
+                .andExpect(jsonPath("$.businessEntityId").value(businessEntityId))
+                .andExpect(jsonPath("$.quantity").value(50));
+        
+        verify(mockInventoryService, times(1)).getInventoryByProductIdAndBusinessEntityId(productId, businessEntityId);
+        verifyNoMoreInteractions(mockInventoryService);
+    }
 
-    //     when(mockInventoryService.getInventoryById(inventoryId)).thenReturn(Optional.empty());
-
-    //     mockMvc.perform(get("/api/inventory/{id}", inventoryId))
-    //             .andExpect(status().isNotFound());
-
-    //     verify(mockInventoryService, times(1)).getInventoryById(inventoryId);
-    //     verifyNoMoreInteractions(mockInventoryService);
-    // }
-
-    // @Test
-    // void testGetInventoryByProductIdAndBusinessEntityId_NotFound() throws Exception {
-    //     Long productId = 101L;
-    //     Long businessEntityId = 201L;
-
-    //     when(mockInventoryService.getInventoryByProductIdAndBusinessEntityId(productId, businessEntityId))
-    //             .thenReturn(Optional.empty());
-
-    //     mockMvc.perform(get("/api/inventory/productId/{productId}/businessEntityId/{businessEntityId}",
-    //                     productId, businessEntityId))
-    //             .andExpect(status().isNotFound());
-
-    //     verify(mockInventoryService, times(1)).getInventoryByProductIdAndBusinessEntityId(productId, businessEntityId);
-    //     verifyNoMoreInteractions(mockInventoryService);
-    // }
+    @Test
+    void testGetInventoryByProductIdAndBusinessEntityIdNotFound() throws Exception {
+        Long productId = 101L;
+        Long businessEntityId = 201L;
+        
+        when(mockInventoryService.getInventoryByProductIdAndBusinessEntityId(productId, businessEntityId))
+                .thenReturn(Optional.empty());
+        
+        mockMvc.perform(get("/api/inventory/productId/{productId}/businessEntityId/{businessEntityId}",
+                        productId, businessEntityId))
+                .andExpect(status().isBadRequest());
+        
+        verify(mockInventoryService, times(1)).getInventoryByProductIdAndBusinessEntityId(productId, businessEntityId);
+        verifyNoMoreInteractions(mockInventoryService);
+    }
 }
