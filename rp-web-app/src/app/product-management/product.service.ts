@@ -9,7 +9,7 @@ import {apiConfig} from '../../environments/environment';
   providedIn: 'root'
 })
 export class ProductService {
-  private apiUrl = apiConfig.backend_api_url + 'api/products'; // Replace with your API URL  
+  private apiUrl = apiConfig.backend_api_url + 'api/products'; // Replace with your API URL
 
   constructor(private http: HttpClient) { }
 
@@ -25,6 +25,10 @@ export class ProductService {
 
   updateProduct(updatedProduct: Product): Observable<Product> {
     return this.http.put<Product>(`${this.apiUrl}/${updatedProduct.id}`, updatedProduct);
+  }
+
+  getProductById(productId: string): Observable<Product> {
+    return this.http.get<Product>(`${this.apiUrl}/${productId}`);
   }
 
 }

@@ -3,7 +3,6 @@ package com.retailpulse.service;
 
 import com.retailpulse.DTO.InventoryTransactionDetailsDto;
 import com.retailpulse.DTO.InventoryTransactionDto;
-import com.retailpulse.DTO.InventoryTransactionProductDto;
 import com.retailpulse.DTO.mapper.InventoryTransactionReportMapper;
 import com.retailpulse.entity.BusinessEntity;
 import com.retailpulse.entity.InventoryTransaction;
@@ -17,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -126,7 +124,6 @@ public class InventoryTransactionReportServiceTest {
         assertThat(inventoryTransactionDtos.get(0).destination().name()).isEqualTo("dest");
 
     }
-
 
 
 }

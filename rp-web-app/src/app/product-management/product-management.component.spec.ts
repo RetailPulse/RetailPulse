@@ -4,9 +4,18 @@ import { provideHttpClient } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
 
 import { createMockAuthService } from '../mock/auth.service.mock';
-import { ConfirmationService } from 'primeng/api'; 
+import { ConfirmationService } from 'primeng/api';
 
 import { ProductManagementComponent } from './product-management.component';
+import { HttpClientModule } from '@angular/common/http';
+import {BusinessEntityService} from '../business-entity-management/business-entity.service';
+
+beforeEach(async () => {
+  await TestBed.configureTestingModule({
+    imports: [HttpClientModule], // Add this
+    providers: [BusinessEntityService] // Ensure this service is included
+  }).compileComponents();
+});
 
 describe('ProductManagementComponent', () => {
   let component: ProductManagementComponent;

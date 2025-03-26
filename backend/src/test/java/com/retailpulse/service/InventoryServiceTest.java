@@ -177,6 +177,26 @@ class InventoryServiceTest {
     }
 
     @Test
+    public void testInventoryContainsProduct_ReturnsTrueWhenProductExists() {
+        Long productId = 1L;
+        Inventory inventory = new Inventory();
+        inventory.setProductId(productId);
+        when(inventoryRepository.findByProductId(productId)).thenReturn(List.of(inventory));
+
+        boolean exists = inventoryService.inventoryContainsProduct(productId);
+        assertTrue(exists, "Should return true when inventory exists for the given productId");
+    }
+
+    @Test
+    public void testInventoryContainsProduct_ReturnsFalseWhenNoInventory() {
+        Long productId = 2L;
+        when(inventoryRepository.findByProductId(productId)).thenReturn(Collections.emptyList());
+
+        boolean exists = inventoryService.inventoryContainsProduct(productId);
+        assertFalse(exists, "Should return false when there is no inventory for the given productId");
+    }
+
+    @Test
     void testSaveInventory() {
         // Arrange
         Inventory inventoryToSave = new Inventory();

@@ -1,9 +1,9 @@
 package com.retailpulse.service;
 
 import com.retailpulse.entity.BusinessEntity;
+import com.retailpulse.entity.Inventory;
 import com.retailpulse.repository.BusinessEntityRepository;
 import com.retailpulse.repository.InventoryRepository;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -65,10 +65,8 @@ public class BusinessEntityServiceTest {
 
     @Test
     void testGetBusinessEntityById_Success() {
-        // Mock BusinessEntity object
         BusinessEntity businessEntity = new BusinessEntity();
         businessEntity.setId(1L);
-        // When findById is called with 1L, then return the Business Entity object
         when(businessEntityRepository.findById(1L)).thenReturn(Optional.of(businessEntity));
 
         Optional<BusinessEntity> result = businessEntityService.getBusinessEntityById(1L);
@@ -87,7 +85,7 @@ public class BusinessEntityServiceTest {
 
         when(businessEntityRepository.save(any(BusinessEntity.class))).thenAnswer(invocation -> {
             BusinessEntity savedBusinessEntity = invocation.getArgument(0);
-            savedBusinessEntity.setId(1L); // Simulate the database setting the ID
+            savedBusinessEntity.setId(1L);
             return savedBusinessEntity;
         });
 
@@ -117,7 +115,6 @@ public class BusinessEntityServiceTest {
         when(businessEntityRepository.save(any(BusinessEntity.class))).thenReturn(existingEntity);
 
         BusinessEntity result = businessEntityService.updateBusinessEntity(businessId, updatedEntityDetails);
-
         assertEquals("New Name", result.getName());
         assertEquals("New Location", result.getLocation());
         assertEquals("New Type", result.getType());
@@ -137,9 +134,9 @@ public class BusinessEntityServiceTest {
 
         when(businessEntityRepository.findById(businessId)).thenReturn(Optional.empty());
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            businessEntityService.updateBusinessEntity(businessId, updatedEntityDetails);
-        });
+        RuntimeException exception = assertThrows(RuntimeException.class, () ->
+            businessEntityService.updateBusinessEntity(businessId, updatedEntityDetails)
+        );
 
         assertEquals("Business Entity not found with id: " + businessId, exception.getMessage());
         verify(businessEntityRepository, times(1)).findById(businessId);
@@ -165,9 +162,9 @@ public class BusinessEntityServiceTest {
 
         when(businessEntityRepository.findById(businessId)).thenReturn(Optional.of(existingEntity));
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            businessEntityService.updateBusinessEntity(businessId, updatedEntityDetails);
-        });
+        RuntimeException exception = assertThrows(RuntimeException.class, () ->
+            businessEntityService.updateBusinessEntity(businessId, updatedEntityDetails)
+        );
 
         assertEquals("Cannot update a deleted business entity with id: " + businessId, exception.getMessage());
         verify(businessEntityRepository, times(1)).findById(businessId);
@@ -185,9 +182,9 @@ public class BusinessEntityServiceTest {
 
         when(businessEntityRepository.findById(businessEntityId)).thenReturn(Optional.empty());
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            businessEntityService.updateBusinessEntity(businessEntityId, updatedBusinessEntityDetails);
-        });
+        RuntimeException exception = assertThrows(RuntimeException.class, () ->
+            businessEntityService.updateBusinessEntity(businessEntityId, updatedBusinessEntityDetails)
+        );
 
         assertEquals("Business Entity not found with id: " + businessEntityId, exception.getMessage());
         verify(businessEntityRepository, times(1)).findById(businessEntityId);
@@ -196,7 +193,6 @@ public class BusinessEntityServiceTest {
 
     @Test
     void testUpdateBusinessEntityDoesNotChangeIsActive_Success() {
-        // Arrange: existing business entity with isActive = true
         BusinessEntity existingBusinessEntity = new BusinessEntity();
         existingBusinessEntity.setId(1L);
         existingBusinessEntity.setName("Old Name");
@@ -205,7 +201,6 @@ public class BusinessEntityServiceTest {
         existingBusinessEntity.setExternal(false);
         existingBusinessEntity.setActive(true);
 
-        // Arrange: update details with new values and an attempt to change isActive to false
         BusinessEntity updatedBusinessEntity = new BusinessEntity();
         updatedBusinessEntity.setName("New Name");
         updatedBusinessEntity.setLocation("New Location");
@@ -215,12 +210,9 @@ public class BusinessEntityServiceTest {
 
         when(businessEntityRepository.findById(1L)).thenReturn(Optional.of(existingBusinessEntity));
         when(businessEntityRepository.save(any(BusinessEntity.class)))
-            .thenAnswer(invocation -> invocation.getArgument(0));
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
-        // Act: update the business entity
         BusinessEntity result = businessEntityService.updateBusinessEntity(1L, updatedBusinessEntity);
-
-        // Assert: the fields are updated except isActive, which remains true
         assertEquals("New Name", result.getName());
         assertEquals("New Location", result.getLocation());
         assertEquals("New Type", result.getType());
@@ -243,16 +235,78 @@ public class BusinessEntityServiceTest {
         when(businessEntityRepository.save(any(BusinessEntity.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        // Fix: Return an empty list to simulate no associated inventory exists.
         when(inventoryService.getInventoryByBusinessEntityId(businessId))
                 .thenReturn(Collections.emptyList());
 
         BusinessEntity deletedEntity = businessEntityService.deleteBusinessEntity(businessId);
-
-        // Validate that the entity is now marked as deleted (active = false)
         assertFalse(deletedEntity.isActive());
         verify(businessEntityRepository, times(1)).findById(businessId);
         verify(businessEntityRepository, times(1)).save(existingEntity);
     }
 
+    @Test
+    void testIsExternalBusinessEntity_Success() {
+        Long businessId = 1L;
+        BusinessEntity businessEntity = new BusinessEntity();
+        businessEntity.setId(businessId);
+        businessEntity.setExternal(true);
+
+        when(businessEntityRepository.findById(businessId)).thenReturn(Optional.of(businessEntity));
+        boolean isExternal = businessEntityService.isExternalBusinessEntity(businessId);
+        assertTrue(isExternal);
+        verify(businessEntityRepository, times(1)).findById(businessId);
+    }
+
+    @Test
+    void testDeleteBusinessEntity_FailsDueToAssociatedInventory() {
+        Long businessId = 1L;
+        BusinessEntity existingEntity = new BusinessEntity();
+        existingEntity.setId(businessId);
+        existingEntity.setName("Test Entity");
+        existingEntity.setLocation("Test Location");
+        existingEntity.setType("Shop");
+        existingEntity.setExternal(false);
+        existingEntity.setActive(true);
+
+        when(businessEntityRepository.findById(businessId)).thenReturn(Optional.of(existingEntity));
+
+        Inventory inventory = new Inventory();
+        inventory.setQuantity(10);
+        when(inventoryService.getInventoryByBusinessEntityId(businessId))
+                .thenReturn(Collections.singletonList(inventory));
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+            businessEntityService.deleteBusinessEntity(businessId)
+        );
+        assertEquals("Cannot delete Business Entity with id " + businessId + " as it has associated products in the inventory.", exception.getMessage());
+        verify(businessEntityRepository, times(1)).findById(businessId);
+    }
+
+    @Test
+    void testUpdateBusinessEntity_IgnoreEmptyStringField() {
+        Long businessId = 1L;
+        BusinessEntity existingEntity = new BusinessEntity();
+        existingEntity.setId(businessId);
+        existingEntity.setName("Original Name");
+        existingEntity.setLocation("Original Location");
+        existingEntity.setType("Original Type");
+        existingEntity.setExternal(false);
+        existingEntity.setActive(true);
+
+        BusinessEntity updateDetails = new BusinessEntity();
+        updateDetails.setName(""); // Should be ignored
+        updateDetails.setLocation("Updated Location");
+        updateDetails.setType("Updated Type");
+        updateDetails.setExternal(true);
+
+        when(businessEntityRepository.findById(businessId)).thenReturn(Optional.of(existingEntity));
+        when(businessEntityRepository.save(any(BusinessEntity.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        BusinessEntity result = businessEntityService.updateBusinessEntity(businessId, updateDetails);
+        assertEquals("Original Name", result.getName());
+        assertEquals("Updated Location", result.getLocation());
+        assertEquals("Updated Type", result.getType());
+        assertTrue(result.isExternal());
+    }
 }

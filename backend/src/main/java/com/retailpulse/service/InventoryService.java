@@ -35,6 +35,10 @@ public class InventoryService {
         return inventoryRepository.findByProductIdAndBusinessEntityId(productId, businessEntityId);
     }
 
+    public boolean inventoryContainsProduct(Long productId) {
+        List<Inventory> inventoryList = getInventoryByProductId(productId);
+        return !inventoryList.isEmpty();
+    }
     // Not exposed in controller - Inventory should only be changed by Inventory Summary
     public Inventory saveInventory(Inventory inventory) {
         return inventoryRepository.save(inventory);

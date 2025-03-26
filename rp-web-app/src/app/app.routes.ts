@@ -11,6 +11,7 @@ const lazyUserManagement = () => import('./user-management/user-management.compo
 const lazyBusinessEntityManagement = () => import('./business-entity-management/business-entity-management.component').then(mod => mod.BusinessEntityManagementComponent);
 const lazyProfile = () => import('./profile/profile.component').then(mod => mod.ProfileComponent);
 const lazyReportGeneration = () => import('./report-generation/report-generation.component').then(mod => mod.ReportGenerationComponent);
+const lazyInvenotryManagement=()=> import ('./inventory-management/inventory-management.component').then(mod=>mod.InventoryManagementComponent);
 
 export const routes: Routes = [
   // Login route
@@ -26,20 +27,20 @@ export const routes: Routes = [
     children: [
       { path: 'product-management', loadComponent: lazyProductManagement },
       { path: 'user-management', loadComponent: lazyUserManagement },
-      { path: 'business-entity-management', loadComponent: lazyBusinessEntityManagement },
+      { path : 'inventory-management', loadComponent: lazyInvenotryManagement},
+      { path: 'business-entity-management', loadComponent: lazyBusinessEntityManagement},
       { path: 'report-generation', loadComponent: lazyReportGeneration},
       { path: 'profile', loadComponent: lazyProfile },
-      { path: '', redirectTo: 'user-management', pathMatch: 'full' }, // Default child route
+      { path: '', redirectTo: 'user-management', pathMatch: 'full' }, // Default childroute
     ],
   },
 
   // Operator route with guard and role-based access
-  {
-    path: 'operator',
+  { path: 'operator',
     loadComponent: lazyOperatorPage,
     canActivate: [authGuard],
     data: { roles: ['CASHER', 'MANAGER'] },
-    children: [      
+    children: [
       { path: 'profile', loadComponent: lazyProfile },
       { path: '', redirectTo: 'profile', pathMatch: 'full' }, // Default child route
     ],
