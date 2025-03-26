@@ -1,9 +1,11 @@
 package com.retailpulse.service;
 
 import com.retailpulse.DTO.InventoryTransactionProductDto;
+import com.retailpulse.entity.BusinessEntity;
 import com.retailpulse.entity.Inventory;
 import com.retailpulse.entity.InventoryTransaction;
 import com.retailpulse.entity.Product;
+import com.retailpulse.repository.BusinessEntityRepository;
 import com.retailpulse.repository.InventoryTransactionRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,7 @@ public class InventoryTransactionService {
     private ProductService productService;
 
     @Autowired
-    private BusinessEntityService businessEntityService;
+    private BusinessEntityRepository businessEntityRepository;
 
     public List<InventoryTransactionProductDto> getAllInventoryTransactionWithProduct() {
         return inventoryTransactionRepository.findAllWithProduct();
@@ -41,7 +43,7 @@ public class InventoryTransactionService {
         int quantity = inventoryTransaction.getQuantity();
         double costPricePerUnit = inventoryTransaction.getCostPricePerUnit();
 
-        boolean isSourceExternal = businessEntityService.isExternalBusinessEntity(sourceId);
+        boolean isSourceExternal = this.isExternalBusinessEntity(sourceId);
         // Source External: No need to validate/deduct source inventory
         if (!isSourceExternal) {
             // Validate source inventory
@@ -63,7 +65,7 @@ public class InventoryTransactionService {
             inventoryService.updateInventory(existingSourceInventory.getId(), existingSourceInventory);
         }
 
-        boolean isDestinationExternal = businessEntityService.isExternalBusinessEntity(destinationId);
+        boolean isDestinationExternal = this.isExternalBusinessEntity(destinationId);
         // Destination External: No need to deduct destination inventory
         if (!isDestinationExternal) {
             // Update or create destination inventory
@@ -114,6 +116,12 @@ public class InventoryTransactionService {
     * * * 2.1.1 Add back inventory of original ProductId to source
     * * * 2.1.2 If updatedQuantity
     */
+
+    private boolean isExternalBusinessEntity(Long id) {
+        BusinessEntity businessEntity = businessEntityRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Business Entity not found with id: " + id));
+        return businessEntity.isExternal();
+    }
 
 
     // Helper Method

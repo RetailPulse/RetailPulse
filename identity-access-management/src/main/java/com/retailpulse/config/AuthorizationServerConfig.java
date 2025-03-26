@@ -41,7 +41,7 @@ public class AuthorizationServerConfig {
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class).oidc(Customizer.withDefaults());
 
         http.exceptionHandling((e) ->
-                e.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
+                e.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/rp-login"))
         );
 
         http.cors(c -> {
@@ -54,14 +54,25 @@ public class AuthorizationServerConfig {
     @Bean
     @Order(2)
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.formLogin(Customizer.withDefaults());
+//        http.formLogin(Customizer.withDefaults());
+        http.formLogin(form -> form
+                .loginPage("/rp-login")
+                .loginProcessingUrl("/login")
+                .permitAll());
 
         http.csrf(
                 c -> c.disable()
         );
 
         http.authorizeHttpRequests(
-                c -> c.anyRequest().authenticated()
+                c -> c
+                        .requestMatchers(
+                                "/login",
+                                "/images/**",
+                                "/css/**",
+                                "/js/**"
+                        ).permitAll()
+                        .anyRequest().authenticated()
         );
 
         return http.build();

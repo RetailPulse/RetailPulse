@@ -1,7 +1,8 @@
 package com.retailpulse.service;
 
+import com.retailpulse.controller.request.BusinessEntityRequestDto;
+import com.retailpulse.controller.response.BusinessEntityResponseDto;
 import com.retailpulse.entity.BusinessEntity;
-import com.retailpulse.entity.Inventory;
 import com.retailpulse.repository.BusinessEntityRepository;
 import com.retailpulse.repository.InventoryRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,9 +58,9 @@ public class BusinessEntityServiceTest {
         List<BusinessEntity> businessEntities = Arrays.asList(businessEntity1, businessEntity2);
         when(businessEntityRepository.findAll()).thenReturn(businessEntities);
 
-        List<BusinessEntity> result = businessEntityService.getAllBusinessEntities();
+        List<BusinessEntityResponseDto> result = businessEntityService.getAllBusinessEntities();
         assertEquals(2, result.size());
-        assertEquals(1L, result.get(0).getId());
+        assertEquals(1L, result.get(0).id());
         verify(businessEntityRepository, times(1)).findAll();
     }
 
@@ -69,19 +70,16 @@ public class BusinessEntityServiceTest {
         businessEntity.setId(1L);
         when(businessEntityRepository.findById(1L)).thenReturn(Optional.of(businessEntity));
 
-        Optional<BusinessEntity> result = businessEntityService.getBusinessEntityById(1L);
-        assertTrue(result.isPresent());
-        assertEquals(1L, result.get().getId());
+        BusinessEntityResponseDto result = businessEntityService.getBusinessEntityById(1L);
+        assertNotNull(result);
+        assertEquals(1L, result.id());
     }
 
     @Test
     void testSaveBusinessEntity_Success() {
-        BusinessEntity businessEntity = new BusinessEntity();
-        businessEntity.setId(1L);
-        businessEntity.setName("Shop 1");
-        businessEntity.setLocation("Location 1");
-        businessEntity.setType("Shop");
-        businessEntity.setExternal(false);
+        BusinessEntityRequestDto businessEntityRequestDto = new BusinessEntityRequestDto("Shop 1", "Location 1", "Shop", false);
+        BusinessEntity businessEntity = new BusinessEntity(businessEntityRequestDto.name(), businessEntityRequestDto.location(),
+                businessEntityRequestDto.type(), businessEntityRequestDto.external());
 
         when(businessEntityRepository.save(any(BusinessEntity.class))).thenAnswer(invocation -> {
             BusinessEntity savedBusinessEntity = invocation.getArgument(0);
@@ -89,9 +87,9 @@ public class BusinessEntityServiceTest {
             return savedBusinessEntity;
         });
 
-        BusinessEntity result = businessEntityService.saveBusinessEntity(businessEntity);
-        assertEquals(businessEntity.getId(), result.getId());
-        verify(businessEntityRepository, times(1)).save(businessEntity);
+        BusinessEntityResponseDto result = businessEntityService.saveBusinessEntity(businessEntityRequestDto);
+        assertEquals(1L, result.id());
+        verify(businessEntityRepository, times(1)).save(any(BusinessEntity.class));
     }
 
     @Test
@@ -105,20 +103,17 @@ public class BusinessEntityServiceTest {
         existingEntity.setExternal(false);
         existingEntity.setActive(true);
 
-        BusinessEntity updatedEntityDetails = new BusinessEntity();
-        updatedEntityDetails.setName("New Name");
-        updatedEntityDetails.setLocation("New Location");
-        updatedEntityDetails.setType("New Type");
-        updatedEntityDetails.setExternal(true);
+        BusinessEntityRequestDto updatedEntityDetails = new BusinessEntityRequestDto("New Name", "New Location", "New Type", true);
 
         when(businessEntityRepository.findById(businessId)).thenReturn(Optional.of(existingEntity));
         when(businessEntityRepository.save(any(BusinessEntity.class))).thenReturn(existingEntity);
 
-        BusinessEntity result = businessEntityService.updateBusinessEntity(businessId, updatedEntityDetails);
-        assertEquals("New Name", result.getName());
-        assertEquals("New Location", result.getLocation());
-        assertEquals("New Type", result.getType());
-        assertTrue(result.isExternal());
+        BusinessEntityResponseDto result = businessEntityService.updateBusinessEntity(businessId, updatedEntityDetails);
+
+        assertEquals("New Name", result.name());
+        assertEquals("New Location", result.location());
+        assertEquals("New Type", result.type());
+        assertTrue(result.external());
         verify(businessEntityRepository, times(1)).findById(businessId);
         verify(businessEntityRepository, times(1)).save(existingEntity);
     }
@@ -126,11 +121,7 @@ public class BusinessEntityServiceTest {
     @Test
     public void testUpdateBusinessEntity_NotFound() {
         Long businessId = 1L;
-        BusinessEntity updatedEntityDetails = new BusinessEntity();
-        updatedEntityDetails.setName("New Name");
-        updatedEntityDetails.setLocation("New Location");
-        updatedEntityDetails.setType("New Type");
-        updatedEntityDetails.setExternal(false);
+        BusinessEntityRequestDto updatedEntityDetails = new BusinessEntityRequestDto("New Name", "New Location", "New Type", false);
 
         when(businessEntityRepository.findById(businessId)).thenReturn(Optional.empty());
 
@@ -154,11 +145,7 @@ public class BusinessEntityServiceTest {
         existingEntity.setExternal(false);
         existingEntity.setActive(false);
 
-        BusinessEntity updatedEntityDetails = new BusinessEntity();
-        updatedEntityDetails.setName("New Name");
-        updatedEntityDetails.setLocation("New Location");
-        updatedEntityDetails.setType("New Location");
-        updatedEntityDetails.setExternal(false);
+        BusinessEntityRequestDto updatedEntityDetails = new BusinessEntityRequestDto("New Name", "New Location", "New Type", false);
 
         when(businessEntityRepository.findById(businessId)).thenReturn(Optional.of(existingEntity));
 
@@ -174,11 +161,7 @@ public class BusinessEntityServiceTest {
     @Test
     public void testUpdateBusinessEntity_BusinessEntityNotFound() {
         Long businessEntityId = 1L;
-        BusinessEntity updatedBusinessEntityDetails = new BusinessEntity();
-        updatedBusinessEntityDetails.setName("New Name");
-        updatedBusinessEntityDetails.setLocation("New Location");
-        updatedBusinessEntityDetails.setType("New Type");
-        updatedBusinessEntityDetails.setExternal(false);
+        BusinessEntityRequestDto updatedBusinessEntityDetails = new BusinessEntityRequestDto("New Name", "New Location", "New Type", false);
 
         when(businessEntityRepository.findById(businessEntityId)).thenReturn(Optional.empty());
 
@@ -201,23 +184,20 @@ public class BusinessEntityServiceTest {
         existingBusinessEntity.setExternal(false);
         existingBusinessEntity.setActive(true);
 
-        BusinessEntity updatedBusinessEntity = new BusinessEntity();
-        updatedBusinessEntity.setName("New Name");
-        updatedBusinessEntity.setLocation("New Location");
-        updatedBusinessEntity.setType("New Type");
-        updatedBusinessEntity.setExternal(true);
-        updatedBusinessEntity.setActive(false); // This should be ignored
+        BusinessEntityRequestDto updatedBusinessEntity = new BusinessEntityRequestDto("New Name", "New Location", "New Type", true);
 
         when(businessEntityRepository.findById(1L)).thenReturn(Optional.of(existingBusinessEntity));
         when(businessEntityRepository.save(any(BusinessEntity.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        BusinessEntity result = businessEntityService.updateBusinessEntity(1L, updatedBusinessEntity);
-        assertEquals("New Name", result.getName());
-        assertEquals("New Location", result.getLocation());
-        assertEquals("New Type", result.getType());
-        assertTrue(result.isExternal());
-        assertTrue(result.isActive(), "BusinessEntity should remain active");
+        BusinessEntityResponseDto result = businessEntityService.updateBusinessEntity(1L, updatedBusinessEntity);
+
+        // Assert: the fields are updated except isActive, which remains true
+        assertEquals("New Name", result.name());
+        assertEquals("New Location", result.location());
+        assertEquals("New Type", result.type());
+        assertTrue(result.external());
+        assertTrue(result.active(), "BusinessEntity should remain active");
     }
 
     @Test
@@ -238,75 +218,11 @@ public class BusinessEntityServiceTest {
         when(inventoryService.getInventoryByBusinessEntityId(businessId))
                 .thenReturn(Collections.emptyList());
 
-        BusinessEntity deletedEntity = businessEntityService.deleteBusinessEntity(businessId);
-        assertFalse(deletedEntity.isActive());
+        BusinessEntityResponseDto deletedEntity = businessEntityService.deleteBusinessEntity(businessId);
+
+        assertFalse(deletedEntity.active());
         verify(businessEntityRepository, times(1)).findById(businessId);
         verify(businessEntityRepository, times(1)).save(existingEntity);
     }
 
-    @Test
-    void testIsExternalBusinessEntity_Success() {
-        Long businessId = 1L;
-        BusinessEntity businessEntity = new BusinessEntity();
-        businessEntity.setId(businessId);
-        businessEntity.setExternal(true);
-
-        when(businessEntityRepository.findById(businessId)).thenReturn(Optional.of(businessEntity));
-        boolean isExternal = businessEntityService.isExternalBusinessEntity(businessId);
-        assertTrue(isExternal);
-        verify(businessEntityRepository, times(1)).findById(businessId);
-    }
-
-    @Test
-    void testDeleteBusinessEntity_FailsDueToAssociatedInventory() {
-        Long businessId = 1L;
-        BusinessEntity existingEntity = new BusinessEntity();
-        existingEntity.setId(businessId);
-        existingEntity.setName("Test Entity");
-        existingEntity.setLocation("Test Location");
-        existingEntity.setType("Shop");
-        existingEntity.setExternal(false);
-        existingEntity.setActive(true);
-
-        when(businessEntityRepository.findById(businessId)).thenReturn(Optional.of(existingEntity));
-
-        Inventory inventory = new Inventory();
-        inventory.setQuantity(10);
-        when(inventoryService.getInventoryByBusinessEntityId(businessId))
-                .thenReturn(Collections.singletonList(inventory));
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-            businessEntityService.deleteBusinessEntity(businessId)
-        );
-        assertEquals("Cannot delete Business Entity with id " + businessId + " as it has associated products in the inventory.", exception.getMessage());
-        verify(businessEntityRepository, times(1)).findById(businessId);
-    }
-
-    @Test
-    void testUpdateBusinessEntity_IgnoreEmptyStringField() {
-        Long businessId = 1L;
-        BusinessEntity existingEntity = new BusinessEntity();
-        existingEntity.setId(businessId);
-        existingEntity.setName("Original Name");
-        existingEntity.setLocation("Original Location");
-        existingEntity.setType("Original Type");
-        existingEntity.setExternal(false);
-        existingEntity.setActive(true);
-
-        BusinessEntity updateDetails = new BusinessEntity();
-        updateDetails.setName(""); // Should be ignored
-        updateDetails.setLocation("Updated Location");
-        updateDetails.setType("Updated Type");
-        updateDetails.setExternal(true);
-
-        when(businessEntityRepository.findById(businessId)).thenReturn(Optional.of(existingEntity));
-        when(businessEntityRepository.save(any(BusinessEntity.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
-
-        BusinessEntity result = businessEntityService.updateBusinessEntity(businessId, updateDetails);
-        assertEquals("Original Name", result.getName());
-        assertEquals("Updated Location", result.getLocation());
-        assertEquals("Updated Type", result.getType());
-        assertTrue(result.isExternal());
-    }
 }

@@ -1,10 +1,12 @@
 package com.retailpulse.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
-@Data
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class BusinessEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,4 +26,12 @@ public class BusinessEntity {
 
     @Column(nullable = false)
     private boolean active = true;
+
+    public BusinessEntity(String name, String location, String type, boolean external) {
+        this.name = name;
+        this.location = location;
+        this.type = type;
+        this.external = external;
+    }
+
 }
