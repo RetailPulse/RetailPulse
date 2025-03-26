@@ -1,12 +1,13 @@
 package com.retailpulse.controller;
 
-import com.retailpulse.entity.BusinessEntity;
+import com.retailpulse.controller.exception.ApplicationException;
+import com.retailpulse.controller.request.BusinessEntityRequestDto;
+import com.retailpulse.controller.response.BusinessEntityResponseDto;
 import com.retailpulse.service.BusinessEntityService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -16,49 +17,47 @@ import java.util.logging.Logger;
 public class BusinessEntityController {
 
     private static final Logger logger = Logger.getLogger(BusinessEntityController.class.getName());
+    private static final String INVALID_REQUEST = "INVALID_REQUEST";
 
     @Autowired
     BusinessEntityService businessEntityService;
 
     @GetMapping
-    public ResponseEntity<List<BusinessEntity>> getAllBusinessEntities() {
+    public ResponseEntity<List<BusinessEntityResponseDto>> getAllBusinessEntities() {
         logger.info("Fetching all business entities");
-        List<BusinessEntity> entities = businessEntityService.getAllBusinessEntities();
+        List<BusinessEntityResponseDto> entities = businessEntityService.getAllBusinessEntities();
         return ResponseEntity.ok(entities);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BusinessEntity> getBusinessById(@PathVariable Long id) {
+    public ResponseEntity<BusinessEntityResponseDto> getBusinessById(@PathVariable Long id) {
         logger.info("Fetching business entity with id: " + id);
-        BusinessEntity entity = businessEntityService.getBusinessEntityById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Business Entity not found with id: " + id));
-        return ResponseEntity.ok(entity);
+        BusinessEntityResponseDto response = businessEntityService.getBusinessEntityById(id);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
-    public ResponseEntity<BusinessEntity> createBusinessEntity(@RequestBody BusinessEntity businessEntity) {
-        logger.info("Received request to create business entity: " + businessEntity);
-        try {
-            BusinessEntity createdBusinessEntity = businessEntityService.saveBusinessEntity(businessEntity);
-            logger.info("Successfully created business entity with location: " + createdBusinessEntity.getLocation());
-            return ResponseEntity.ok(createdBusinessEntity);
-        } catch (Exception e) {
-            logger.severe("Error creating business entity: " + e.getMessage());
-            throw e;
+    public ResponseEntity<BusinessEntityResponseDto> createBusinessEntity(@RequestBody BusinessEntityRequestDto request) {
+        logger.info("Received request to create business entity: " + request);
+
+        if (!StringUtils.hasText(request.name()) ||
+                !StringUtils.hasText(request.location()) ||
+                !StringUtils.hasText(request.type()) ||
+                request.external() == null) {
+            throw new ApplicationException(INVALID_REQUEST, "Name, location, type, and external are required fields");
         }
+
+        BusinessEntityResponseDto response = businessEntityService.saveBusinessEntity(request);
+        logger.info("Successfully created business entity");
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BusinessEntity> updateBusinessEntity(@PathVariable Long id, @RequestBody BusinessEntity businessEntity) {
+    public ResponseEntity<BusinessEntityResponseDto> updateBusinessEntity(@PathVariable Long id, @RequestBody BusinessEntityRequestDto request) {
         logger.info("Received request to update business entity with id: " + id);
-        try {
-            BusinessEntity updatedBusinessEntity = businessEntityService.updateBusinessEntity(id, businessEntity);
-            logger.info("Successfully updated business entity with id: " + updatedBusinessEntity.getId());
-            return ResponseEntity.ok(updatedBusinessEntity);
-        } catch (Exception e) {
-            logger.severe("Error updating business entity: " + e.getMessage());
-            throw e;
-        }
+        BusinessEntityResponseDto response = businessEntityService.updateBusinessEntity(id, request);
+        logger.info("Successfully updated business entity with id: " + response.id());
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")

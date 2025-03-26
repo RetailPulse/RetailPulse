@@ -1,9 +1,11 @@
 package com.retailpulse.service;
 
 import com.retailpulse.DTO.InventoryTransactionProductDto;
+import com.retailpulse.entity.BusinessEntity;
 import com.retailpulse.entity.Inventory;
 import com.retailpulse.entity.InventoryTransaction;
 import com.retailpulse.entity.Product;
+import com.retailpulse.repository.BusinessEntityRepository;
 import com.retailpulse.repository.InventoryTransactionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,7 +32,7 @@ class InventoryTransactionServiceTest {
     private ProductService mockProductService;
 
     @Mock
-    private BusinessEntityService mockBusinessEntityService;
+    private BusinessEntityRepository mockBusinessEntityRepository;
 
     @InjectMocks
     private InventoryTransactionService inventoryTransactionService;
@@ -110,9 +112,11 @@ class InventoryTransactionServiceTest {
         updatedDestinationInventory.setQuantity(40);
         updatedDestinationInventory.setTotalCostPrice(200.0);
 
+        BusinessEntity businessEntity = new BusinessEntity("name", "location", "type", false);
+
         when(mockProductService.getProductById(1L)).thenReturn(Optional.of(product));
-        when(mockBusinessEntityService.isExternalBusinessEntity(101L)).thenReturn(false);
-        when(mockBusinessEntityService.isExternalBusinessEntity(201L)).thenReturn(false);
+        when(mockBusinessEntityRepository.findById(101L)).thenReturn(Optional.of(businessEntity));
+        when(mockBusinessEntityRepository.findById(201L)).thenReturn(Optional.of(businessEntity));
         when(mockInventoryService.getInventoryByProductIdAndBusinessEntityId(1L, 101L)).thenReturn(Optional.of(sourceInventory));
         when(mockInventoryService.getInventoryByProductIdAndBusinessEntityId(1L, 201L)).thenReturn(Optional.of(destinationInventory));
         when(mockInventoryService.updateInventory(1L, updatedSourceInventory)).thenReturn(updatedSourceInventory);
@@ -131,14 +135,12 @@ class InventoryTransactionServiceTest {
         assertEquals(5.0, result.getCostPricePerUnit(), 0.01);
 
         verify(mockProductService, times(1)).getProductById(1L);
-        verify(mockBusinessEntityService, times(1)).isExternalBusinessEntity(101L);
-        verify(mockBusinessEntityService, times(1)).isExternalBusinessEntity(201L);
         verify(mockInventoryService, times(1)).getInventoryByProductIdAndBusinessEntityId(1L, 101L);
         verify(mockInventoryService, times(1)).getInventoryByProductIdAndBusinessEntityId(1L, 201L);
         verify(mockInventoryService, times(1)).updateInventory(1L, updatedSourceInventory);
         verify(mockInventoryService, times(1)).updateInventory(2L, updatedDestinationInventory);
         verify(mockInventoryTransactionRepository, times(1)).save(transaction);
-        verifyNoMoreInteractions(mockProductService, mockBusinessEntityService, mockInventoryService, mockInventoryTransactionRepository);
+        verifyNoMoreInteractions(mockProductService, mockInventoryService, mockInventoryTransactionRepository);
     }
 
     @Test
@@ -162,8 +164,10 @@ class InventoryTransactionServiceTest {
         sourceInventory.setQuantity(20);
         sourceInventory.setTotalCostPrice(100.0);
 
+        BusinessEntity businessEntity = new BusinessEntity("name", "location", "type", false);
+
         when(mockProductService.getProductById(1L)).thenReturn(Optional.of(product));
-        when(mockBusinessEntityService.isExternalBusinessEntity(101L)).thenReturn(false);
+        when(mockBusinessEntityRepository.findById(101L)).thenReturn(Optional.of(businessEntity));
         when(mockInventoryService.getInventoryByProductIdAndBusinessEntityId(1L, 101L)).thenReturn(Optional.of(sourceInventory));
 
         // Act & Assert
@@ -177,9 +181,8 @@ class InventoryTransactionServiceTest {
         );
 
         verify(mockProductService, times(1)).getProductById(1L);
-        verify(mockBusinessEntityService, times(1)).isExternalBusinessEntity(101L);
         verify(mockInventoryService, times(1)).getInventoryByProductIdAndBusinessEntityId(1L, 101L);
-        verifyNoMoreInteractions(mockProductService, mockBusinessEntityService, mockInventoryService);
+        verifyNoMoreInteractions(mockProductService, mockInventoryService);
     }
 
     @Test
@@ -287,11 +290,14 @@ class InventoryTransactionServiceTest {
         updatedDestinationInventory.setQuantity(destinationInventory.getQuantity() + 10);
         updatedDestinationInventory.setTotalCostPrice(destinationInventory.getTotalCostPrice() + (5.0 * 10));
 
+        BusinessEntity businessEntityFalse = new BusinessEntity("name", "location", "type", false);
+        BusinessEntity businessEntityTrue = new BusinessEntity("name", "location", "type", true);
+
         when(mockProductService.getProductById(1L)).thenReturn(Optional.of(product));
         // Source is external: skip source inventory validation/update.
-        when(mockBusinessEntityService.isExternalBusinessEntity(101L)).thenReturn(true);
+        when(mockBusinessEntityRepository.findById(101L)).thenReturn(Optional.of(businessEntityTrue));
         // Destination is not external.
-        when(mockBusinessEntityService.isExternalBusinessEntity(201L)).thenReturn(false);
+        when(mockBusinessEntityRepository.findById(201L)).thenReturn(Optional.of(businessEntityFalse));
         when(mockInventoryService.getInventoryByProductIdAndBusinessEntityId(1L, 201L))
                 .thenReturn(Optional.of(destinationInventory));
         when(mockInventoryService.updateInventory(2L, updatedDestinationInventory)).thenReturn(updatedDestinationInventory);
@@ -309,8 +315,6 @@ class InventoryTransactionServiceTest {
         assertEquals(5.0, result.getCostPricePerUnit(), 0.01);
 
         verify(mockProductService, times(1)).getProductById(1L);
-        verify(mockBusinessEntityService, times(1)).isExternalBusinessEntity(101L);
-        verify(mockBusinessEntityService, times(1)).isExternalBusinessEntity(201L);
         // Destination inventory update
         verify(mockInventoryService, times(1)).getInventoryByProductIdAndBusinessEntityId(1L, 201L);
         verify(mockInventoryService, times(1)).updateInventory(2L, updatedDestinationInventory);
@@ -346,11 +350,14 @@ class InventoryTransactionServiceTest {
         updatedSourceInventory.setQuantity(sourceInventory.getQuantity() - 10);
         updatedSourceInventory.setTotalCostPrice(sourceInventory.getTotalCostPrice() - (5.0 * 10));
 
+        BusinessEntity businessEntityFalse = new BusinessEntity("name", "location", "type", false);
+        BusinessEntity businessEntityTrue = new BusinessEntity("name", "location", "type", true);
+
         when(mockProductService.getProductById(1L)).thenReturn(Optional.of(product));
         // Source is not external.
-        when(mockBusinessEntityService.isExternalBusinessEntity(101L)).thenReturn(false);
+        when(mockBusinessEntityRepository.findById(101L)).thenReturn(Optional.of(businessEntityFalse));
         // Destination is external: skip destination inventory update.
-        when(mockBusinessEntityService.isExternalBusinessEntity(201L)).thenReturn(true);
+        when(mockBusinessEntityRepository.findById(201L)).thenReturn(Optional.of(businessEntityTrue));
         when(mockInventoryService.getInventoryByProductIdAndBusinessEntityId(1L, 101L)).thenReturn(Optional.of(sourceInventory));
         when(mockInventoryService.updateInventory(1L, updatedSourceInventory)).thenReturn(updatedSourceInventory);
         when(mockInventoryTransactionRepository.save(transaction)).thenReturn(transaction);
@@ -367,8 +374,6 @@ class InventoryTransactionServiceTest {
         assertEquals(5.0, result.getCostPricePerUnit(), 0.01);
 
         verify(mockProductService, times(1)).getProductById(1L);
-        verify(mockBusinessEntityService, times(1)).isExternalBusinessEntity(101L);
-        verify(mockBusinessEntityService, times(1)).isExternalBusinessEntity(201L);
         verify(mockInventoryService, times(1)).getInventoryByProductIdAndBusinessEntityId(1L, 101L);
         verify(mockInventoryService, times(1)).updateInventory(1L, updatedSourceInventory);
         // Destination inventory calls should not be made.
@@ -389,10 +394,12 @@ class InventoryTransactionServiceTest {
         product.setId(1L);
         product.setActive(true);
 
+        BusinessEntity businessEntityTrue = new BusinessEntity("name", "location", "type", true);
+
         when(mockProductService.getProductById(1L)).thenReturn(Optional.of(product));
         // Both source and destination are external; skip inventory modifications.
-        when(mockBusinessEntityService.isExternalBusinessEntity(101L)).thenReturn(true);
-        when(mockBusinessEntityService.isExternalBusinessEntity(201L)).thenReturn(true);
+        when(mockBusinessEntityRepository.findById(101L)).thenReturn(Optional.of(businessEntityTrue));
+        when(mockBusinessEntityRepository.findById(201L)).thenReturn(Optional.of(businessEntityTrue));
         when(mockInventoryTransactionRepository.save(transaction)).thenReturn(transaction);
 
         // Act
@@ -407,8 +414,6 @@ class InventoryTransactionServiceTest {
         assertEquals(5.0, result.getCostPricePerUnit(), 0.01);
 
         verify(mockProductService, times(1)).getProductById(1L);
-        verify(mockBusinessEntityService, times(1)).isExternalBusinessEntity(101L);
-        verify(mockBusinessEntityService, times(1)).isExternalBusinessEntity(201L);
         // No inventory service calls for inventory updates expected.
         verify(mockInventoryTransactionRepository, times(1)).save(transaction);
     }
@@ -441,9 +446,11 @@ class InventoryTransactionServiceTest {
         updatedSourceInventory.setQuantity(sourceInventory.getQuantity() - 10);
         updatedSourceInventory.setTotalCostPrice(sourceInventory.getTotalCostPrice() - (5.0 * 10));
 
+        BusinessEntity businessEntityFalse = new BusinessEntity("name", "location", "type", false);
+
         when(mockProductService.getProductById(1L)).thenReturn(Optional.of(product));
-        when(mockBusinessEntityService.isExternalBusinessEntity(101L)).thenReturn(false);
-        when(mockBusinessEntityService.isExternalBusinessEntity(201L)).thenReturn(false);
+        when(mockBusinessEntityRepository.findById(101L)).thenReturn(Optional.of(businessEntityFalse));
+        when(mockBusinessEntityRepository.findById(201L)).thenReturn(Optional.of(businessEntityFalse));
         when(mockInventoryService.getInventoryByProductIdAndBusinessEntityId(1L, 101L))
                 .thenReturn(Optional.of(sourceInventory));
         // Destination inventory does not exist.
@@ -469,8 +476,6 @@ class InventoryTransactionServiceTest {
         assertEquals(5.0, result.getCostPricePerUnit(), 0.01);
 
         verify(mockProductService, times(1)).getProductById(1L);
-        verify(mockBusinessEntityService, times(1)).isExternalBusinessEntity(101L);
-        verify(mockBusinessEntityService, times(1)).isExternalBusinessEntity(201L);
         verify(mockInventoryService, times(1))
                 .getInventoryByProductIdAndBusinessEntityId(1L, 101L);
         verify(mockInventoryService, times(1))
